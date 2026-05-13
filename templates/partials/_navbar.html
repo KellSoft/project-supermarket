@@ -1,0 +1,9 @@
+<nav class="navbar navbar-dark bg-dark px-3">
+    <a class="navbar-brand fw-bold" href="#">🏪 Maná y Asociados</a>
+    <div class="d-flex text-white small">
+        {% if user.is_authenticated %}
+            <span class="me-3">{{ user.username }}</span>
+            <a href="{% url 'accounts:logout' %}" class="text-white">Salir</a>
+        {% endif %}
+    </div>
+</nav>
