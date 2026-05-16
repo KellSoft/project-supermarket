@@ -36,6 +36,11 @@ class PurchaseListView(ListView):
 
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = PurchaseForm()
+        return context
+
 
 class PurchaseCreateView(View):
     template_name = 'purchases/purchases_list.html'

@@ -1,91 +1,133 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block content %}
 
 <div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Compras</h2>
 
-    <div class="d-flex justify-content-between mb-3">
+    <button
+      type="button"
+      class="btn btn-primary"
+      data-bs-toggle="modal"
+      data-bs-target="#purchaseModal"
+    >
+      Nueva compra
+    </button>
+  </div>
 
-        <h2>Compras</h2>
+  <!-- búsqueda -->
 
-        <a href="{% url 'purchases:purchase_create' %}"
-           class="btn btn-primary">
-
-            Nueva compra
-
-        </a>
-
+  <form method="GET" class="row mb-4">
+    <div class="col-md-4">
+      <input
+        type="text"
+        name="q"
+        value="{{ request.GET.q }}"
+        class="form-control"
+        placeholder="Buscar factura, producto o proveedor"
+      />
     </div>
 
-    <!-- búsqueda -->
+    <div class="col-md-3">
+      <input
+        type="date"
+        name="start_date"
+        value="{{ request.GET.start_date }}"
+        class="form-control"
+      />
+    </div>
 
-    <form method="GET" class="row mb-4">
+    <div class="col-md-3">
+      <input
+        type="date"
+        name="end_date"
+        value="{{ request.GET.end_date }}"
+        class="form-control"
+      />
+    </div>
 
-        <div class="col-md-4">
-            <input type="text"
-                   name="q"
-                   class="form-control"
-                   placeholder="Buscar factura, producto o proveedor">
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-success w-100">Buscar</button>
+    </div>
+
+    <div class="col-md-1">
+      <a
+        href="{% url 'purchases:purchase_list' %}"
+        class="btn btn-secondary w-100"
+      >
+        X
+      </a>
+    </div>
+  </form>
+
+  <table class="table table-bordered table-hover">
+    <thead class="table-dark">
+      <tr>
+        <th># Factura</th>
+        <th>Fecha</th>
+        <th>Producto</th>
+        <th>Proveedor</th>
+        <th>Monto</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for purchase in purchases %}
+
+      <tr>
+        <td>{{ purchase.invoice_number }}</td>
+
+        <td>{{ purchase.purchase_date }}</td>
+
+        <td>{{ purchase.product }}</td>
+
+        <td>{{ purchase.supplier }}</td>
+
+        <td>${{ purchase.amount }}</td>
+      </tr>
+
+      {% empty %}
+
+      <tr>
+        <td colspan="5" class="text-center">No se encontraron compras</td>
+      </tr>
+
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+
+<div class="modal fade" id="purchaseModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Registrar compra</h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+        ></button>
+      </div>
+
+      <form method="POST" action="{% url 'purchases:purchase_create' %}">
+        <div class="modal-body">{% csrf_token %} {{ form|crispy }}</div>
+
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cerrar
+          </button>
+
+          <button type="submit" class="btn btn-primary">Guardar compra</button>
         </div>
-
-        <div class="col-md-3">
-            <input type="date"
-                   name="start_date"
-                   class="form-control">
-        </div>
-
-        <div class="col-md-3">
-            <input type="date"
-                   name="end_date"
-                   class="form-control">
-        </div>
-
-        <div class="col-md-2">
-            <button class="btn btn-success w-100">
-                Filtrar
-            </button>
-        </div>
-
-    </form>
-
-    <table class="table table-bordered table-hover">
-
-        <thead class="table-dark">
-
-            <tr>
-                <th># Factura</th>
-                <th>Fecha</th>
-                <th>Producto</th>
-                <th>Proveedor</th>
-                <th>Monto</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for purchase in purchases %}
-
-            <tr>
-
-                <td>{{ purchase.invoice_number }}</td>
-
-                <td>{{ purchase.purchase_date }}</td>
-
-                <td>{{ purchase.product }}</td>
-
-                <td>{{ purchase.supplier }}</td>
-
-                <td>${{ purchase.amount }}</td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
+      </form>
+    </div>
+  </div>
 </div>
 
 {% endblock %}
