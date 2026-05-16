@@ -3,9 +3,9 @@ from django.urls import path, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('dashboard.urls')),
-    path('accounts/', include('accounts.urls')),
-    path('cash-closing/', include('cash_closing.urls')),
-    path('purchases/', include('purchases.urls')),
-    path('reports/', include('reports.urls')),
+    path('', include('apps.dashboard.urls')),
+    path('accounts/', include('apps.accounts.urls')),
+    path('cash-closing/', include('apps.cash_closing.urls')),
+    path('purchases/', include('apps.purchases.urls')),
+    path('reports/', include('apps.reports.urls')),
 ]
