@@ -3,7 +3,7 @@
     <div class="d-flex text-white small">
         {% if user.is_authenticated %}
             <span class="me-3">{{ user.username }}</span>
-            <a href="{% url 'accounts:logout' %}" class="text-white">Salir</a>
+            {% comment %} <a href="{% url 'accounts:logout' %}" class="text-white">Salir</a> {% endcomment %}
         {% endif %}
     </div>
 </nav>

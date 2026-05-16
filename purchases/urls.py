@@ -1,5 +1,10 @@
 from django.urls import path
+from . import views
 
 app_name = 'purchases'
 
-urlpatterns = []
+urlpatterns = [
+    path('', views.PurchaseListView.as_view(), name='purchase_list'),
+    path('create/', views.PurchaseCreateView.as_view(), name='purchase_create'),
+    path('pdf/', views.PurchasePDFView.as_view(), name='purchase_pdf'),
+]

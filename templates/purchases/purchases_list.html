@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between mb-3">
+
+        <h2>Compras</h2>
+
+        <a href="{% url 'purchases:purchase_create' %}"
+           class="btn btn-primary">
+
+            Nueva compra
+
+        </a>
+
+    </div>
+
+    <!-- búsqueda -->
+
+    <form method="GET" class="row mb-4">
+
+        <div class="col-md-4">
+            <input type="text"
+                   name="q"
+                   class="form-control"
+                   placeholder="Buscar factura, producto o proveedor">
+        </div>
+
+        <div class="col-md-3">
+            <input type="date"
+                   name="start_date"
+                   class="form-control">
+        </div>
+
+        <div class="col-md-3">
+            <input type="date"
+                   name="end_date"
+                   class="form-control">
+        </div>
+
+        <div class="col-md-2">
+            <button class="btn btn-success w-100">
+                Filtrar
+            </button>
+        </div>
+
+    </form>
+
+    <table class="table table-bordered table-hover">
+
+        <thead class="table-dark">
+
+            <tr>
+                <th># Factura</th>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Proveedor</th>
+                <th>Monto</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for purchase in purchases %}
+
+            <tr>
+
+                <td>{{ purchase.invoice_number }}</td>
+
+                <td>{{ purchase.purchase_date }}</td>
+
+                <td>{{ purchase.product }}</td>
+
+                <td>{{ purchase.supplier }}</td>
+
+                <td>${{ purchase.amount }}</td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+</div>
+
+{% endblock %}
