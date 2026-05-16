@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import Purchase
+from apps.purchases.models import Purchase
 
 @admin.register(Purchase)
-class PutchaseAdmin(admin.ModelAdmin):
+class PurchaseAdmin(admin.ModelAdmin):
     
     list_display = (
         'invoice_number',

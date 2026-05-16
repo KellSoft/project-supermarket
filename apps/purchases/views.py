@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Purchase
+from apps.purchases.models import Purchase
 from .forms import PurchaseForm
 
 def purchase_list(request):
