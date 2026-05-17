@@ -1,22 +1,33 @@
 <nav class="col-md-2 d-md-block bg-light sidebar py-3">
-    <ul class="nav flex-column">
+    <ul class="nav flex-column gap-1 px-2">
+
         <li class="nav-item">
-            <a class="nav-link" href="/">📊 Dashboard</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-muted">💰 Cuadre diario</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-muted">🛒 Compras</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-muted">📈 Reportes</a>
-        </li>
-        <li class = "nav-item">
-            <a href="{% url 'purchases:purchase_list' %}"
-            class = "nav-link">
-            Compras
+            <a class="nav-link d-flex align-items-center gap-2 rounded"
+               href="/">
+                📊 Dashboard
             </a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded text-muted"
+               href="#">
+                💰 Cuadre diario
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded"
+               href="{% url 'purchases:purchase_list' %}">
+                🛒 Compras
+            </a>
+        </li>
+
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded"
+               href="{% url 'purchases:purchase_pdf' %}">
+                📄 Reporte
+            </a>
+        </li>
+
     </ul>
 </nav>

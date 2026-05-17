@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reporte de Compras</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 10pt;
+            color: #1a1a1a;
+            padding: 32px 40px;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            border-bottom: 3px solid #1a1a1a;
+            padding-bottom: 12px;
+            margin-bottom: 6px;
+        }
+
+        .header h1 {
+            font-size: 20pt;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .header .meta {
+            text-align: right;
+            font-size: 8pt;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .accent-bar {
+            height: 4px;
+            background: linear-gradient(90deg, #f5a623 0%, #f5e6c8 100%);
+            margin-bottom: 20px;
+        }
+
+        /* FILTER CHIP */
+        .filter-chip {
+            display: inline-block;
+            background: #f0f0f0;
+            border-left: 4px solid #f5a623;
+            padding: 6px 12px;
+            font-size: 8.5pt;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        /* TABLE */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead tr {
+            background: #1a1a1a;
+            color: #fff;
+        }
+
+        thead th {
+            padding: 9px 11px;
+            text-align: left;
+            font-size: 7.5pt;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f7f7f7;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+
+        tbody td {
+            padding: 8px 11px;
+            font-size: 9pt;
+        }
+
+        .td-right {
+            text-align: right;
+            font-weight: 600;
+        }
+
+        .td-muted {
+            color: #777;
+            font-size: 8.5pt;
+        }
+
+        /* TOTALS */
+        tfoot tr {
+            border-top: 2px solid #1a1a1a;
+        }
+
+        tfoot td {
+            padding: 10px 11px;
+            font-weight: 700;
+            font-size: 10pt;
+        }
+
+        /* EMPTY */
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* FOOTER */
+        .doc-footer {
+            margin-top: 32px;
+            border-top: 1px solid #ddd;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 7.5pt;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Reporte de Compras</h1>
+        <div class="meta">
+            <strong>Generado</strong><br>
+            {{ generated|date:"d/m/Y" }}<br>
+        </div>
+    </div>
+
+    <div class="accent-bar"></div>
+
+    <div class="filter-chip">
+        Filtros aplicados: {{ filter_label }}
+    </div>
+
+    {% if purchases %}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Factura</th>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Proveedor</th>
+                <th style="text-align:right">Monto</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for purchase in purchases %}
+            <tr>
+                <td class="td-muted">{{ forloop.counter }}</td>
+                <td>{{ purchase.invoice_number }}</td>
+                <td class="td-muted">{{ purchase.purchase_date|date:"d/m/Y" }}</td>
+                <td><strong>{{ purchase.product }}</strong></td>
+                <td>{{ purchase.supplier }}</td>
+                <td class="td-right">${{ purchase.amount|floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4"></td>
+                <td style="text-align:right; color:#777; font-size:8pt; font-weight:600; text-transform:uppercase; letter-spacing:1px;">
+                    Total
+                </td>
+                <td class="td-right" style="color:#f5a623; font-size:12pt;">
+                    ${{ total|floatformat:2 }}
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+
+    {% else %}
+    <div class="empty">
+        No se encontraron compras con los filtros seleccionados.
+    </div>
+    {% endif %}
+
+    <div class="doc-footer">
+        <span>Documento generado automáticamente · Solo lectura</span>
+        <span>Total de registros: {{ purchases|length }}</span>
+    </div>
+
+</body>
+</html>

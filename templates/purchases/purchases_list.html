@@ -82,7 +82,7 @@
 
         <td>{{ purchase.supplier }}</td>
 
-        <td>${{ purchase.amount }}</td>
+        <td>${{ purchase.amount|floatformat:2 }}</td>
       </tr>
 
       {% empty %}
