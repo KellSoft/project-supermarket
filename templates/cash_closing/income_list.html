@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+{# ── Top bar ── #}
+<div class="d-flex align-items-center justify-content-between mb-4">
+  <h5 class="mb-0 fw-semibold">💰 Ingresos</h5>
+
+  <form method="get" class="d-flex align-items-center gap-2">
+
+    <label class="text-muted small mb-0">Negocio</label>
+    <select name="business"
+            class="form-select form-select-sm"
+            style="width:160px"
+            onchange="this.form.submit()">
+      <option value="">Todos</option>
+      {% for b in businesses %}
+      <option value="{{ b.pk }}"
+              {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>
+        {{ b.name }}
+      </option>
+      {% endfor %}
+    </select>
+
+    <label class="text-muted small mb-0">Fecha</label>
+    <input type="date"
+           name="date"
+           value="{{ selected_date }}"
+           class="form-control form-control-sm"
+           style="width:160px"
+           onchange="this.form.submit()">
+
+  </form>
+</div>
+
+{# ── Alertas ── #}
+{% for msg in messages %}
+<div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show py-2 small" role="alert">
+  {{ msg }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+
+{# ── Métricas ── #}
+<div class="row g-2 mb-4">
+  <div class="col">
+    <div class="bg-light rounded p-3">
+      <div class="text-muted small mb-1">Total efectivo recibido</div>
+      <div class="fs-5 fw-semibold text-success">${{ total_income|intcomma }}</div>
+    </div>
+  </div>
+  {% for item in income_by_business %}
+  <div class="col">
+    <div class="bg-light rounded p-3">
+      <div class="text-muted small mb-1">{{ item.business.name }}</div>
+      <div class="fs-5 fw-semibold">${{ item.total|intcomma }}</div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{# ── Formulario ── #}
+<div class="card border mb-4">
+  <div class="card-header bg-white py-2 small text-muted fw-semibold">
+    Nuevo ingreso
+  </div>
+  <div class="card-body py-3">
+    <form method="post" action="{% url 'cash_closing:income_create' %}">
+      {% csrf_token %}
+      <div class="row g-2 align-items-end">
+
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Negocio</label>
+          <select name="business" class="form-select form-select-sm" required>
+            <option value="">— Selecciona —</option>
+            {% for business in businesses %}
+            <option value="{{ business.pk }}">{{ business.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted mb-1">Fecha</label>
+          <input type="date"
+                 name="date"
+                 value="{{ selected_date }}"
+                 class="form-control form-control-sm"
+                 required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label small text-muted mb-1">Valor ($)</label>
+          <input type="number"
+                 name="amount"
+                 class="form-control form-control-sm"
+                 placeholder="0"
+                 min="1"
+                 step="1"
+                 required>
+        </div>
+
+        <div class="col-md-2 d-grid">
+          <button type="submit" class="btn btn-success btn-sm">
+            Guardar
+          </button>
+        </div>
+
+      </div>
+    </form>
+  </div>
+</div>
+
+{# ── Tabla ── #}
+<div class="card border">
+  <div class="card-header bg-white py-2 small text-muted fw-semibold">
+    Registro del día — {{ selected_date }}
+  </div>
+  <div class="table-responsive">
+    <table class="table table-hover table-sm mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th class="ps-3">Negocio</th>
+          <th>Fecha</th>
+          <th class="text-end">Valor</th>
+          <th class="text-end text-muted">Hora</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+        <tr>
+          <td class="ps-3">
+            <span class="badge rounded-pill text-bg-secondary">
+              {{ income.business.name }}
+            </span>
+          </td>
+          <td class="text-muted small">{{ income.date }}</td>
+          <td class="text-end fw-semibold">${{ income.amount|intcomma }}</td>
+          <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
+          <td class="text-end pe-3">
+            <form method="post"
+                  action="{% url 'cash_closing:income_delete' income.pk %}"
+                  onsubmit="return confirm('¿Eliminar este ingreso?')">
+              {% csrf_token %}
+              <button type="submit"
+                      class="btn btn-link btn-sm text-danger p-0">
+                Eliminar
+              </button>
+            </form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="text-center text-muted py-4 small">
+            Sin ingresos para esta fecha.
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% if incomes %}
+      <tfoot class="table-light">
+        <tr>
+          <td colspan="2" class="ps-3 fw-semibold small">Total</td>
+          <td class="text-end fw-semibold text-success">${{ total_income|intcomma }}</td>
+          <td colspan="2"></td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+</div>
+
+{% endblock %}
