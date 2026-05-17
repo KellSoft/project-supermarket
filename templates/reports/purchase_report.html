@@ -13,7 +13,6 @@
             padding: 32px 40px;
         }
 
-        /* HEADER */
         .header {
             display: flex;
             justify-content: space-between;
@@ -42,7 +41,6 @@
             margin-bottom: 20px;
         }
 
-        /* FILTER CHIP */
         .filter-chip {
             display: inline-block;
             background: #f0f0f0;
@@ -53,7 +51,6 @@
             margin-bottom: 20px;
         }
 
-        /* TABLE */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -72,13 +69,8 @@
             letter-spacing: 0.8px;
         }
 
-        tbody tr:nth-child(even) {
-            background: #f7f7f7;
-        }
-
-        tbody tr {
-            border-bottom: 1px solid #ddd;
-        }
+        tbody tr:nth-child(even) { background: #f7f7f7; }
+        tbody tr { border-bottom: 1px solid #ddd; }
 
         tbody td {
             padding: 8px 11px;
@@ -95,10 +87,7 @@
             font-size: 8.5pt;
         }
 
-        /* TOTALS */
-        tfoot tr {
-            border-top: 2px solid #1a1a1a;
-        }
+        tfoot tr { border-top: 2px solid #1a1a1a; }
 
         tfoot td {
             padding: 10px 11px;
@@ -106,7 +95,6 @@
             font-size: 10pt;
         }
 
-        /* EMPTY */
         .empty {
             text-align: center;
             padding: 40px;
@@ -114,7 +102,6 @@
             font-style: italic;
         }
 
-        /* FOOTER */
         .doc-footer {
             margin-top: 32px;
             border-top: 1px solid #ddd;
@@ -132,7 +119,7 @@
         <h1>Reporte de Compras</h1>
         <div class="meta">
             <strong>Generado</strong><br>
-            {{ generated|date:"d/m/Y" }}<br>
+            {{ generated|date:"d/m/Y" }}
         </div>
     </div>
 
