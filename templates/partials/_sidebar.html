@@ -6,14 +6,26 @@
       </a>
     </li>
 
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded text-muted"
-        href="#"
-      >
-        💰 Cuadre diario
-      </a>
-    </li>
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded text-muted"
+               href="#">
+                💰 Cuadre diario
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded
+                        {% if request.resolver_match.app_name == 'cash_closing' %}active fw-semibold{% else %}text-muted{% endif %}"
+                href="{% url 'cash_closing:income_list' %}">
+                💰 Ingresos
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link d-flex align-items-center gap-2 rounded
+                        {% if request.resolver_match.url_name == 'expense_list' %}active fw-semibold{% else %}text-muted{% endif %}"
+                href="{% url 'cash_closing:expense_list' %}">
+                💸 Egresos efectivo
+            </a>
+        </li>
 
     <li class="nav-item">
       <a
