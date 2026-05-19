@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5" style="max-width: 860px">
+  <h2 class="mb-1">📄 Reportes</h2>
+  <p class="text-muted mb-4">Selecciona el reporte que quieres generar y descárgalo en PDF.</p>
+
+  <div class="row g-4">
+
+    {# ── Tarjeta Compras ── #}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column align-items-start p-4">
+          <div class="fs-2 mb-3">🛒</div>
+          <h5 class="fw-semibold mb-1">Compras</h5>
+          <p class="text-muted small mb-4">Filtra por fecha, proveedor o producto.</p>
+          <button class="btn btn-primary btn-sm mt-auto"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalCompras">
+            Generar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {# ── Tarjeta Ingresos ── #}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column align-items-start p-4">
+          <div class="fs-2 mb-3">💰</div>
+          <h5 class="fw-semibold mb-1">Ingresos</h5>
+          <p class="text-muted small mb-4">Filtra por negocio y rango de fechas.</p>
+          <button class="btn btn-success btn-sm mt-auto"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalIngresos">
+            Generar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {# ── Tarjeta Egresos ── #}
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0">
+        <div class="card-body d-flex flex-column align-items-start p-4">
+          <div class="fs-2 mb-3">💸</div>
+          <h5 class="fw-semibold mb-1">Egresos efectivo</h5>
+          <p class="text-muted small mb-4">Filtra por negocio y rango de fechas.</p>
+          <button class="btn btn-danger btn-sm mt-auto"
+                  data-bs-toggle="modal"
+                  data-bs-target="#modalEgresos">
+            Generar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- MODAL COMPRAS -->
+<div class="modal fade" id="modalCompras" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:purchase_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">🛒 Reporte de Compras</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Proveedor <span class="text-muted fw-normal">(opcional)</span></label>
+            <input type="text" name="supplier" class="form-control" placeholder="Ej: Colombina">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Producto <span class="text-muted fw-normal">(opcional)</span></label>
+            <input type="text" name="product" class="form-control" placeholder="Ej: Arroz">
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary btn-sm">⬇ Descargar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- MODAL INGRESOS -->
+<div class="modal fade" id="modalIngresos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:income_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">💰 Reporte de Ingresos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Negocio</label>
+            <select name="business" class="form-select">
+              <option value="">Todos los negocios</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success btn-sm">⬇ Descargar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- MODAL EGRESOS -->
+<div class="modal fade" id="modalEgresos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:expense_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">💸 Reporte de Egresos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Negocio</label>
+            <select name="business" class="form-select">
+              <option value="">Todos los negocios</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+
+          <div class="col-6">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-danger btn-sm">⬇ Descargar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

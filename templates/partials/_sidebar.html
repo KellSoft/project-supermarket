@@ -37,12 +37,11 @@
     </li>
 
     <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded"
-        href="{% url 'reports:purchase_report' %}"
-      >
-        📄 Reporte
-      </a>
-    </li>
+  <a class="nav-link d-flex align-items-center gap-2 rounded
+            {% if request.resolver_match.app_name == 'reports' %}active fw-semibold{% else %}text-muted{% endif %}"
+     href="{% url 'reports:report_index' %}">
+    📄 Reporte
+  </a>
+</li>
   </ul>
 </nav>

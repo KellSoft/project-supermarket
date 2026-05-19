@@ -186,5 +186,31 @@
     </table>
   </div>
 </div>
+<script>
+function liveFormat(input) {
+  const pos = input.selectionStart;
+  const prev = input.value.length;
+  const digits = input.value.replace(/\D/g, "");
+  if (!digits) { input.value = ""; return; }
+  input.value = parseInt(digits).toLocaleString("es-CO");
+  const diff = input.value.length - prev;
+  input.setSelectionRange(pos + diff, pos + diff);
+}
 
+const amountInput = document.querySelector('input[name="amount"]');
+
+if (amountInput) {
+  amountInput.setAttribute("type", "text");
+  amountInput.setAttribute("inputmode", "numeric");
+
+  amountInput.addEventListener("input", function() {
+    liveFormat(this);
+  });
+
+  amountInput.closest("form").addEventListener("submit", function() {
+    const clean = amountInput.value.replace(/\./g, "").replace(",", ".");
+    amountInput.value = clean || "0";
+  });
+}
+</script>
 {% endblock %}

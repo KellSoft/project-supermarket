@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Reporte de Compras</title>
+    <title>Reporte de Egresos</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
 
@@ -11,8 +11,8 @@
             --ink-soft: #555;
             --ink-faint: #999;
             --rule: #e0e0e0;
-            --accent: #c8421a;
-            --accent-light: #fdf1ee;
+            --accent: #1a3a7c;
+            --accent-light: #eef1fb;
             --row-alt: #fafafa;
             --white: #ffffff;
         }
@@ -27,7 +27,6 @@
             padding: 36px 44px 44px;
         }
 
-        /* ── MASTHEAD ── */
         .masthead {
             display: flex;
             justify-content: space-between;
@@ -71,11 +70,9 @@
             line-height: 1.8;
         }
 
-        /* ── DIVIDER ── */
         .divider {
             display: flex;
             align-items: center;
-            gap: 0;
             margin: 14px 0 18px;
         }
 
@@ -91,7 +88,6 @@
             background: var(--rule);
         }
 
-        /* ── FILTER BADGE ── */
         .filter-row {
             display: flex;
             align-items: center;
@@ -111,20 +107,14 @@
             font-size: 8pt;
             color: var(--ink-soft);
             background: var(--accent-light);
-            border: 1px solid #f0c4b8;
+            border: 1px solid #c0caf0;
             border-radius: 3px;
             padding: 3px 10px;
         }
 
-        /* ── TABLE ── */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        table { width: 100%; border-collapse: collapse; }
 
-        thead tr {
-            border-bottom: 2px solid var(--ink);
-        }
+        thead tr { border-bottom: 2px solid var(--ink); }
 
         thead th {
             padding: 8px 10px;
@@ -138,11 +128,7 @@
 
         thead th.th-right { text-align: right; }
 
-        tbody tr {
-            border-bottom: 1px solid var(--rule);
-            transition: background 0.1s;
-        }
-
+        tbody tr { border-bottom: 1px solid var(--rule); }
         tbody tr:nth-child(even) { background: var(--row-alt); }
 
         tbody td {
@@ -151,27 +137,19 @@
             vertical-align: middle;
         }
 
-        .td-num {
+        .td-num { font-size: 8pt; color: var(--ink-faint); width: 28px; }
+        .td-right { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+        .td-muted { color: var(--ink-soft); font-size: 8.5pt; }
+
+        .business-badge {
+            display: inline-block;
+            background: var(--accent-light);
+            border: 1px solid #c0caf0;
+            border-radius: 3px;
+            padding: 2px 8px;
             font-size: 8pt;
-            color: var(--ink-faint);
-            width: 28px;
-        }
-
-        .td-right {
-            text-align: right;
-            font-weight: 600;
-            font-variant-numeric: tabular-nums;
-        }
-
-        .td-muted {
-            color: var(--ink-soft);
-            font-size: 8.5pt;
-        }
-
-        .td-product strong {
-            display: block;
             font-weight: 500;
-            font-size: 9pt;
+            color: var(--accent);
         }
 
         .pill {
@@ -183,14 +161,9 @@
             color: var(--ink-soft);
         }
 
-        /* ── TFOOT ── */
-        tfoot tr {
-            border-top: 2px solid var(--ink);
-        }
+        tfoot tr { border-top: 2px solid var(--ink); }
 
-        tfoot td {
-            padding: 11px 10px;
-        }
+        tfoot td { padding: 11px 10px; }
 
         .tfoot-label {
             font-size: 7.5pt;
@@ -209,7 +182,6 @@
             font-variant-numeric: tabular-nums;
         }
 
-        /* ── EMPTY STATE ── */
         .empty {
             text-align: center;
             padding: 48px 0;
@@ -220,7 +192,6 @@
             border-bottom: 1px solid var(--rule);
         }
 
-        /* ── FOOTER ── */
         .doc-footer {
             margin-top: 28px;
             padding-top: 10px;
@@ -229,7 +200,6 @@
             justify-content: space-between;
             font-size: 7pt;
             color: var(--ink-faint);
-            letter-spacing: 0.3px;
         }
 
         .doc-footer .total-count {
@@ -243,7 +213,7 @@
     <div class="masthead">
         <div class="masthead-left">
             <div class="label">Reporte oficial</div>
-            <h1>Compras</h1>
+            <h1>Egresos efectivo</h1>
         </div>
         <div class="masthead-right">
             <div class="company">Maná y Asociados</div>
@@ -264,27 +234,27 @@
         <span class="filter-value">{{ filter_label }}</span>
     </div>
 
-    {% if purchases %}
+    {% if expenses %}
     <table>
         <thead>
             <tr>
                 <th style="width:28px">#</th>
-                <th>Factura</th>
-                <th>Fecha</th>
-                <th>Producto</th>
+                <th>Negocio</th>
                 <th>Proveedor</th>
+                <th>N° Factura</th>
+                <th>Fecha</th>
                 <th class="th-right">Monto</th>
             </tr>
         </thead>
         <tbody>
-            {% for purchase in purchases %}
+            {% for expense in expenses %}
             <tr>
                 <td class="td-num">{{ forloop.counter }}</td>
-                <td><span class="pill">{{ purchase.invoice_number }}</span></td>
-                <td class="td-muted">{{ purchase.purchase_date|date:"d/m/Y" }}</td>
-                <td class="td-product"><strong>{{ purchase.product }}</strong></td>
-                <td class="td-muted">{{ purchase.supplier }}</td>
-                <td class="td-right">${{ purchase.amount|floatformat:"2g" }}</td>
+                <td><span class="business-badge">{{ expense.business.name }}</span></td>
+                <td>{{ expense.supplier }}</td>
+                <td><span class="pill">{{ expense.invoice_number|default:"—" }}</span></td>
+                <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
+                <td class="td-right">${{ expense.amount|floatformat:"2g" }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -297,12 +267,12 @@
         </tfoot>
     </table>
     {% else %}
-    <div class="empty">No se encontraron compras con los filtros seleccionados.</div>
+    <div class="empty">No se encontraron egresos con los filtros seleccionados.</div>
     {% endif %}
 
     <div class="doc-footer">
         <span>Documento generado automáticamente · Maná y Asociados</span>
-        <span class="total-count">{{ purchases|length }} registro{% if purchases|length != 1 %}s{% endif %}</span>
+        <span class="total-count">{{ expenses|length }} registro{% if expenses|length != 1 %}s{% endif %}</span>
     </div>
 
 </body>

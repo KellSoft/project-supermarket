@@ -82,7 +82,13 @@
 
         <td>{{ purchase.supplier }}</td>
 
-        <td>${{ purchase.amount|floatformat:2 }}</td>
+        <!-- Formato colombiano: punto miles, coma decimales -->
+        <td
+          class="purchase-amount"
+          data-value="{{ purchase.amount|floatformat:2 }}"
+        >
+          ${{ purchase.amount|floatformat:2 }}
+        </td>
       </tr>
 
       {% empty %}
@@ -129,5 +135,61 @@
     </div>
   </div>
 </div>
+
+<script>
+  // Convierte número a formato colombiano: 1.000.000,00
+  function formatCOP(value) {
+    const number = parseFloat(value);
+    if (isNaN(number)) return value;
+    return number.toLocaleString("es-CO", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  }
+
+  // Formatea la tabla al cargar
+  document.querySelectorAll(".purchase-amount").forEach(function (cell) {
+    const raw = cell.getAttribute("data-value");
+    cell.textContent = "$" + formatCOP(raw);
+  });
+
+  // Formato en vivo mientras se escribe
+  const amountInput = document.querySelector('#purchaseModal input[name="amount"]');
+
+  if (amountInput) {
+    // Cambia el tipo a text para tener control total
+    amountInput.setAttribute("type", "text");
+    amountInput.setAttribute("inputmode", "numeric");
+    amountInput.setAttribute("placeholder", "0");
+
+    amountInput.addEventListener("input", function () {
+      const cursorPos = this.selectionStart;
+      const prevLength = this.value.length;
+
+      // Extrae solo dígitos
+      const onlyDigits = this.value.replace(/\D/g, "");
+
+      if (onlyDigits === "") {
+        this.value = "";
+        return;
+      }
+
+      // Formatea con puntos de miles (sin decimales mientras escribe)
+      const formatted = parseInt(onlyDigits, 10).toLocaleString("es-CO");
+      this.value = formatted;
+
+      // Ajusta cursor para que no salte al final
+      const newLength = this.value.length;
+      const newCursor = cursorPos + (newLength - prevLength);
+      this.setSelectionRange(newCursor, newCursor);
+    });
+
+    // Antes de enviar el formulario: limpia el formato para que Django reciba número limpio
+    const form = amountInput.closest("form");
+    form.addEventListener("submit", function () {
+      amountInput.value = amountInput.value.replace(/\./g, "").replace(",", ".");
+    });
+  }
+</script>
 
 {% endblock %}
