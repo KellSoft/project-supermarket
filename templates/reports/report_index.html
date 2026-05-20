@@ -7,6 +7,25 @@
 
   <div class="row g-4">
 
+    <!-- Tarjeta Reporte Diario -->
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #6f42c1 !important;">
+      <div class="card-body d-flex flex-column align-items-start p-4">
+        <div class="fs-2 mb-3">📅</div>
+        <h5 class="fw-semibold mb-1">Resumen del día</h5>
+        <p class="text-muted small mb-4">
+          Compras, ingresos y egresos de una fecha. Por defecto, hoy.
+        </p>
+        <button class="btn btn-sm mt-auto"
+                style="background:#6f42c1; color:#fff;"
+                data-bs-toggle="modal"
+                data-bs-target="#modalDiario">
+          Generar PDF
+        </button>
+      </div>
+    </div>
+  </div>
+
     {# ── Tarjeta Compras ── #}
     <div class="col-md-4">
       <div class="card h-100 shadow-sm border-0">
@@ -181,4 +200,48 @@
   </div>
 </div>
 
+<!-- MODAL DIARIO -->
+<div class="modal fade" id="modalDiario" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:daily_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">📅 Resumen del día</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+
+          <div class="col-12">
+            <label class="form-label small text-muted">
+              Fecha <span class="text-muted fw-normal">(por defecto, hoy)</span>
+            </label>
+            <input type="date"
+                   name="date"
+                   value="{{ selected_date }}"
+                   class="form-control">
+          </div>
+
+          <div class="col-12">
+            <div class="alert alert-light border small text-muted mb-0 py-2">
+              El reporte incluirá todas las <strong>compras</strong>,
+              <strong>ingresos</strong> y <strong>egresos</strong>
+              registrados en la fecha seleccionada, con un balance del día.
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm"
+                  data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit"
+                  class="btn btn-sm"
+                  style="background:#6f42c1; color:#fff;">
+            ⬇ Descargar PDF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 {% endblock %}

@@ -2,6 +2,7 @@ from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template.loader import render_to_string
+from django.utils import timezone
 from weasyprint import HTML
 from datetime import date
 
@@ -172,3 +173,42 @@ def _build_filter_label(
     if start_date and end_date:
         parts.append(f"Período: {start_date} → {end_date}")
     return " · ".join(parts) if parts else "Todos los registros"
+
+class DailyReportView(View):
+    
+    def get(self, request):
+        selected_date = request.GET.get('date',str(timezone.localdate()))
+        businesses = Business.objects.all()
+        return render (request, 'reports/report_index.html', {
+            'businesses': businesses,
+            'selected_date': selected_date,
+        })
+        
+    def post(self, request):
+        selected_date = request.POST.get('date') or str(timezone.localdate())
+        
+        purchases = list(Purchase.objects.filter(purchase_date=selected_date))
+        incomes = list(Income.objects.filter(date=selected_date).select_related('business'))
+        expenses = list(Expense.objects.filter(date=selected_date).select_related('business'))
+        
+        total_purchases = sum(p.amount for p in purchases)
+        total_incomes = sum(i.amount for i in incomes)
+        total_expenses = sum(e.amount for e in expenses)
+        balance = total_incomes - total_expenses
+        
+        html_string = render_to_string('reports/daily_report.html', {
+            'selected_date': selected_date,
+            'generated': date.today(),
+            'purchases': purchases,
+            'incomes': incomes,
+            'expenses': expenses,
+            'total_purchases': total_purchases,
+            'total_incomes': total_incomes,
+            'total_expenses': total_expenses,
+            'balance': balance,
+        })
+        
+        pdf = HTML(string=html_string).write_pdf()
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="reporte_diario_{selected_date}.pdf"'
+        return response
