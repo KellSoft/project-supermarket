@@ -1,31 +1,38 @@
 <nav class="col-md-2 d-md-block bg-light sidebar py-3">
   <ul class="nav flex-column gap-1 px-2">
     <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2 rounded" href="/">
-        📊 Dashboard
+      <a class="nav-link d-flex align-items-center gap-2 rounded" href="/"> 📊 Dashboard </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.url_name == 'cash-flow' %}active fw-semibold{% else %}text-muted{% endif %}"
+        href="{% url 'cash_closing:cash-flow' %}"
+      >
+        💰 Flujo de caja
       </a>
     </li>
 
-        <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2 rounded text-muted"
-               href="#">
-                💰 Cuadre diario
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2 rounded
-                        {% if request.resolver_match.app_name == 'cash_closing' %}active fw-semibold{% else %}text-muted{% endif %}"
-                href="{% url 'cash_closing:income_list' %}">
-                💰 Ingresos
-            </a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link d-flex align-items-center gap-2 rounded
-                        {% if request.resolver_match.url_name == 'expense_list' %}active fw-semibold{% else %}text-muted{% endif %}"
-                href="{% url 'cash_closing:expense_list' %}">
-                💸 Egresos efectivo
-            </a>
-        </li>
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center gap-2 rounded text-muted" href="#">
+        💰 Cuadre diario
+      </a>
+    </li>
+    {% comment %} <li class="nav-item">
+      <a
+        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.app_name == 'cash_closing' %}active fw-semibold{% else %}text-muted{% endif %}"
+        href="{% url 'cash_closing:income_list' %}"
+      >
+        💰 Ingresos
+      </a>
+    </li>
+    <li class="nav-item">
+      <a
+        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.url_name == 'expense_list' %}active fw-semibold{% else %}text-muted{% endif %}"
+        href="{% url 'cash_closing:expense_list' %}"
+      >
+        💸 Egresos efectivo
+      </a>
+    </li> {% endcomment %}
 
     <li class="nav-item">
       <a
@@ -37,11 +44,12 @@
     </li>
 
     <li class="nav-item">
-  <a class="nav-link d-flex align-items-center gap-2 rounded
-            {% if request.resolver_match.app_name == 'reports' %}active fw-semibold{% else %}text-muted{% endif %}"
-     href="{% url 'reports:report_index' %}">
-    📄 Reporte
-  </a>
-</li>
+      <a
+        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.app_name == 'reports' %}active fw-semibold{% else %}text-muted{% endif %}"
+        href="{% url 'reports:report_index' %}"
+      >
+        📄 Reporte
+      </a>
+    </li>
   </ul>
 </nav>

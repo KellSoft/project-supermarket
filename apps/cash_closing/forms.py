@@ -1,46 +1,62 @@
 from django import forms
-from .models import CashExpense, Income
-from apps.businesses.models import Business
+from .models import Income, Expense, PaymentMethod, BankChoices
 
 
 class IncomeForm(forms.ModelForm):
-    business = forms.ModelChoiceField(
-        queryset=Business.objects.all(),
-        empty_label="— Selecciona negocio —",
-        label="Negocio",
-    )
-    amount = forms.DecimalField(
-        min_value=0, label="Valor", widget=forms.NumberInput(attrs={"placeholder": "0"})
-    )
-    date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"}), label="Fecha"
-    )
-
     class Meta:
         model = Income
-        fields = ["business", "amount", "date"]
+        fields = ["business", "amount", "payment_method", "bank", "date"]
+        widgets = {
+            "date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "form-control"
+        self.fields["bank"].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        payment_method = cleaned_data.get("payment_method")
+        bank = cleaned_data.get("bank")
+
+        if payment_method == PaymentMethod.DEPOSIT and not bank:
+            self.add_error("bank", "El banco es obligatorio para consignaciones.")
+        if payment_method == PaymentMethod.CASH and bank:
+            cleaned_data["bank"] = None
+        return cleaned_data
 
 
-class CashExpenseForm(forms.ModelForm):
-    business = forms.ModelChoiceField(
-        queryset=Business.objects.all(), empty_label="— Selecciona —", label="Negocio"
-    )
-    supplier = forms.CharField(
-        label="Proveedor",
-        widget=forms.TextInput(attrs={"placeholder": "Nombre proveedor"}),
-    )
-    invoice_number = forms.CharField(
-        label="N° factura",
-        required=False,
-        widget=forms.TextInput(attrs={"placeholder": "0000"}),
-    )
-    amount = forms.DecimalField(
-        min_value=0, label="Monto", widget=forms.NumberInput(attrs={"placeholder": "0"})
-    )
-    date = forms.DateField(
-        widget=forms.DateInput(attrs={"type": "date"}), label="Fecha"
-    )
-
+class ExpenseForm(forms.ModelForm):
     class Meta:
-        model = CashExpense
-        fields = ["business", "supplier", "invoice_number", "amount", "date"]
+        model = Expense
+        fields = [
+            "business",
+            "payment_method",
+            "supplier",
+            "invoice_number",
+            "amount",
+            "date",
+            "bank",
+        ]
+        widgets = {
+            "date": forms.DateInput(attrs={"type": "date"}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field in self.fields.values():
+            field.widget.attrs["class"] = "form-control"
+        self.fields["bank"].required = False
+
+    def clean(self):
+        cleaned_data = super().clean()
+        payment_method = cleaned_data.get("payment_method")
+        bank = cleaned_data.get("bank")
+
+        if payment_method == PaymentMethod.DEPOSIT and not bank:
+            self.add_error("bank", "El banco es obligatorio para consignaciones.")
+        if payment_method == PaymentMethod.CASH and bank:
+            cleaned_data["bank"] = None
+        return cleaned_data

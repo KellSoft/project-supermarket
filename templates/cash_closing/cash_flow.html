@@ -1,0 +1,404 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+
+{# ── Alertas ── #}
+{% for msg in messages %}
+<div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show py-2 small mb-3" role="alert">
+  {{ msg }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+</div>
+{% endfor %}
+
+{# ── Top bar ── #}
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <div>
+    <h5 class="mb-0 fw-semibold">Flujo de caja</h5>
+    <small class="text-muted">Ingresos y egresos — {{ selected_date }}</small>
+  </div>
+  <form method="get" id="filterForm" class="d-flex align-items-center gap-2">
+    <select name="business" class="form-select form-select-sm" style="width:160px" onchange="this.form.submit()">
+      <option value="">Todos los negocios</option>
+      {% for b in businesses %}
+      <option value="{{ b.pk }}" {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
+      {% endfor %}
+    </select>
+    <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" style="width:150px" onchange="this.form.submit()">
+  </form>
+</div>
+
+{# ── Métricas ── #}
+<div class="row g-2 mb-4">
+  <div class="col">
+    <div class="p-3 rounded-3 border-start border-success border-3 bg-light">
+      <div class="text-muted small">Ingresos efectivo</div>
+      <div class="fs-5 fw-semibold text-success">${{ total_income_cash|intcomma }}</div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="p-3 rounded-3 border-start border-primary border-3 bg-light">
+      <div class="text-muted small">Ingresos consignación</div>
+      <div class="fs-5 fw-semibold text-primary">${{ total_income_deposit|intcomma }}</div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="p-3 rounded-3 border-start border-danger border-3 bg-light">
+      <div class="text-muted small">Egresos efectivo</div>
+      <div class="fs-5 fw-semibold text-danger">${{ total_expense_cash|intcomma }}</div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="p-3 rounded-3 border-start border-warning border-3 bg-light">
+      <div class="text-muted small">Egresos consignación</div>
+      <div class="fs-5 fw-semibold text-warning">${{ total_expense_deposit|intcomma }}</div>
+    </div>
+  </div>
+  <div class="col">
+    <div class="p-3 rounded-3 border border-2 bg-white">
+      <div class="text-muted small">Balance neto</div>
+      <div class="fs-5 fw-semibold {% if net_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
+        ${{ net_balance|intcomma }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── Tabs ── #}
+<ul class="nav nav-tabs mb-3" id="cashTabs">
+  <li class="nav-item">
+    <button class="nav-link {% if active_tab != 'expense' %}active{% endif %} fw-semibold text-success"
+            data-bs-toggle="tab" data-bs-target="#tab-income" type="button">
+      💰 Ingresos
+    </button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link {% if active_tab == 'expense' %}active{% endif %} fw-semibold text-danger"
+            data-bs-toggle="tab" data-bs-target="#tab-expense" type="button">
+      💸 Egresos
+    </button>
+  </li>
+</ul>
+
+<div class="tab-content">
+
+{# ══════════════ TAB INGRESOS ══════════════ #}
+<div class="tab-pane fade {% if active_tab != 'expense' %}show active{% endif %}" id="tab-income">
+
+  <div class="card border mb-3">
+    <div class="card-header bg-success bg-opacity-10 py-2 small fw-semibold text-success">
+      ➕ Nuevo ingreso
+    </div>
+    <div class="card-body py-3">
+      <form method="post" action="{% url 'cash_closing:cash-flow' %}" id="incomeForm"
+            x-data="{ method: 'cash' }">
+        {% csrf_token %}
+        <input type="hidden" name="_kind" value="income">
+        <input type="hidden" name="_business_filter" value="{{ selected_business }}">
+        <input type="hidden" name="payment_method" :value="method">
+
+        <div class="row g-2 align-items-end">
+
+          <div class="col-md-3">
+            <label class="form-label small text-muted mb-1">Negocio</label>
+            <select name="business" class="form-select form-select-sm" required>
+              <option value="">— Selecciona —</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Fecha</label>
+            <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" required>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Método de pago</label>
+            <div class="btn-group w-100" role="group">
+              <button type="button"
+                      class="btn btn-sm"
+                      :class="method === 'cash' ? 'btn-success' : 'btn-outline-success'"
+                      @click="method = 'cash'">
+                Efectivo
+              </button>
+              <button type="button"
+                      class="btn btn-sm"
+                      :class="method === 'deposit' ? 'btn-primary' : 'btn-outline-primary'"
+                      @click="method = 'deposit'">
+                Consignación
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
+            <label class="form-label small text-muted mb-1">Banco</label>
+            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+              <option value="">— Banco —</option>
+              {% for val, label in bank_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div :class="method === 'deposit' ? 'col-md-2' : 'col-md-3'">
+            <label class="form-label small text-muted mb-1">Valor ($)</label>
+            <input type="text" inputmode="numeric" name="amount" id="incomeAmount"
+                   class="form-control form-control-sm" placeholder="0" required>
+          </div>
+
+          <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {# Tabla ingresos #}
+  <div class="card border">
+    <div class="card-header bg-white py-2 small text-muted fw-semibold">
+      Registro del día — {{ selected_date }}
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-sm mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Negocio</th>
+            <th>Método</th>
+            <th>Banco</th>
+            <th>Fecha</th>
+            <th class="text-end">Valor</th>
+            <th class="text-end text-muted">Hora</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for income in incomes %}
+          <tr>
+            <td class="ps-3">
+              <span class="badge rounded-pill text-bg-secondary">{{ income.business.name }}</span>
+            </td>
+            <td>
+              {% if income.payment_method == 'cash' %}
+                <span class="badge text-bg-success">Efectivo</span>
+              {% else %}
+                <span class="badge text-bg-primary">Consignación</span>
+              {% endif %}
+            </td>
+            <td class="text-muted small">{{ income.get_bank_display|default:"—" }}</td>
+            <td class="text-muted small">{{ income.date }}</td>
+            <td class="text-end fw-semibold text-success">${{ income.amount|intcomma }}</td>
+            <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
+            <td class="text-end pe-3">
+              <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
+                    onsubmit="return confirm('¿Eliminar este ingreso?')" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="7" class="text-center text-muted py-4 small">Sin ingresos para esta fecha.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if incomes %}
+        <tfoot class="table-light">
+          <tr>
+            <td colspan="4" class="ps-3 fw-semibold small">Total</td>
+            <td class="text-end fw-semibold text-success">${{ total_income|intcomma }}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+
+{# ══════════════ TAB EGRESOS ══════════════ #}
+<div class="tab-pane fade {% if active_tab == 'expense' %}show active{% endif %}" id="tab-expense">
+
+  <div class="card border mb-3">
+    <div class="card-header bg-danger bg-opacity-10 py-2 small fw-semibold text-danger">
+      ➕ Nuevo egreso
+    </div>
+    <div class="card-body py-3">
+      <form method="post" action="{% url 'cash_closing:cash-flow' %}" id="expenseForm"
+            x-data="{ method: 'cash' }">
+        {% csrf_token %}
+        <input type="hidden" name="_kind" value="expense">
+        <input type="hidden" name="_business_filter" value="{{ selected_business }}">
+        <input type="hidden" name="payment_method" :value="method">
+
+        <div class="row g-2 align-items-end">
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Negocio</label>
+            <select name="business" class="form-select form-select-sm" required>
+              <option value="">— Selecciona —</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Fecha</label>
+            <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" required>
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Proveedor</label>
+            <input type="text" name="supplier" class="form-control form-control-sm" placeholder="Nombre proveedor" required>
+          </div>
+
+          <div class="col-md-1">
+            <label class="form-label small text-muted mb-1">N° factura</label>
+            <input type="text" name="invoice_number" class="form-control form-control-sm" placeholder="0000">
+          </div>
+
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Método</label>
+            <div class="btn-group w-100" role="group">
+              <button type="button"
+                      class="btn btn-sm"
+                      :class="method === 'cash' ? 'btn-danger' : 'btn-outline-danger'"
+                      @click="method = 'cash'">
+                Efectivo
+              </button>
+              <button type="button"
+                      class="btn btn-sm"
+                      :class="method === 'deposit' ? 'btn-warning' : 'btn-outline-warning'"
+                      @click="method = 'deposit'">
+                Consignación
+              </button>
+            </div>
+          </div>
+
+          <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
+            <label class="form-label small text-muted mb-1">Banco</label>
+            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+              <option value="">— Banco —</option>
+              {% for val, label in bank_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div :class="method === 'deposit' ? 'col-md-1' : 'col-md-2'">
+            <label class="form-label small text-muted mb-1">Monto ($)</label>
+            <input type="text" inputmode="numeric" name="amount" id="expenseAmount"
+                   class="form-control form-control-sm" placeholder="0" required>
+          </div>
+
+          <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-danger btn-sm">Guardar</button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  {# Tabla egresos #}
+  <div class="card border">
+    <div class="card-header bg-white py-2 small text-muted fw-semibold">
+      Registro del día — {{ selected_date }}
+    </div>
+    <div class="table-responsive">
+      <table class="table table-hover table-sm mb-0 align-middle">
+        <thead class="table-light">
+          <tr>
+            <th class="ps-3">Negocio</th>
+            <th>Proveedor</th>
+            <th>N° factura</th>
+            <th>Método</th>
+            <th>Banco</th>
+            <th>Fecha</th>
+            <th class="text-end">Monto</th>
+            <th class="text-end text-muted">Hora</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for expense in expenses %}
+          <tr>
+            <td class="ps-3">
+              <span class="badge rounded-pill text-bg-secondary">{{ expense.business.name }}</span>
+            </td>
+            <td>{{ expense.supplier }}</td>
+            <td class="text-muted small">{{ expense.invoice_number|default:"—" }}</td>
+            <td>
+              {% if expense.payment_method == 'cash' %}
+                <span class="badge text-bg-danger">Efectivo</span>
+              {% else %}
+                <span class="badge text-bg-warning">Consignación</span>
+              {% endif %}
+            </td>
+            <td class="text-muted small">{{ expense.get_bank_display|default:"—" }}</td>
+            <td class="text-muted small">{{ expense.date }}</td>
+            <td class="text-end fw-semibold text-danger">${{ expense.amount|intcomma }}</td>
+            <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>
+            <td class="text-end pe-3">
+              <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
+                    onsubmit="return confirm('¿Eliminar este egreso?')" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
+              </form>
+            </td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="9" class="text-center text-muted py-4 small">Sin egresos para esta fecha.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        {% if expenses %}
+        <tfoot class="table-light">
+          <tr>
+            <td colspan="6" class="ps-3 fw-semibold small">Total</td>
+            <td class="text-end fw-semibold text-danger">${{ total_expense|intcomma }}</td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+
+</div>{# /tab-content #}
+
+<script>
+[x-cloak] { display: none !important; }
+
+function liveFormat(input) {
+  const pos = input.selectionStart;
+  const prev = input.value.length;
+  const digits = input.value.replace(/\D/g, '');
+  if (!digits) { input.value = ''; return; }
+  input.value = parseInt(digits).toLocaleString('es-CO');
+  const diff = input.value.length - prev;
+  input.setSelectionRange(pos + diff, pos + diff);
+}
+
+function bindAmount(inputId, formId) {
+  const inp = document.getElementById(inputId);
+  if (!inp) return;
+  inp.addEventListener('input', function() { liveFormat(this); });
+  document.getElementById(formId).addEventListener('submit', function() {
+    const clean = inp.value.replace(/\./g, '').replace(',', '.');
+    inp.value = clean || '0';
+  });
+}
+
+bindAmount('incomeAmount', 'incomeForm');
+bindAmount('expenseAmount', 'expenseForm');
+</script>
+
+{% endblock %}

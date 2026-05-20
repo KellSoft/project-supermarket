@@ -1,24 +1,22 @@
 from django.urls import path
-from .views import (
-    IncomeListView,
-    IncomeCreateView,
-    IncomeDeleteView,
-    CashExpenseListView,
-    CashExpenseCreateView,
-    CashExpenseDeleteView,
-)
+from . import views
 
 app_name = "cash_closing"
 
 urlpatterns = [
-    path("incomes/", IncomeListView.as_view(), name="income_list"),
-    path("incomes/create/", IncomeCreateView.as_view(), name="income_create"),
-    path("incomes/<int:pk>/delete/", IncomeDeleteView.as_view(), name="income_delete"),
-    path("expenses/", CashExpenseListView.as_view(), name="expense_list"),
-    path("expenses/create/", CashExpenseCreateView.as_view(), name="expense_create"),
+    path("", views.CashFlowView.as_view(), name="cash-flow"),
+    path("ingresos/", views.IncomeListView.as_view(), name="income-list"),
+    path("ingresos/crear/", views.IncomeCreateView.as_view(), name="income-create"),
     path(
-        "expenses/<int:pk>/delete/",
-        CashExpenseDeleteView.as_view(),
-        name="expense_delete",
+        "ingresos/<int:pk>/eliminar/",
+        views.IncomeDeleteView.as_view(),
+        name="income-delete",
+    ),
+    path("egresos/", views.ExpenseListView.as_view(), name="expense-list"),
+    path("egresos/crear/", views.ExpenseCreateView.as_view(), name="expense-create"),
+    path(
+        "egresos/<int:pk>/eliminar/",
+        views.ExpenseDeleteView.as_view(),
+        name="expense-delete",
     ),
 ]
