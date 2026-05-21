@@ -1,9 +1,127 @@
-<nav class="navbar navbar-dark bg-dark px-3">
-    <a class="navbar-brand fw-bold" href="#">🏪 Maná y Asociados</a>
-    <div class="d-flex text-white small">
-        {% if user.is_authenticated %}
-            <span class="me-3">{{ user.username }}</span>
-            {% comment %} <a href="{% url 'accounts:logout' %}" class="text-white">Salir</a> {% endcomment %}
-        {% endif %}
+<nav class="mana-navbar">
+  <a class="mana-brand" href="{% url 'dashboard:index' %}">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect width="30" height="30" rx="7" fill="#F5F0E8"/>
+      <path d="M7 21 L11 9 L15 17 L19 9 L23 21" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+    </svg>
+    <div class="mana-brand-text">
+      <span class="mana-brand-name">Maná</span>
+      <span class="mana-brand-sub">y Asociados</span>
     </div>
+  </a>
+
+  <div class="mana-nav-right">
+    {% if user.is_authenticated %}
+    <a href="/admin/" class="mana-user-btn">
+      <div class="mana-avatar">{{ user.username|first|upper }}</div>
+      <div class="mana-user-info">
+        <span class="mana-user-name">{{ user.username }}</span>
+        <span class="mana-user-role">Administrador</span>
+      </div>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:rgba(245,240,232,0.4); margin-left:4px;">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+    </a>
+    {% endif %}
+  </div>
 </nav>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+  .mana-navbar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 58px;
+    background: #0d1b2e;
+    border-bottom: 1px solid rgba(245,240,232,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .mana-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .mana-brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  .mana-brand-name {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #F5F0E8;
+    letter-spacing: 0.2px;
+  }
+
+  .mana-brand-sub {
+    font-size: 0.58rem;
+    font-weight: 400;
+    color: rgba(245,240,232,0.38);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .mana-nav-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .mana-user-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    padding: 5px 10px 5px 5px;
+    border-radius: 8px;
+    border: 1px solid rgba(245,240,232,0.08);
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .mana-user-btn:hover {
+    background: rgba(245,240,232,0.05);
+    border-color: rgba(245,240,232,0.15);
+  }
+
+  .mana-avatar {
+    width: 30px;
+    height: 30px;
+    background: rgba(245,240,232,0.12);
+    color: #F5F0E8;
+    border-radius: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    border: 1px solid rgba(245,240,232,0.15);
+  }
+
+  .mana-user-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+  }
+
+  .mana-user-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #F5F0E8;
+  }
+
+  .mana-user-role {
+    font-size: 0.6rem;
+    color: rgba(245,240,232,0.35);
+    letter-spacing: 0.3px;
+  }
+</style>

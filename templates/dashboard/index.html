@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Dashboard — Maná{% endblock %}
 {% block content %}
+{% load cop_filters %}
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
@@ -64,11 +65,18 @@
     margin-bottom: 28px;
   }
 
+  .metric-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+  }
+
   .metric-card {
     background: var(--white);
     border: 1px solid var(--rule);
     border-radius: var(--radius);
-    padding: 18px 20px;
+    padding: 16px 18px 14px;
     position: relative;
     overflow: hidden;
   }
@@ -85,19 +93,40 @@
   .metric-card.mc-red::before   { background: var(--red);   }
 
   .metric-card .mc-label {
-    font-size: 0.68rem;
+    font-size: 0.62rem;
     font-weight: 600;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     text-transform: uppercase;
     color: var(--ink-faint);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
 
   .metric-card .mc-value {
-    font-family: 'Syne', sans-serif;
-    font-size: 1.55rem;
-    font-weight: 700;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 300;
     line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .metric-card .mc-value .mc-currency {
+    font-size: 0.85rem;
+    font-weight: 500;
+    opacity: 0.45;
+    margin-right: 1px;
+    letter-spacing: 0;
+  }
+
+  .mc-green .mc-value { color: var(--green); }
+  .mc-blue  .mc-value { color: var(--blue);  }
+  .mc-red   .mc-value { color: var(--red);   }
+
+  .metric-card .mc-sub {
+    font-size: 0.68rem;
+    color: var(--ink-faint);
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid var(--rule);
   }
 
   .mc-green .mc-value { color: var(--green); }
@@ -187,22 +216,30 @@
   </div>
 
   <!-- MÉTRICAS HOY -->
-  <div class="metric-row">
-    <div class="metric-card mc-green">
-      <div class="mc-label">Ingresos hoy</div>
-      <div class="mc-value">${{ today_income|default:"0" }}</div>
-      <div class="mc-sub">Todos los negocios</div>
+   <div class="metric-row">
+  <div class="metric-card mc-green">
+  <div class="mc-label">Ingresos hoy</div>
+  <div class="mc-value">
+    <span class="mc-currency">$</span>{{ today_income|default:0|cop }}
+  </div>
+  <div class="mc-sub">Todos los negocios</div>
+  </div>
+
+  <div class="metric-card mc-red">
+    <div class="mc-label">Egresos hoy</div>
+    <div class="mc-value">
+      <span class="mc-currency">$</span>{{ today_expense|default:0|cop }}
     </div>
-    <div class="metric-card mc-red">
-      <div class="mc-label">Egresos hoy</div>
-      <div class="mc-value">${{ today_expense|default:"0" }}</div>
-      <div class="mc-sub">Efectivo</div>
+    <div class="mc-sub">Efectivo</div>
+  </div>
+
+  <div class="metric-card mc-blue">
+    <div class="mc-label">Compras hoy</div>
+    <div class="mc-value">
+      <span class="mc-currency">$</span>{{ today_purchases|default:0|cop }}
     </div>
-    <div class="metric-card mc-blue">
-      <div class="mc-label">Compras hoy</div>
-      <div class="mc-value">${{ today_purchases|default:"0" }}</div>
-      <div class="mc-sub">Total facturado</div>
-    </div>
+    <div class="mc-sub">Total facturado</div>
+  </div>
   </div>
 
   <!-- GRÁFICAS -->
@@ -291,13 +328,13 @@
   Chart.defaults.font.size   = 11;
   Chart.defaults.color       = '#888';
 
-  const gridColor  = '#ece9e3';
-  const green      = '#1a7c4a';
-  const greenAlpha = 'rgba(26,124,74,0.12)';
-  const blue       = '#1a3a7c';
-  const blueAlpha  = 'rgba(26,58,124,0.12)';
-  const red        = '#c8421a';
-  const gold       = '#d4930a';
+  const gridColor = '#e8e6e1';
+  const green = '#2d6a4f';
+  const greenAlpha = 'rgba(45,106,79,0.10)';
+  const blue = '#14213D';
+  const blueAlpha = 'rgba(20,33,61,0.10)';
+  const red = '#8b2e12';
+  const gold = '#b8860b';
 
   // ── GRÁFICA 1: línea doble ──
   new Chart(document.getElementById('chart1'), {

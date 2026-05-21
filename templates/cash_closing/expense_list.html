@@ -2,214 +2,559 @@
 {% load humanize %}
 
 {% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
 
-<div class="d-flex align-items-center justify-content-between mb-4">
-  <h5 class="mb-0 fw-semibold">💸 Egresos efectivo</h5>
+  :root {
+    --c-ink:      #0d0d0d;
+    --c-soft:     #555;
+    --c-faint:    #999;
+    --c-rule:     #e8e6e1;
+    --c-bg:       #f7f6f3;
+    --c-white:    #ffffff;
+    --c-red:      #c8421a;
+    --c-red-l:    #fdf1ee;
+    --c-red-b:    #f0c4b8;
+    --c-blue:     #14213D;
+    --c-blue-l:   #eef1fb;
+    --c-gold:     #FCA311;
+    --radius:     8px;
+  }
 
-  <form method="get" class="d-flex align-items-center gap-2">
-    <label class="text-muted small mb-0">Negocio</label>
-    <select name="business"
-            class="form-select form-select-sm"
-            style="width:160px"
-            onchange="this.form.submit()">
-      <option value="">Todos</option>
-      {% for b in businesses %}
-      <option value="{{ b.pk }}"
-              {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>
-        {{ b.name }}
-      </option>
-      {% endfor %}
-    </select>
+  .page { font-family: 'Outfit', sans-serif; color: var(--c-ink); }
 
-    <label class="text-muted small mb-0">Fecha</label>
-    <input type="date"
-           name="date"
-           value="{{ selected_date }}"
-           class="form-control form-control-sm"
-           style="width:160px"
-           onchange="this.form.submit()">
-  </form>
-</div>
+  /* ── TOPBAR ── */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--c-rule);
+  }
 
-{% for msg in messages %}
-<div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show py-2 small" role="alert">
-  {{ msg }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-{% endfor %}
+  .topbar-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    color: var(--c-ink);
+  }
 
-{# ── Métricas ── #}
-<div class="row g-2 mb-4">
-  <div class="col">
-    <div class="bg-light rounded p-3">
-      <div class="text-muted small mb-1">Total egresos efectivo</div>
-      <div class="fs-5 fw-semibold text-danger">${{ total_expense|intcomma }}</div>
-    </div>
-  </div>
-  {% for item in expense_by_business %}
-  <div class="col">
-    <div class="bg-light rounded p-3">
-      <div class="text-muted small mb-1">{{ item.business.name }}</div>
-      <div class="fs-5 fw-semibold">${{ item.total|intcomma }}</div>
-    </div>
-  </div>
-  {% endfor %}
-</div>
+  .topbar-title span { color: var(--c-red); }
 
-{# ── Formulario ── #}
-<div class="card border mb-4">
-  <div class="card-header bg-white py-2 small text-muted fw-semibold">
-    Nuevo egreso
-  </div>
-  <div class="card-body py-3">
-    <form method="post" action="{% url 'cash_closing:expense_create' %}">
-      {% csrf_token %}
-      <div class="row g-2 align-items-end">
+  .filter-form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-        <div class="col-md-3">
-          <label class="form-label small text-muted mb-1">Negocio</label>
-          <select name="business" class="form-select form-select-sm" required>
-            <option value="">— Selecciona —</option>
-            {% for b in businesses %}
-            <option value="{{ b.pk }}">{{ b.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
+  .filter-form label {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--c-faint);
+    white-space: nowrap;
+  }
 
-        <div class="col-md-2">
-          <label class="form-label small text-muted mb-1">Fecha</label>
-          <input type="date"
-                 name="date"
-                 value="{{ selected_date }}"
-                 class="form-control form-control-sm"
-                 required>
-        </div>
+  .filter-form select,
+  .filter-form input[type="date"] {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius);
+    padding: 6px 10px;
+    background: var(--c-white);
+    color: var(--c-ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
 
-        <div class="col-md-2">
-          <label class="form-label small text-muted mb-1">Proveedor</label>
-          <input type="text"
-                 name="supplier"
-                 class="form-control form-control-sm"
-                 placeholder="Nombre proveedor"
-                 required>
-        </div>
+  .filter-form select:focus,
+  .filter-form input[type="date"]:focus {
+    border-color: var(--c-red);
+  }
 
-        <div class="col-md-2">
-          <label class="form-label small text-muted mb-1">N° factura</label>
-          <input type="text"
-                 name="invoice_number"
-                 class="form-control form-control-sm"
-                 placeholder="0000">
-        </div>
+  /* ── MÉTRICAS ── */
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 24px;
+  }
 
-        <div class="col-md-2">
-          <label class="form-label small text-muted mb-1">Monto ($)</label>
-          <input type="number"
-                 name="amount"
-                 class="form-control form-control-sm"
-                 placeholder="0"
-                 min="1"
-                 step="1"
-                 required>
-        </div>
+  .metric-card {
+    background: var(--c-white);
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+  }
 
-        <div class="col-md-1 d-grid">
-          <button type="submit" class="btn btn-danger btn-sm">
-            Guardar
-          </button>
-        </div>
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--c-red);
+  }
 
-      </div>
+  .metric-card .m-label {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--c-faint);
+    margin-bottom: 6px;
+  }
+
+  .metric-card .m-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--c-red);
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .metric-card .m-value .m-sym {
+    font-size: 0.8rem;
+    font-weight: 400;
+    opacity: 0.5;
+    margin-right: 1px;
+  }
+
+  /* ── FORM CARD ── */
+  .form-card {
+    background: var(--c-white);
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .form-card-header {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--c-rule);
+    background: var(--c-bg);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .form-card-header-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--c-red);
+  }
+
+  .form-card-header span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--c-soft);
+    text-transform: uppercase;
+  }
+
+  .form-card-body { padding: 16px 18px; }
+
+  .form-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .form-group label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--c-faint);
+  }
+
+  .form-group select,
+  .form-group input {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.82rem;
+    border: 1px solid var(--c-rule);
+    border-radius: 6px;
+    padding: 7px 10px;
+    background: var(--c-white);
+    color: var(--c-ink);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-width: 0;
+  }
+
+  .form-group select:focus,
+  .form-group input:focus {
+    border-color: var(--c-red);
+    box-shadow: 0 0 0 3px rgba(200,66,26,0.08);
+  }
+
+  .btn-save {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 8px 20px;
+    background: var(--c-red);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+    align-self: flex-end;
+  }
+
+  .btn-save:hover { background: #a8351400; background: #a83514; }
+  .btn-save:active { transform: scale(0.98); }
+
+  /* ── TABLA ── */
+  .table-card {
+    background: var(--c-white);
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .table-card-header {
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--c-rule);
+    background: var(--c-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .table-card-header span {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: var(--c-soft);
+    text-transform: uppercase;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+
+  thead th {
+    padding: 9px 12px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: var(--c-faint);
+    border-bottom: 1px solid var(--c-rule);
+    white-space: nowrap;
+    background: var(--c-bg);
+  }
+
+  thead th.th-r { text-align: right; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--c-rule);
+    transition: background 0.1s;
+  }
+
+  tbody tr:hover { background: #fafaf8; }
+  tbody tr:last-child { border-bottom: none; }
+
+  tbody td {
+    padding: 9px 12px;
+    font-size: 0.82rem;
+    vertical-align: middle;
+  }
+
+  .td-r { text-align: right; }
+
+  .badge-biz {
+    display: inline-block;
+    background: var(--c-red-l);
+    color: var(--c-red);
+    border: 1px solid var(--c-red-b);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+
+  .badge-method {
+    display: inline-block;
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+
+  .badge-cash {
+    background: #fdf8ec;
+    color: #a06b00;
+    border: 1px solid #f0d98a;
+  }
+
+  .badge-deposit {
+    background: var(--c-blue-l);
+    color: var(--c-blue);
+    border: 1px solid #c0caf0;
+  }
+
+  .pill {
+    display: inline-block;
+    background: #f0f0f0;
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 0.72rem;
+    color: var(--c-soft);
+  }
+
+  .td-muted { color: var(--c-soft); font-size: 0.78rem; }
+  .td-amount { font-weight: 600; color: var(--c-red); }
+
+  .btn-del {
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.72rem;
+    color: var(--c-red);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 4px;
+    opacity: 0.6;
+    transition: opacity 0.15s, background 0.15s;
+  }
+
+  .btn-del:hover { opacity: 1; background: var(--c-red-l); }
+
+  tfoot td {
+    padding: 10px 12px;
+    border-top: 2px solid var(--c-rule);
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .tfoot-total { color: var(--c-red); text-align: right; }
+
+  .empty-row td {
+    text-align: center;
+    padding: 36px !important;
+    color: var(--c-faint);
+    font-size: 0.82rem;
+    font-style: italic;
+  }
+
+  .bank-group { display: none; }
+  .bank-group.visible { display: flex; flex-direction: column; gap: 4px; }
+</style>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">Egresos <span>efectivo</span></div>
+    <form method="get" class="filter-form">
+      <label>Negocio</label>
+      <select name="business" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        {% for b in businesses %}
+        <option value="{{ b.pk }}" {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>
+          {{ b.name }}
+        </option>
+        {% endfor %}
+      </select>
+      <label>Fecha</label>
+      <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()">
     </form>
   </div>
-</div>
 
-{# ── Tabla ── #}
-<div class="card border">
-  <div class="card-header bg-white py-2 small text-muted fw-semibold">
-    Registro del día — {{ selected_date }}
+  <!-- ALERTAS -->
+  {% for msg in messages %}
+  <div style="margin-bottom:12px; padding:10px 14px; border-radius:6px; font-size:0.8rem; font-family:'Outfit',sans-serif;
+    background:{% if msg.tags == 'error' %}#fdf1ee{% else %}#edf7f2{% endif %};
+    color:{% if msg.tags == 'error' %}#c8421a{% else %}#1a7c4a{% endif %};
+    border:1px solid {% if msg.tags == 'error' %}#f0c4b8{% else %}#b8deca{% endif %};">
+    {{ msg }}
   </div>
-  <div class="table-responsive">
-    <table class="table table-hover table-sm mb-0 align-middle">
-      <thead class="table-light">
+  {% endfor %}
+
+  <!-- MÉTRICAS -->
+  <div class="metrics">
+    <div class="metric-card">
+      <div class="m-label">Total egresos</div>
+      <div class="m-value"><span class="m-sym">$</span>{{ total_expense|intcomma }}</div>
+    </div>
+    {% for item in expense_by_business %}
+    <div class="metric-card">
+      <div class="m-label">{{ item.business__name }}</div>
+      <div class="m-value"><span class="m-sym">$</span>{{ item.total|intcomma }}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- FORMULARIO -->
+  <div class="form-card">
+    <div class="form-card-header">
+      <div class="form-card-header-dot"></div>
+      <span>Nuevo egreso</span>
+    </div>
+    <div class="form-card-body">
+      <form method="post" action="{% url 'cash_closing:expense-create' %}" id="expense-form">
+        {% csrf_token %}
+        <div class="form-row">
+
+          <div class="form-group" style="flex:1.5; min-width:130px;">
+            <label>Negocio</label>
+            <select name="business" required>
+              <option value="">— Selecciona —</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:120px;">
+            <label>Fecha</label>
+            <input type="date" name="date" value="{{ selected_date }}" required>
+          </div>
+
+          <div class="form-group" style="flex:1.5; min-width:140px;">
+            <label>Proveedor</label>
+            <input type="text" name="supplier" placeholder="Nombre proveedor" required>
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:110px;">
+            <label>N° Factura</label>
+            <input type="text" name="invoice_number" placeholder="0000">
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:130px;">
+            <label>Método de pago</label>
+            <select name="payment_method" id="exp-payment-method" required onchange="toggleExpenseBank(this.value)">
+              <option value="">— Selecciona —</option>
+              <option value="cash">Efectivo</option>
+              <option value="deposit">Consignación</option>
+            </select>
+          </div>
+
+          <div class="form-group bank-group" id="exp-bank-group" style="flex:1; min-width:140px;">
+            <label>Banco <span style="color:#c8421a">*</span></label>
+            <select name="bank" id="exp-bank-select">
+              <option value="">— Selecciona —</option>
+              <option value="agrario">Banco Agrario</option>
+              <option value="bancolombia">Bancolombia</option>
+              <option value="bogota">Banco de Bogotá</option>
+            </select>
+          </div>
+
+          <div class="form-group" style="flex:1; min-width:120px;">
+            <label>Monto ($)</label>
+            <input type="text" inputmode="numeric" name="amount" id="exp-amount-input" placeholder="0" required>
+          </div>
+
+          <button type="submit" class="btn-save">Guardar</button>
+
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- TABLA -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <span>Registro — {{ selected_date }}</span>
+      <span style="color:var(--c-faint); font-size:0.68rem;">{{ expenses|length }} registro{{ expenses|length|pluralize:"s" }}</span>
+    </div>
+    <table>
+      <thead>
         <tr>
-          <th class="ps-3">Negocio</th>
+          <th>Negocio</th>
           <th>Proveedor</th>
-          <th>N° factura</th>
+          <th>N° Factura</th>
           <th>Fecha</th>
-          <th class="text-end">Monto</th>
-          <th class="text-end text-muted">Hora</th>
+          <th>Método</th>
+          <th>Banco</th>
+          <th class="th-r">Monto</th>
+          <th class="th-r">Hora</th>
           <th></th>
         </tr>
       </thead>
       <tbody>
         {% for expense in expenses %}
         <tr>
-          <td class="ps-3">
-            <span class="badge rounded-pill text-bg-secondary">
-              {{ expense.business.name }}
+          <td><span class="badge-biz">{{ expense.business.name }}</span></td>
+          <td>{{ expense.supplier }}</td>
+          <td><span class="pill">{{ expense.invoice_number|default:"—" }}</span></td>
+          <td class="td-muted">{{ expense.date }}</td>
+          <td>
+            <span class="badge-method {% if expense.payment_method == 'cash' %}badge-cash{% else %}badge-deposit{% endif %}">
+              {{ expense.get_payment_method_display }}
             </span>
           </td>
-          <td>{{ expense.supplier }}</td>
-          <td class="text-muted small">{{ expense.invoice_number|default:"—" }}</td>
-          <td class="text-muted small">{{ expense.date }}</td>
-          <td class="text-end fw-semibold">${{ expense.amount|intcomma }}</td>
-          <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>
-          <td class="text-end pe-3">
-            <form method="post"
-                  action="{% url 'cash_closing:expense_delete' expense.pk %}"
+          <td class="td-muted">{{ expense.get_bank_display|default:"—" }}</td>
+          <td class="td-r td-amount">${{ expense.amount|intcomma }}</td>
+          <td class="td-r td-muted">{{ expense.created_at|time:"H:i" }}</td>
+          <td class="td-r">
+            <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
                   onsubmit="return confirm('¿Eliminar este egreso?')">
               {% csrf_token %}
-              <button type="submit" class="btn btn-link btn-sm text-danger p-0">
-                Eliminar
-              </button>
+              <button type="submit" class="btn-del">Eliminar</button>
             </form>
           </td>
         </tr>
         {% empty %}
-        <tr>
-          <td colspan="7" class="text-center text-muted py-4 small">
-            Sin egresos para esta fecha.
-          </td>
+        <tr class="empty-row">
+          <td colspan="9">Sin egresos para esta fecha.</td>
         </tr>
         {% endfor %}
       </tbody>
       {% if expenses %}
-      <tfoot class="table-light">
+      <tfoot>
         <tr>
-          <td colspan="4" class="ps-3 fw-semibold small">Total</td>
-          <td class="text-end fw-semibold text-danger">${{ total_expense|intcomma }}</td>
+          <td colspan="6" style="color:var(--c-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Total</td>
+          <td class="tfoot-total">${{ total_expense|intcomma }}</td>
           <td colspan="2"></td>
         </tr>
       </tfoot>
       {% endif %}
     </table>
   </div>
+
 </div>
+
 <script>
-function liveFormat(input) {
-  const pos = input.selectionStart;
-  const prev = input.value.length;
-  const digits = input.value.replace(/\D/g, "");
-  if (!digits) { input.value = ""; return; }
-  input.value = parseInt(digits).toLocaleString("es-CO");
-  const diff = input.value.length - prev;
-  input.setSelectionRange(pos + diff, pos + diff);
+function toggleExpenseBank(method) {
+  const bankGroup = document.getElementById('exp-bank-group');
+  const bankSelect = document.getElementById('exp-bank-select');
+  if (method === 'deposit') {
+    bankGroup.classList.add('visible');
+    bankSelect.required = true;
+  } else {
+    bankGroup.classList.remove('visible');
+    bankSelect.required = false;
+    bankSelect.value = '';
+  }
 }
 
-const amountInput = document.querySelector('input[name="amount"]');
-
-if (amountInput) {
-  amountInput.setAttribute("type", "text");
-  amountInput.setAttribute("inputmode", "numeric");
-
-  amountInput.addEventListener("input", function() {
-    liveFormat(this);
+const expAmount = document.getElementById('exp-amount-input');
+if (expAmount) {
+  expAmount.addEventListener('input', function() {
+    const pos = this.selectionStart;
+    const prev = this.value.length;
+    const digits = this.value.replace(/\D/g, '');
+    if (!digits) { this.value = ''; return; }
+    this.value = parseInt(digits).toLocaleString('es-CO');
+    const diff = this.value.length - prev;
+    this.setSelectionRange(pos + diff, pos + diff);
   });
 
-  amountInput.closest("form").addEventListener("submit", function() {
-    const clean = amountInput.value.replace(/\./g, "").replace(",", ".");
-    amountInput.value = clean || "0";
+  document.getElementById('expense-form').addEventListener('submit', function() {
+    expAmount.value = expAmount.value.replace(/\./g, '').replace(',', '.') || '0';
   });
 }
 </script>
