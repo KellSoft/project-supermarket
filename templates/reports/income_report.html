@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load cop_filters %}
 <head>
     <meta charset="UTF-8">
     <title>Reporte de Ingresos</title>
@@ -119,7 +120,7 @@
         thead th {
             padding: 8px 10px;
             text-align: left;
-            font-size: 7pt;
+            font-size: 6.5pt;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1.2px;
@@ -132,8 +133,8 @@
         tbody tr:nth-child(even) { background: var(--row-alt); }
 
         tbody td {
-            padding: 9px 10px;
-            font-size: 9pt;
+            padding: 9px 6px;
+            font-size: 8pt;
             vertical-align: middle;
         }
 
@@ -232,6 +233,9 @@
                 <th style="width:28px">#</th>
                 <th>Negocio</th>
                 <th>Fecha</th>
+                <th>Método</th>
+                <th>Banco</th>
+                <th>Turno</th>
                 <th class="th-right">Valor</th>
             </tr>
         </thead>
@@ -241,15 +245,18 @@
                 <td class="td-num">{{ forloop.counter }}</td>
                 <td><span class="business-badge">{{ income.business.name }}</span></td>
                 <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
-                <td class="td-right">${{ income.amount|floatformat:"2g" }}</td>
+                <td class="td-muted">{{ income.get_payment_method_display }}</td>
+                <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
+                <td class="td-muted">{{ income.get_shift_display }}</td>
+                <td class="td-right">${{ income.amount|cop }}</td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="2"></td>
+                <td colspan="5"></td>
                 <td class="tfoot-label">Total</td>
-                <td class="tfoot-amount">${{ total|floatformat:"2g" }}</td>
+                <td class="tfoot-amount">${{ total|cop }}</td>
             </tr>
         </tfoot>
     </table>

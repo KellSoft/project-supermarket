@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load cop_filters %}
 <head>
     <meta charset="UTF-8">
     <title>Resumen Diario</title>
@@ -175,7 +176,7 @@
         thead th {
             padding: 7px 9px;
             text-align: left;
-            font-size: 7pt;
+            font-size: 6.5pt;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -188,8 +189,8 @@
         tbody tr:nth-child(even) { background: var(--row-alt); }
 
         tbody td {
-            padding: 8px 9px;
-            font-size: 8.5pt;
+            padding: 8px 6px;
+            font-size: 7.5pt;
             vertical-align: middle;
         }
 
@@ -218,11 +219,11 @@
         .badge-expense { background: #eef1fb; color: var(--c-expense); border: 1px solid #c0caf0; }
 
         tfoot tr { border-top: 1.5px solid var(--ink); }
-        tfoot td { padding: 9px; font-size: 8.5pt; }
+        tfoot td { padding: 8px 6px; font-size: 7.5pt; }
 
         .tfoot-label {
             text-align: right;
-            font-size: 7pt;
+            font-size: 6.5pt;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 1px;
@@ -283,25 +284,25 @@
 <div class="summary-grid">
     <div class="summary-card card-income">
         <div class="s-label">Total ingresos</div>
-        <div class="s-amount">${{ total_incomes|floatformat:"2g" }}</div>
+        <div class="s-amount">${{ total_incomes|cop }}</div>
     </div>
     <div class="summary-card card-expense">
         <div class="s-label">Total egresos</div>
-        <div class="s-amount">${{ total_expenses|floatformat:"2g" }}</div>
+        <div class="s-amount">${{ total_expenses|cop }}</div>
     </div>
     <div class="summary-card card-purchase">
         <div class="s-label">Total compras</div>
-        <div class="s-amount">${{ total_purchases|floatformat:"2g" }}</div>
+        <div class="s-amount">${{ total_purchases|cop }}</div>
     </div>
     {% if balance >= 0 %}
     <div class="summary-card card-balance">
         <div class="s-label">Balance neto</div>
-        <div class="s-amount">${{ balance|floatformat:"2g" }}</div>
+        <div class="s-amount">${{ balance|cop }}</div>
     </div>
     {% else %}
     <div class="summary-card card-balance-neg">
         <div class="s-label">Balance neto</div>
-        <div class="s-amount">-${{ balance|floatformat:"2g"|slice:"1:" }}</div>
+        <div class="s-amount">-${{ balance|cop|slice:"1:" }}</div>
     </div>
     {% endif %}
 </div>
@@ -319,6 +320,9 @@
             <th style="width:24px">#</th>
             <th>Negocio</th>
             <th>Fecha</th>
+            <th>Método</th>
+            <th>Banco</th>
+            <th>Turno</th>
             <th class="th-right">Valor</th>
         </tr>
     </thead>
@@ -328,18 +332,21 @@
             <td class="td-num">{{ forloop.counter }}</td>
             <td><span class="badge-business badge-income">{{ income.business.name }}</span></td>
             <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
-            <td class="td-right" style="color: var(--c-income);">${{ income.amount|floatformat:"2g" }}</td>
+            <td class="td-muted">{{ income.get_payment_method_display }}</td>
+            <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
+            <td class="td-muted">{{ income.get_shift_display }}</td>
+            <td class="td-right" style="color: var(--c-income);">${{ income.amount|cop }}</td>
         </tr>
         {% empty %}
-        <tr class="empty-row"><td colspan="4">Sin ingresos registrados para este día.</td></tr>
+        <tr class="empty-row"><td colspan="7">Sin ingresos registrados para este día.</td></tr>
         {% endfor %}
     </tbody>
     {% if incomes %}
     <tfoot>
         <tr>
-            <td colspan="2"></td>
+            <td colspan="5"></td>
             <td class="tfoot-label">Total</td>
-            <td class="tfoot-amount" style="color: var(--c-income);">${{ total_incomes|floatformat:"2g" }}</td>
+            <td class="tfoot-amount" style="color: var(--c-income);">${{ total_incomes|cop }}</td>
         </tr>
     </tfoot>
     {% endif %}
@@ -360,6 +367,8 @@
             <th>Proveedor</th>
             <th>N° Factura</th>
             <th>Fecha</th>
+            <th>Método</th>
+            <th>Banco</th>
             <th class="th-right">Monto</th>
         </tr>
     </thead>
@@ -371,18 +380,20 @@
             <td>{{ expense.supplier }}</td>
             <td><span class="pill">{{ expense.invoice_number|default:"—" }}</span></td>
             <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
-            <td class="td-right" style="color: var(--c-expense);">${{ expense.amount|floatformat:"2g" }}</td>
+            <td class="td-muted">{{ expense.get_payment_method_display }}</td>
+            <td class="td-muted">{{ expense.get_bank_display|default:"—" }}</td>
+            <td class="td-right" style="color: var(--c-expense);">${{ expense.amount|cop }}</td>
         </tr>
         {% empty %}
-        <tr class="empty-row"><td colspan="6">Sin egresos registrados para este día.</td></tr>
+        <tr class="empty-row"><td colspan="8">Sin egresos registrados para este día.</td></tr>
         {% endfor %}
     </tbody>
     {% if expenses %}
     <tfoot>
         <tr>
-            <td colspan="4"></td>
+            <td colspan="6"></td>
             <td class="tfoot-label">Total</td>
-            <td class="tfoot-amount" style="color: var(--c-expense);">${{ total_expenses|floatformat:"2g" }}</td>
+            <td class="tfoot-amount" style="color: var(--c-expense);">${{ total_expenses|cop }}</td>
         </tr>
     </tfoot>
     {% endif %}
@@ -414,10 +425,10 @@
             <td><strong>{{ purchase.product }}</strong></td>
             <td class="td-muted">{{ purchase.supplier }}</td>
             <td class="td-muted">{{ purchase.purchase_date|date:"d/m/Y" }}</td>
-            <td class="td-right" style="color: var(--c-purchase);">${{ purchase.amount|floatformat:"2g" }}</td>
+            <td class="td-right" style="color: var(--c-purchase);">${{ purchase.amount|cop }}</td>
         </tr>
         {% empty %}
-        <tr class="empty-row"><td colspan="6">Sin compras registradas para este día.</td></tr>
+        <tr class="empty-row"><td colspan="6">Sin compras registradas para este día.</td>
         {% endfor %}
     </tbody>
     {% if purchases %}
@@ -425,7 +436,7 @@
         <tr>
             <td colspan="4"></td>
             <td class="tfoot-label">Total</td>
-            <td class="tfoot-amount" style="color: var(--c-purchase);">${{ total_purchases|floatformat:"2g" }}</td>
+            <td class="tfoot-amount" style="color: var(--c-purchase);">${{ total_purchases|cop }}</td>
         </tr>
     </tfoot>
     {% endif %}
