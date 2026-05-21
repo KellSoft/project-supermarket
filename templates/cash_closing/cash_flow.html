@@ -33,32 +33,32 @@
   <div class="col">
     <div class="p-3 rounded-3 border-start border-success border-3 bg-light">
       <div class="text-muted small">Ingresos efectivo</div>
-      <div class="fs-5 fw-semibold text-success">${{ total_income_cash|intcomma }}</div>
+      <div class="fs-5 fw-semibold text-success">${{ total_income_cash|floatformat:"0g" }}</div>
     </div>
   </div>
   <div class="col">
     <div class="p-3 rounded-3 border-start border-primary border-3 bg-light">
       <div class="text-muted small">Ingresos consignación</div>
-      <div class="fs-5 fw-semibold text-primary">${{ total_income_deposit|intcomma }}</div>
+      <div class="fs-5 fw-semibold text-primary">${{ total_income_deposit|floatformat:"0g" }}</div>
     </div>
   </div>
   <div class="col">
     <div class="p-3 rounded-3 border-start border-danger border-3 bg-light">
       <div class="text-muted small">Egresos efectivo</div>
-      <div class="fs-5 fw-semibold text-danger">${{ total_expense_cash|intcomma }}</div>
+      <div class="fs-5 fw-semibold text-danger">${{ total_expense_cash|floatformat:"0g" }}</div>
     </div>
   </div>
   <div class="col">
     <div class="p-3 rounded-3 border-start border-warning border-3 bg-light">
       <div class="text-muted small">Egresos consignación</div>
-      <div class="fs-5 fw-semibold text-warning">${{ total_expense_deposit|intcomma }}</div>
+      <div class="fs-5 fw-semibold text-warning">${{ total_expense_deposit|floatformat:"0g" }}</div>
     </div>
   </div>
   <div class="col">
     <div class="p-3 rounded-3 border border-2 bg-white">
       <div class="text-muted small">Balance neto</div>
       <div class="fs-5 fw-semibold {% if net_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
-        ${{ net_balance|intcomma }}
+        ${{ net_balance|floatformat:"0g" }}
       </div>
     </div>
   </div>
@@ -99,7 +99,7 @@
 
         <div class="row g-2 align-items-end">
 
-          <div class="col-md-3">
+          <div class="col-md-2">
             <label class="form-label small text-muted mb-1">Negocio</label>
             <select name="business" class="form-select form-select-sm" required>
               <option value="">— Selecciona —</option>
@@ -134,15 +134,23 @@
 
           <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
             <label class="form-label small text-muted mb-1">Banco</label>
-            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
-              <option value="">— Banco —</option>
+            <input type="hidden" name="bank" value="bancolombia">
+            <select class="form-select form-select-sm" disabled>
               {% for val, label in bank_choices %}
-              <option value="{{ val }}">{{ label }}</option>
+              <option {% if val == 'bancolombia' %}selected{% endif %}>{{ label }}</option>
               {% endfor %}
             </select>
           </div>
 
-          <div :class="method === 'deposit' ? 'col-md-2' : 'col-md-3'">
+          <div class="col-md-2">
+            <label class="form-label small text-muted mb-1">Turno</label>
+            <select name="shift" class="form-select form-select-sm" required>
+              <option value="1">Turno 1</option>
+              <option value="2">Turno 2</option>
+            </select>
+          </div>
+
+          <div :class="method === 'deposit' ? 'col-md-1' : 'col-md-2'">
             <label class="form-label small text-muted mb-1">Valor ($)</label>
             <input type="text" inputmode="numeric" name="amount" id="incomeAmount"
                    class="form-control form-control-sm" placeholder="0" required>
@@ -170,6 +178,7 @@
             <th>Método</th>
             <th>Banco</th>
             <th>Fecha</th>
+            <th>Turno</th>
             <th class="text-end">Valor</th>
             <th class="text-end text-muted">Hora</th>
             <th></th>
@@ -190,7 +199,11 @@
             </td>
             <td class="text-muted small">{{ income.get_bank_display|default:"—" }}</td>
             <td class="text-muted small">{{ income.date }}</td>
-            <td class="text-end fw-semibold text-success">${{ income.amount|intcomma }}</td>
+            <td>
+              <span class="badge text-bg-secondary">T{{ income.shift }}</span>
+            </td>
+            <td class="text-end fw-semibold text-success">${{ income.amount|floatformat:"0g" }}
+</td>
             <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
             <td class="text-end pe-3">
               <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
@@ -202,15 +215,15 @@
           </tr>
           {% empty %}
           <tr>
-            <td colspan="7" class="text-center text-muted py-4 small">Sin ingresos para esta fecha.</td>
+            <td colspan="8" class="text-center text-muted py-4 small">Sin ingresos para esta fecha.</td>
           </tr>
           {% endfor %}
         </tbody>
         {% if incomes %}
         <tfoot class="table-light">
           <tr>
-            <td colspan="4" class="ps-3 fw-semibold small">Total</td>
-            <td class="text-end fw-semibold text-success">${{ total_income|intcomma }}</td>
+            <td colspan="5" class="ps-3 fw-semibold small">Total</td>
+            <td class="text-end fw-semibold text-success">${{ total_income|floatformat:"0g" }}</td>
             <td colspan="2"></td>
           </tr>
         </tfoot>
@@ -342,7 +355,7 @@
             </td>
             <td class="text-muted small">{{ expense.get_bank_display|default:"—" }}</td>
             <td class="text-muted small">{{ expense.date }}</td>
-            <td class="text-end fw-semibold text-danger">${{ expense.amount|intcomma }}</td>
+            <td class="text-end fw-semibold text-danger">${{ expense.amount|floatformat:"0g" }}</td>
             <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>
             <td class="text-end pe-3">
               <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
@@ -362,7 +375,7 @@
         <tfoot class="table-light">
           <tr>
             <td colspan="6" class="ps-3 fw-semibold small">Total</td>
-            <td class="text-end fw-semibold text-danger">${{ total_expense|intcomma }}</td>
+            <td class="text-end fw-semibold text-danger">${{ total_expense|floatformat:"0g" }}</td>
             <td colspan="2"></td>
           </tr>
         </tfoot>
@@ -374,31 +387,34 @@
 
 </div>{# /tab-content #}
 
-<script>
+<style>
 [x-cloak] { display: none !important; }
+</style>
 
+<script>
 function liveFormat(input) {
-  const pos = input.selectionStart;
+  const start = input.selectionStart;
   const prev = input.value.length;
-  const digits = input.value.replace(/\D/g, '');
-  if (!digits) { input.value = ''; return; }
-  input.value = parseInt(digits).toLocaleString('es-CO');
+  const digits = input.value.replace(/\D/g, "");
+  if (!digits) { input.value = ""; return; }
+  input.value = parseInt(digits).toLocaleString("de-DE", { maximumFractionDigits: 0 });
   const diff = input.value.length - prev;
-  input.setSelectionRange(pos + diff, pos + diff);
+  input.setSelectionRange(start + diff, start + diff);
 }
 
-function bindAmount(inputId, formId) {
-  const inp = document.getElementById(inputId);
-  if (!inp) return;
-  inp.addEventListener('input', function() { liveFormat(this); });
-  document.getElementById(formId).addEventListener('submit', function() {
-    const clean = inp.value.replace(/\./g, '').replace(',', '.');
-    inp.value = clean || '0';
+function bindAmount(id) {
+  const input = document.getElementById(id);
+  if (!input) return;
+  input.addEventListener("input", function() { liveFormat(this); });
+  input.closest("form").addEventListener("submit", function() {
+    input.value = input.value.replace(/\./g, "") || "0";
   });
 }
 
-bindAmount('incomeAmount', 'incomeForm');
-bindAmount('expenseAmount', 'expenseForm');
+document.addEventListener("DOMContentLoaded", function() {
+  bindAmount("incomeAmount");
+  bindAmount("expenseAmount");
+});
 </script>
 
 {% endblock %}

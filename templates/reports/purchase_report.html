@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+{% load cop_filters %}
 <head>
     <meta charset="UTF-8">
     <title>Reporte de Compras</title>
@@ -284,7 +285,7 @@
                 <td class="td-muted">{{ purchase.purchase_date|date:"d/m/Y" }}</td>
                 <td class="td-product"><strong>{{ purchase.product }}</strong></td>
                 <td class="td-muted">{{ purchase.supplier }}</td>
-                <td class="td-right">${{ purchase.amount|floatformat:"2g" }}</td>
+                <td class="td-right">${{ purchase.amount|cop }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -292,7 +293,7 @@
             <tr>
                 <td colspan="4"></td>
                 <td class="tfoot-label">Total</td>
-                <td class="tfoot-amount">${{ total|floatformat:"2g" }}</td>
+                <td class="tfoot-amount">${{ total|cop }}</td>
             </tr>
         </tfoot>
     </table>

@@ -149,6 +149,44 @@
             <input type="date" name="end_date" class="form-control">
           </div>
 
+          <div class="col-12">
+            <label class="form-label small text-muted">Método de pago</label>
+            <select name="payment_method" class="form-select">
+              <option value="">Todos los métodos</option>
+              <option value="cash">Efectivo</option>
+              <option value="deposit">Consignación</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Banco</label>
+            <select name="bank" class="form-select">
+              <option value="">Todos los bancos</option>
+              <option value="agrario">Banco Agrario</option>
+              <option value="bancolombia">Bancolombia</option>
+              <option value="bogota">Banco de Bogotá</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Turno</label>
+            <select name="shift" class="form-select">
+              <option value="">Todos los turnos</option>
+              <option value="1">Turno 1</option>
+              <option value="2">Turno 2</option>
+            </select>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success btn-sm">⬇ Descargar PDF</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
@@ -188,6 +226,30 @@
           <div class="col-6">
             <label class="form-label small text-muted">Hasta</label>
             <input type="date" name="end_date" class="form-control">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Proveedor</label>
+            <input type="text" name="supplier" class="form-control" placeholder="Ej: Colombina">
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Método de pago</label>
+            <select name="payment_method" class="form-select">
+              <option value="">Todos los métodos</option>
+              <option value="cash">Efectivo</option>
+              <option value="deposit">Consignación</option>
+            </select>
+          </div>
+
+          <div class="col-12">
+            <label class="form-label small text-muted">Banco</label>
+            <select name="bank" class="form-select">
+              <option value="">Todos los bancos</option>
+              <option value="agrario">Banco Agrario</option>
+              <option value="bancolombia">Bancolombia</option>
+              <option value="bogota">Banco de Bogotá</option>
+            </select>
           </div>
 
         </div>

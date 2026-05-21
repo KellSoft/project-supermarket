@@ -15,6 +15,11 @@ class PaymentMethod(models.TextChoices):
     DEPOSIT = "deposit", "Consignación"
 
 
+class Shift(models.IntegerChoices):
+    SHIFT_1 = 1, "Turno 1"
+    SHIFT_2 = 2, "Turno 2"
+
+
 class Income(models.Model):
     business = models.ForeignKey(
         Business,
@@ -34,6 +39,10 @@ class Income(models.Model):
         blank=True,
         null=True,
         verbose_name="Banco",
+    )
+    shift = models.IntegerField(
+        choices=Shift.choices,
+        verbose_name="Turno",
     )
     date = models.DateField(verbose_name="Fecha")
     created_at = models.DateTimeField(auto_now_add=True)
