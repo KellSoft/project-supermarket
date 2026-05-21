@@ -102,5 +102,4 @@ class DashboardView(View):
             "today_expense": int(today_expense),
             "today_purchases": int(today_purchases),
         }
-        print(context)
         return render(request, "dashboard/index.html", context)
