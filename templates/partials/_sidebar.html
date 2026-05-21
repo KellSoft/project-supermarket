@@ -1,7 +1,11 @@
 <nav class="col-md-2 d-md-block bg-light sidebar py-3">
   <ul class="nav flex-column gap-1 px-2">
     <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2 rounded" href="/"> 📊 Dashboard </a>
+      <a class="nav-link d-flex align-items-center gap-2 rounded
+                {% if request.resolver_match.app_name == 'dashboard' %}active fw-semibold{% else %}text-muted{% endif %}"
+         href="{% url 'dashboard:index' %}">
+        📊 Dashboard
+      </a>
     </li>
     <li class="nav-item">
       <a

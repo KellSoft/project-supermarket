@@ -1,47 +1,450 @@
 {% extends "base.html" %}
-
 {% block title %}Dashboard — Maná{% endblock %}
-
 {% block content %}
-<h2 class="mb-4">Dashboard</h2>
-<p class="text-muted">Bienvenido al sistema Maná y Asociados</p>
 
-<div class="row g-4">
-    <div class="col-md-3">
-        <div class="card text-white bg-primary">
-            <div class="card-body">
-                <h6 class="card-title">Rapitienda El Maná</h6>
-                <p class="card-text fs-4">$0</p>
-            </div>
-        </div>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+
+  :root {
+    --ink:        #0d0d0d;
+    --ink-soft:   #555;
+    --ink-faint:  #aaa;
+    --bg:         #f5f4f1;
+    --white:      #ffffff;
+    --rule:       #e4e2dd;
+    --green:      #1a7c4a;
+    --green-l:    #edf7f2;
+    --blue:       #1a3a7c;
+    --blue-l:     #eef1fb;
+    --red:        #c8421a;
+    --red-l:      #fdf1ee;
+    --gold:       #d4930a;
+    --gold-l:     #fdf8ec;
+    --radius:     10px;
+  }
+
+  .dash-wrap {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    padding: 0 4px;
+  }
+
+  /* ── TOP BAR ── */
+  .dash-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 28px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .dash-topbar h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.9rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1;
+  }
+
+  .dash-topbar .date-tag {
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+    background: var(--rule);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+
+  /* ── METRIC PILLS ── */
+  .metric-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .metric-card {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .metric-card.mc-green::before { background: var(--green); }
+  .metric-card.mc-blue::before  { background: var(--blue);  }
+  .metric-card.mc-red::before   { background: var(--red);   }
+
+  .metric-card .mc-label {
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+
+  .metric-card .mc-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.55rem;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .mc-green .mc-value { color: var(--green); }
+  .mc-blue  .mc-value { color: var(--blue);  }
+  .mc-red   .mc-value { color: var(--red);   }
+
+  .metric-card .mc-sub {
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+
+  /* ── CHART GRID ── */
+  .chart-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .chart-grid .chart-full {
+    grid-column: 1 / -1;
+  }
+
+  .chart-box {
+    background: var(--white);
+    border: 1px solid var(--rule);
+    border-radius: var(--radius);
+    padding: 20px 22px 16px;
+  }
+
+  .chart-box .cb-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .chart-box .cb-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: -0.2px;
+  }
+
+  .chart-box .cb-sub {
+    font-size: 0.7rem;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  .cb-legend {
+    display: flex;
+    gap: 12px;
+  }
+
+  .cb-legend span {
+    font-size: 0.68rem;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .cb-legend span::before {
+    content: '';
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+  }
+
+  .leg-green::before { background: var(--green); }
+  .leg-blue::before  { background: var(--blue);  }
+  .leg-gold::before  { background: var(--gold);  }
+  .leg-red::before   { background: var(--red);   }
+
+  canvas { display: block; }
+</style>
+
+<div class="dash-wrap">
+
+  <!-- TOP BAR -->
+  <div class="dash-topbar">
+    <h1>Dashboard</h1>
+    <span class="date-tag" id="js-today"></span>
+  </div>
+
+  <!-- MÉTRICAS HOY -->
+  <div class="metric-row">
+    <div class="metric-card mc-green">
+      <div class="mc-label">Ingresos hoy</div>
+      <div class="mc-value">${{ today_income|default:"0" }}</div>
+      <div class="mc-sub">Todos los negocios</div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h6 class="card-title">Mercatodo</h6>
-                <p class="card-text fs-4">$0</p>
-            </div>
-        </div>
+    <div class="metric-card mc-red">
+      <div class="mc-label">Egresos hoy</div>
+      <div class="mc-value">${{ today_expense|default:"0" }}</div>
+      <div class="mc-sub">Efectivo</div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h6 class="card-title">Primavera</h6>
-                <p class="card-text fs-4">$0</p>
-            </div>
-        </div>
+    <div class="metric-card mc-blue">
+      <div class="mc-label">Compras hoy</div>
+      <div class="mc-value">${{ today_purchases|default:"0" }}</div>
+      <div class="mc-sub">Total facturado</div>
     </div>
-    <div class="col-md-3">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h6 class="card-title">Panadería</h6>
-                <p class="card-text fs-4">$0</p>
-            </div>
+  </div>
+
+  <!-- GRÁFICAS -->
+  <div class="chart-grid">
+
+    <!-- Gráfica 1: Ingresos vs Egresos 30 días — FULL WIDTH -->
+    <div class="chart-box chart-full">
+      <div class="cb-header">
+        <div>
+          <div class="cb-title">Ingresos vs Egresos</div>
+          <div class="cb-sub">Últimos 30 días</div>
         </div>
+        <div class="cb-legend">
+          <span class="leg-green">Ingresos</span>
+          <span class="leg-blue">Egresos</span>
+        </div>
+      </div>
+      <canvas id="chart1" height="90"></canvas>
     </div>
-    <a href="{% url 'reports:purchase_report' %}"
-    class="btn btn-danger">
-        Descargar PDF
-    </a>
+
+    <!-- Gráfica 2: Ingresos vs Egresos por negocio -->
+    <div class="chart-box">
+      <div class="cb-header">
+        <div>
+          <div class="cb-title">Por negocio</div>
+          <div class="cb-sub">Ingresos vs Egresos acumulados</div>
+        </div>
+        <div class="cb-legend">
+          <span class="leg-green">Ingresos</span>
+          <span class="leg-red">Egresos</span>
+        </div>
+      </div>
+      <canvas id="chart2" height="180"></canvas>
+    </div>
+
+    <!-- Gráfica 4: Top proveedores -->
+    <div class="chart-box">
+      <div class="cb-header">
+        <div>
+          <div class="cb-title">Top proveedores</div>
+          <div class="cb-sub">Por monto total comprado</div>
+        </div>
+      </div>
+      <canvas id="chart4" height="180"></canvas>
+    </div>
+
+    <!-- Gráfica 7: Ingresos por negocio este mes -->
+    <div class="chart-box chart-full">
+      <div class="cb-header">
+        <div>
+          <div class="cb-title">Ingresos por negocio</div>
+          <div class="cb-sub">Mes actual</div>
+        </div>
+      </div>
+      <canvas id="chart7" height="70"></canvas>
+    </div>
+
+  </div>
 </div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+  // Fecha de hoy
+  document.getElementById('js-today').textContent = new Date().toLocaleDateString('es-CO', {
+    weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  // Datos desde Django
+  const c1Labels   = {{ chart1_labels|safe }};
+  const c1Incomes  = {{ chart1_incomes|safe }};
+  const c1Expenses = {{ chart1_expenses|safe }};
+
+  const c2Labels   = {{ chart2_labels|safe }};
+  const c2Incomes  = {{ chart2_incomes|safe }};
+  const c2Expenses = {{ chart2_expenses|safe }};
+
+  const c4Labels = {{ chart4_labels|safe }};
+  const c4Values = {{ chart4_values|safe }};
+
+  const c7Labels = {{ chart7_labels|safe }};
+  const c7Values = {{ chart7_values|safe }};
+
+  // Defaults globales
+  Chart.defaults.font.family = "'DM Sans', sans-serif";
+  Chart.defaults.font.size   = 11;
+  Chart.defaults.color       = '#888';
+
+  const gridColor  = '#ece9e3';
+  const green      = '#1a7c4a';
+  const greenAlpha = 'rgba(26,124,74,0.12)';
+  const blue       = '#1a3a7c';
+  const blueAlpha  = 'rgba(26,58,124,0.12)';
+  const red        = '#c8421a';
+  const gold       = '#d4930a';
+
+  // ── GRÁFICA 1: línea doble ──
+  new Chart(document.getElementById('chart1'), {
+    type: 'line',
+    data: {
+      labels: c1Labels,
+      datasets: [
+        {
+          label: 'Ingresos',
+          data: c1Incomes,
+          borderColor: green,
+          backgroundColor: greenAlpha,
+          borderWidth: 2,
+          pointRadius: 2,
+          pointHoverRadius: 5,
+          fill: true,
+          tension: 0.4,
+        },
+        {
+          label: 'Egresos',
+          data: c1Expenses,
+          borderColor: blue,
+          backgroundColor: blueAlpha,
+          borderWidth: 2,
+          pointRadius: 2,
+          pointHoverRadius: 5,
+          fill: true,
+          tension: 0.4,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: {
+            maxTicksLimit: 10,
+            maxRotation: 0,
+          },
+        },
+        y: {
+          grid: { color: gridColor },
+          ticks: {
+            callback: v => '$' + v.toLocaleString('es-CO'),
+          },
+        },
+      },
+    },
+  });
+
+  // ── GRÁFICA 2: barras agrupadas ──
+  new Chart(document.getElementById('chart2'), {
+    type: 'bar',
+    data: {
+      labels: c2Labels,
+      datasets: [
+        {
+          label: 'Ingresos',
+          data: c2Incomes,
+          backgroundColor: green,
+          borderRadius: 4,
+          barPercentage: 0.6,
+        },
+        {
+          label: 'Egresos',
+          data: c2Expenses,
+          backgroundColor: red,
+          borderRadius: 4,
+          barPercentage: 0.6,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: gridColor },
+          ticks: { callback: v => '$' + v.toLocaleString('es-CO') },
+        },
+      },
+    },
+  });
+
+  // ── GRÁFICA 4: barras horizontales proveedores ──
+  new Chart(document.getElementById('chart4'), {
+    type: 'bar',
+    data: {
+      labels: c4Labels,
+      datasets: [
+        {
+          label: 'Monto',
+          data: c4Values,
+          backgroundColor: [
+            gold, blue, green, red,
+            '#7c3aed', '#0891b2', '#be185d', '#065f46'
+          ],
+          borderRadius: 4,
+          barPercentage: 0.65,
+        },
+      ],
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          grid: { color: gridColor },
+          ticks: { callback: v => '$' + v.toLocaleString('es-CO') },
+        },
+        y: { grid: { display: false } },
+      },
+    },
+  });
+
+  // ── GRÁFICA 7: barras ingresos por negocio mes actual ──
+  new Chart(document.getElementById('chart7'), {
+    type: 'bar',
+    data: {
+      labels: c7Labels,
+      datasets: [
+        {
+          label: 'Ingresos del mes',
+          data: c7Values,
+          backgroundColor: [green, blue, gold, red, '#7c3aed', '#0891b2'],
+          borderRadius: 6,
+          barPercentage: 0.5,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: {
+          grid: { color: gridColor },
+          ticks: { callback: v => '$' + v.toLocaleString('es-CO') },
+        },
+      },
+    },
+  });
+</script>
+
 {% endblock %}
