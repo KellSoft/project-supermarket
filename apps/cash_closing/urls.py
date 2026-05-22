@@ -10,15 +10,7 @@ urlpatterns = [
     path("ingresos/<int:pk>/eliminar/",views.IncomeDeleteView.as_view(),name="income-delete",),
     path("egresos/", views.ExpenseListView.as_view(), name="expense-list"),
     path("egresos/crear/", views.ExpenseCreateView.as_view(), name="expense-create"),
-    path(
-        "egresos/<int:pk>/eliminar/",
-        views.ExpenseDeleteView.as_view(),
-        name="expense-delete",
-    ),
+    path("egresos/<int:pk>/eliminar/",views.ExpenseDeleteView.as_view(),name="expense-delete",),
     path("cuadre/", views.CashClosingView.as_view(), name="cash-closing"),
-    path(
-        "cuadre/historial/",
-        views.CashClosingHistoryView.as_view(),
-        name="cash-closing-history",
-    ),
+    path("cuadre/historial/",views.CashClosingHistoryView.as_view(),name="cash-closing-history",),
 ]
