@@ -7,8 +7,8 @@ from django.contrib import messages
 from django.utils.timezone import localdate
 from django.db.models import Sum
 from apps.businesses.models import Business
-from .models import BankChoices, Income, Expense
-from .forms import IncomeForm, ExpenseForm
+from .models import CashClosing, CashDenomination, Income, Expense, BankChoices
+from .forms import ExpenseForm, IncomeForm, OpeningBalanceForm, CashClosingEditForm
 
 
 class BaseListView(ListView):
@@ -27,11 +27,6 @@ class BaseListView(ListView):
         ctx["selected_business"] = filters["business"]
         ctx["businesses"] = Business.objects.all()
         return ctx
-
-
-# ──────────────────────────────────────────
-# INGRESOS
-# ──────────────────────────────────────────
 
 
 class IncomeListView(BaseListView):
@@ -73,11 +68,6 @@ class IncomeCreateView(View):
             for error in form.errors.values():
                 messages.error(request, error.as_text())
         return redirect("cash_closing:income-list")
-
-
-# ──────────────────────────────────────────
-# EGRESOS
-# ──────────────────────────────────────────
 
 
 class ExpenseListView(BaseListView):
@@ -215,3 +205,115 @@ class ExpenseDeleteView(View):
         url = reverse("cash_closing:cash-flow")
         date = request.POST.get("date", str(localdate()))
         return HttpResponseRedirect(f"{url}?date={date}&tab=expense")
+
+
+
+
+def _build_denominations(closing):
+    saved = {d.value: d.quantity for d in closing.denominations.all()}
+    rows = []
+    for value, label in CashDenomination.DENOMINATIONS:
+        qty = saved.get(value, 0)
+        rows.append({
+            "value":    value,
+            "label":    label,
+            "quantity": qty,
+            "subtotal": value * qty,
+            "is_bill":  value in CashDenomination.BILLS,
+        })
+    return rows
+ 
+ 
+def _closing_context(closing):
+    """Contexto financiero completo para el template del cuadre."""
+    return {
+        "closing":               closing,
+        "is_first":              not CashClosing.has_previous_closing(closing),
+        "opening_form":          OpeningBalanceForm(instance=closing),
+        "edit_form":             CashClosingEditForm(instance=closing),
+        "denominations":         _build_denominations(closing),
+        "total_income_cash":     closing.total_income_cash,
+        "total_expense_cash":    closing.total_expense_cash,
+        "expected_cash":         closing.expected_cash,
+        "difference":            closing.difference,
+    }
+ 
+ 
+class CashClosingView(View):
+    template_name = "cash_closing/cash_closing.html"
+ 
+    def get(self, request):
+        closing, _ = CashClosing.get_or_create_for_today()
+        return render(request, self.template_name, _closing_context(closing))
+ 
+    def post(self, request):
+        closing, _ = CashClosing.get_or_create_for_today()
+        action = request.POST.get("_action", "")
+ 
+        if action == "set_opening":
+            if closing.is_closed:
+                messages.error(request, "El cuadre ya está cerrado.")
+                return redirect("cash_closing:cash-closing")
+            form = OpeningBalanceForm(request.POST, instance=closing)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Saldo inicial guardado.")
+            else:
+                messages.error(request, "Valor inválido para el saldo inicial.")
+            return redirect("cash_closing:cash-closing")
+ 
+        if action == "edit_closing":
+            if closing.is_closed:
+                messages.error(request, "El cuadre ya está cerrado.")
+                return redirect("cash_closing:cash-closing")
+            form = CashClosingEditForm(request.POST, instance=closing)
+            if form.is_valid():
+                form.save()
+                messages.success(request, "Cuadre actualizado.")
+            else:
+                messages.error(request, "Error al actualizar el cuadre.")
+            return redirect("cash_closing:cash-closing")
+ 
+        if action == "save_denominations":
+            if closing.is_closed:
+                messages.error(request, "El cuadre ya está cerrado.")
+                return redirect("cash_closing:cash-closing")
+            for value, _ in CashDenomination.DENOMINATIONS:
+                qty = int(request.POST.get(f"qty_{value}", 0) or 0)
+                CashDenomination.objects.update_or_create(
+                    closing=closing,
+                    value=value,
+                    defaults={"quantity": qty},
+                )
+            closing.recalculate_physical_cash()
+            messages.success(request, "Conteo guardado.")
+            return redirect("cash_closing:cash-closing")
+ 
+        if action == "close_closing":
+            if closing.is_closed:
+                messages.error(request, "El cuadre ya estaba cerrado.")
+                return redirect("cash_closing:cash-closing")
+            closing.close()
+            messages.success(
+                request,
+                f"Cuadre cerrado. Efectivo final: ${closing.physical_cash:,.0f}"
+            )
+            return redirect("cash_closing:cash-closing")
+ 
+        if action == "reopen_closing":
+            if closing.is_closed:
+                closing.is_closed = False
+                closing.save(update_fields=["is_closed"])
+                messages.warning(request, "Cuadre reabierto. Recuerda volver a cerrarlo.")
+            return redirect("cash_closing:cash-closing")
+ 
+        messages.error(request, "Acción no reconocida.")
+        return redirect("cash_closing:cash-closing")
+ 
+ 
+class CashClosingHistoryView(View):
+    template_name = "cash_closing/cash_closing_history.html"
+ 
+    def get(self, request):
+        closings = CashClosing.objects.all()
+        return render(request, self.template_name, {"closings": closings})

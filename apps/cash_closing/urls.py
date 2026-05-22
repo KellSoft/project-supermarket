@@ -19,4 +19,10 @@ urlpatterns = [
         views.ExpenseDeleteView.as_view(),
         name="expense-delete",
     ),
+    path("cuadre/", views.CashClosingView.as_view(), name="cash-closing"),
+    path(
+        "cuadre/historial/",
+        views.CashClosingHistoryView.as_view(),
+        name="cash-closing-history",
+    ),
 ]
