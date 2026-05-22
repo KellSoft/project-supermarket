@@ -21,6 +21,15 @@
         </svg>
         <span>Flujo de caja</span>
       </a>
+      <a href="{% url 'cash_closing:cash-closing' %}"
+        class="mana-nav-item {% if request.resolver_match.url_name == 'cash-closing' or request.resolver_match.url_name == 'cash-closing-history' %}active{% endif %}">
+        <svg class="mana-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="18" rx="2"/>
+          <line x1="2" y1="9" x2="22" y2="9"/>
+          <line x1="12" y1="9" x2="12" y2="21"/>
+        </svg>
+        <span>Cuadre diario</span>
+      </a>
 
     </nav>
   </div>
@@ -200,63 +209,3 @@
   .mana-sidebar::-webkit-scrollbar-track { background: transparent; }
   .mana-sidebar::-webkit-scrollbar-thumb { background: rgba(245,240,232,0.08); border-radius: 4px; }
 </style>
-<nav class="col-md-2 d-md-block bg-light sidebar py-3">
-  <ul class="nav flex-column gap-1 px-2">
-    <li class="nav-item">
-      <a class="nav-link d-flex align-items-center gap-2 rounded" href="/"> 📊 Dashboard </a>
-    </li>
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.url_name == 'cash-flow' %}active fw-semibold{% else %}text-muted{% endif %}"
-        href="{% url 'cash_closing:cash-flow' %}"
-      >
-        💰 Flujo de caja
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded text-muted"
-        href="{% url 'cash_closing:cash-closing' %}"
-      >
-        💰 Cuadre diario
-      </a>
-    </li>
-    {% comment %}
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.app_name == 'cash_closing' %}active fw-semibold{% else %}text-muted{% endif %}"
-        href="{% url 'cash_closing:income_list' %}"
-      >
-        💰 Ingresos
-      </a>
-    </li>
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.url_name == 'expense_list' %}active fw-semibold{% else %}text-muted{% endif %}"
-        href="{% url 'cash_closing:expense_list' %}"
-      >
-        💸 Egresos efectivo
-      </a>
-    </li>
-    {% endcomment %}
-
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded"
-        href="{% url 'purchases:purchase_list' %}"
-      >
-        🛒 Compras
-      </a>
-    </li>
-
-    <li class="nav-item">
-      <a
-        class="nav-link d-flex align-items-center gap-2 rounded {% if request.resolver_match.app_name == 'reports' %}active fw-semibold{% else %}text-muted{% endif %}"
-        href="{% url 'reports:report_index' %}"
-      >
-        📄 Reporte
-      </a>
-    </li>
-  </ul>
-</nav>
