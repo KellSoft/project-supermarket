@@ -1,273 +1,342 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-{% load cop_filters %}
-<head>
-    <meta charset="UTF-8">
+  {% load cop_filters %}
+  <head>
+    <meta charset="UTF-8" />
     <title>Reporte de Ingresos</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap');
+      @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap");
 
-        :root {
-            --ink: #0f0f0f;
-            --ink-soft: #555;
-            --ink-faint: #999;
-            --rule: #e0e0e0;
-            --accent: #1a7c4a;
-            --accent-light: #edf7f2;
-            --row-alt: #fafafa;
-            --white: #ffffff;
-        }
+      :root {
+        --ink: #0f0f0f;
+        --ink-soft: #555;
+        --ink-faint: #999;
+        --rule: #e0e0e0;
+        --accent: #1a7c4a;
+        --accent-light: #edf7f2;
+        --row-alt: #fafafa;
+        --white: #ffffff;
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: 'DM Sans', Arial, sans-serif;
-            font-size: 9.5pt;
-            color: var(--ink);
-            background: var(--white);
-            padding: 36px 44px 44px;
-        }
+      body {
+        font-family: "DM Sans", Arial, sans-serif;
+        font-size: 9.5pt;
+        color: var(--ink);
+        background: var(--white);
+        padding: 36px 44px 44px;
+      }
 
-        .masthead {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0;
-        }
+      .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0;
+      }
 
-        .masthead-left .label {
-            font-size: 7pt;
-            font-weight: 600;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 4px;
-        }
+      .masthead-left .label {
+        font-size: 7pt;
+        font-weight: 600;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 4px;
+      }
 
-        .masthead-left h1 {
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: 26pt;
-            font-weight: 400;
-            color: var(--ink);
-            line-height: 1.1;
-            letter-spacing: -0.5px;
-        }
+      .masthead-left h1 {
+        font-family: "DM Serif Display", Georgia, serif;
+        font-size: 26pt;
+        font-weight: 400;
+        color: var(--ink);
+        line-height: 1.1;
+        letter-spacing: -0.5px;
+      }
 
-        .masthead-right {
-            text-align: right;
-            padding-top: 6px;
-        }
+      .masthead-right {
+        text-align: right;
+        padding-top: 6px;
+      }
 
-        .masthead-right .company {
-            font-size: 11pt;
-            font-weight: 600;
-            color: var(--ink);
-            margin-bottom: 2px;
-        }
+      .masthead-right .company {
+        font-size: 11pt;
+        font-weight: 600;
+        color: var(--ink);
+        margin-bottom: 2px;
+      }
 
-        .masthead-right .date-block {
-            font-size: 8pt;
-            color: var(--ink-soft);
-            line-height: 1.8;
-        }
+      .masthead-right .date-block {
+        font-size: 8pt;
+        color: var(--ink-soft);
+        line-height: 1.8;
+      }
 
-        .divider {
-            display: flex;
-            align-items: center;
-            margin: 14px 0 18px;
-        }
+      .divider {
+        display: flex;
+        align-items: center;
+        margin: 14px 0 18px;
+      }
 
-        .divider-thick {
-            height: 3px;
-            width: 48px;
-            background: var(--accent);
-        }
+      .divider-thick {
+        height: 3px;
+        width: 48px;
+        background: var(--accent);
+      }
 
-        .divider-thin {
-            flex: 1;
-            height: 1px;
-            background: var(--rule);
-        }
+      .divider-thin {
+        flex: 1;
+        height: 1px;
+        background: var(--rule);
+      }
 
-        .filter-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 22px;
-        }
+      .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 22px;
+      }
 
-        .filter-label {
-            font-size: 7pt;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--ink-faint);
-        }
+      .filter-label {
+        font-size: 7pt;
+        font-weight: 600;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: var(--ink-faint);
+      }
 
-        .filter-value {
-            font-size: 8pt;
-            color: var(--ink-soft);
-            background: var(--accent-light);
-            border: 1px solid #b8deca;
-            border-radius: 3px;
-            padding: 3px 10px;
-        }
+      .filter-value {
+        font-size: 8pt;
+        color: var(--ink-soft);
+        background: var(--accent-light);
+        border: 1px solid #b8deca;
+        border-radius: 3px;
+        padding: 3px 10px;
+      }
 
-        table { width: 100%; border-collapse: collapse; }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
 
-        thead tr { border-bottom: 2px solid var(--ink); }
+      thead tr {
+        border-bottom: 2px solid var(--ink);
+      }
 
-        thead th {
-            padding: 8px 10px;
-            text-align: left;
-            font-size: 6.5pt;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: var(--ink-soft);
-        }
+      thead th {
+        padding: 8px 10px;
+        text-align: left;
+        font-size: 6.5pt;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: var(--ink-soft);
+      }
 
-        thead th.th-right { text-align: right; }
+      thead th.th-right {
+        text-align: right;
+      }
 
-        tbody tr { border-bottom: 1px solid var(--rule); }
-        tbody tr:nth-child(even) { background: var(--row-alt); }
+      tbody tr {
+        border-bottom: 1px solid var(--rule);
+      }
+      tbody tr:nth-child(even) {
+        background: var(--row-alt);
+      }
 
-        tbody td {
-            padding: 9px 6px;
-            font-size: 8pt;
-            vertical-align: middle;
-        }
+      tbody td {
+        padding: 9px 6px;
+        font-size: 8pt;
+        vertical-align: middle;
+      }
 
-        .td-num { font-size: 8pt; color: var(--ink-faint); width: 28px; }
-        .td-right { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
-        .td-muted { color: var(--ink-soft); font-size: 8.5pt; }
+      .td-num {
+        font-size: 8pt;
+        color: var(--ink-faint);
+        width: 28px;
+      }
+      .td-right {
+        text-align: right;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+      }
+      .td-muted {
+        color: var(--ink-soft);
+        font-size: 8.5pt;
+      }
 
-        .business-badge {
-            display: inline-block;
-            background: var(--accent-light);
-            border: 1px solid #b8deca;
-            border-radius: 3px;
-            padding: 2px 8px;
-            font-size: 8pt;
-            font-weight: 500;
-            color: var(--accent);
-        }
+      .business-badge {
+        display: inline-block;
+        background: var(--accent-light);
+        border: 1px solid #b8deca;
+        border-radius: 3px;
+        padding: 2px 8px;
+        font-size: 8pt;
+        font-weight: 500;
+        color: var(--accent);
+      }
 
-        tfoot tr { border-top: 2px solid var(--ink); }
+      tfoot tr {
+        border-top: 2px solid var(--ink);
+      }
 
-        tfoot td { padding: 11px 10px; }
+      tfoot td {
+        padding: 11px 10px;
+      }
 
-        .tfoot-label {
-            font-size: 7.5pt;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--ink-soft);
-            text-align: right;
-        }
+      .tfoot-label {
+        font-size: 7.5pt;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--ink-soft);
+        text-align: right;
+      }
 
-        .tfoot-amount {
-            text-align: right;
-            font-family: 'DM Serif Display', Georgia, serif;
-            font-size: 14pt;
-            color: var(--accent);
-            font-variant-numeric: tabular-nums;
-        }
+      .tfoot-amount {
+        text-align: right;
+        font-family: "DM Serif Display", Georgia, serif;
+        font-size: 14pt;
+        color: var(--accent);
+        font-variant-numeric: tabular-nums;
+      }
 
-        .empty {
-            text-align: center;
-            padding: 48px 0;
-            color: var(--ink-faint);
-            font-size: 9pt;
-            font-style: italic;
-            border-top: 1px solid var(--rule);
-            border-bottom: 1px solid var(--rule);
-        }
+      .empty {
+        text-align: center;
+        padding: 48px 0;
+        color: var(--ink-faint);
+        font-size: 9pt;
+        font-style: italic;
+        border-top: 1px solid var(--rule);
+        border-bottom: 1px solid var(--rule);
+      }
 
-        .doc-footer {
-            margin-top: 28px;
-            padding-top: 10px;
-            border-top: 1px solid var(--rule);
-            display: flex;
-            justify-content: space-between;
-            font-size: 7pt;
-            color: var(--ink-faint);
-        }
+      .doc-footer {
+        margin-top: 28px;
+        padding-top: 10px;
+        border-top: 1px solid var(--rule);
+        display: flex;
+        justify-content: space-between;
+        font-size: 7pt;
+        color: var(--ink-faint);
+      }
 
-        .doc-footer .total-count {
-            font-weight: 600;
-            color: var(--ink-soft);
-        }
+      .doc-footer .total-count {
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <div class="masthead">
-        <div class="masthead-left">
-            <div class="label">Reporte oficial</div>
-            <h1>Ingresos</h1>
+      <div class="masthead-left">
+        <div class="label">Reporte oficial</div>
+        <h1>Ingresos</h1>
+      </div>
+      <div class="masthead-right">
+        <div class="company">Maná y Asociados</div>
+        <div class="date-block">
+          Generado el {{ generated|date:"d \d\e F \d\e Y" }}<br />
+          Solo lectura · Uso interno
         </div>
-        <div class="masthead-right">
-            <div class="company">Maná y Asociados</div>
-            <div class="date-block">
-                Generado el {{ generated|date:"d \d\e F \d\e Y" }}<br>
-                Solo lectura · Uso interno
-            </div>
-        </div>
+      </div>
     </div>
 
     <div class="divider">
-        <div class="divider-thick"></div>
-        <div class="divider-thin"></div>
+      <div class="divider-thick"></div>
+      <div class="divider-thin"></div>
     </div>
 
     <div class="filter-row">
-        <span class="filter-label">Filtros</span>
-        <span class="filter-value">{{ filter_label }}</span>
+      <span class="filter-label">Filtros</span>
+      <span class="filter-value">{{ filter_label }}</span>
     </div>
 
     {% if incomes %}
     <table>
-        <thead>
-            <tr>
-                <th style="width:28px">#</th>
-                <th>Negocio</th>
-                <th>Fecha</th>
-                <th>Método</th>
-                <th>Banco</th>
-                <th>Turno</th>
-                <th class="th-right">Valor</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for income in incomes %}
-            <tr>
-                <td class="td-num">{{ forloop.counter }}</td>
-                <td><span class="business-badge">{{ income.business.name }}</span></td>
-                <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
-                <td class="td-muted">{{ income.get_payment_method_display }}</td>
-                <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
-                <td class="td-muted">{{ income.get_shift_display }}</td>
-                <td class="td-right">${{ income.amount|cop }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="5"></td>
-                <td class="tfoot-label">Total</td>
-                <td class="tfoot-amount">${{ total|cop }}</td>
-            </tr>
-        </tfoot>
+      <thead>
+        <tr>
+          <th style="width: 28px">#</th>
+          <th>Negocio</th>
+          <th>Fecha</th>
+          <th>Método</th>
+          <th>Banco</th>
+          <th>Turno</th>
+          <th class="th-right">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+        <tr>
+          <td class="td-num">{{ forloop.counter }}</td>
+          <td>
+            <span class="business-badge">{{ income.business.name }}</span>
+          </td>
+          <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
+          <td class="td-muted">{{ income.get_payment_method_display }}</td>
+          <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
+          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-right">${{ income.amount|cop }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"></td>
+          <td class="tfoot-label">Total</td>
+          <td class="tfoot-amount">${{ total|cop }}</td>
+        </tr>
+      </tfoot>
     </table>
     {% else %}
-    <div class="empty">No se encontraron ingresos con los filtros seleccionados.</div>
+    <div class="empty">
+      No se encontraron ingresos con los filtros seleccionados.
+    </div>
+    {% endif %} {% if chart_por_negocio or chart_por_metodo %}
+    <div
+      style="
+        margin-top: 32px;
+        padding-top: 16px;
+        border-top: 1px solid var(--rule);
+      "
+    >
+      <div
+        style="
+          font-size: 7pt;
+          font-weight: 600;
+          letter-spacing: 1.5px;
+          text-transform: uppercase;
+          color: var(--ink-faint);
+          margin-bottom: 20px;
+        "
+      >
+        Análisis visual
+      </div>
+      {% if chart_por_negocio %}
+      <div style="margin-bottom: 24px">
+        <img
+          src="data:image/png;base64,{{ chart_por_negocio }}"
+          style="width: 100%; height: auto"
+        />
+      </div>
+      {% endif %} {% if chart_por_metodo %}
+      <div>
+        <img
+          src="data:image/png;base64,{{ chart_por_metodo }}"
+          style="width: 100%; height: auto"
+        />
+      </div>
+      {% endif %}
+    </div>
     {% endif %}
 
     <div class="doc-footer">
-        <span>Documento generado automáticamente · Maná y Asociados</span>
-        <span class="total-count">{{ incomes|length }} registro{% if incomes|length != 1 %}s{% endif %}</span>
+      <span>Documento generado automáticamente · Maná y Asociados</span>
+      <span class="total-count"
+        >{{ incomes|length }} registro{% if incomes|length != 1 %}s{% endif%}</span>
     </div>
-
-</body>
+  </body>
 </html>

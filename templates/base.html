@@ -9,23 +9,49 @@
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
     <script src="https://unpkg.com/htmx.org@1.9.12" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        background: #F4F4F4;
+        color: #0d0d0d;
+      }
+
+      .mana-layout {
+        display: flex;
+        min-height: calc(100vh - 58px);
+      }
+
+      .mana-main {
+        flex: 1;
+        padding: 28px 32px;
+        overflow-x: hidden;
+        min-width: 0;
+      }
+
+      /* Scrollbar sidebar */
+      .mana-sidebar::-webkit-scrollbar { width: 4px; }
+      .mana-sidebar::-webkit-scrollbar-track { background: transparent; }
+      .mana-sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+    </style>
 </head>
 <body>
     {% include "partials/_navbar.html" %}
 
-    <div class="container-fluid">
-        <div class="row">
-            {% include "partials/_sidebar.html" %}
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 py-4">
-                {% include "partials/_messages.html" %}
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+    <div class="mana-layout">
+        {% include "partials/_sidebar.html" %}
+        <main class="mana-main">
+            {% include "partials/_messages.html" %}
+            {% block content %}{% endblock %}
+        </main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     {% block extra_js %}{% endblock %}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

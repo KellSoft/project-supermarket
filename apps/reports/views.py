@@ -1,3 +1,12 @@
+import io
+import base64
+import matplotlib
+matplotlib.use('Agg')  # sin interfaz gráfica
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+
+
 from django.views import View
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -5,6 +14,7 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from weasyprint import HTML
 from datetime import date
+from datetime import date as date_type
 
 from apps.purchases.models import Purchase
 from apps.cash_closing.models import Expense, Income
@@ -34,23 +44,17 @@ class PurchaseReportView(View):
 
         if supplier:
             purchases = purchases.filter(supplier__icontains=supplier)
-
-        product = request.POST.get("product")
         if product:
             purchases = purchases.filter(product__icontains=product)
-
-        start_date = request.POST.get("start_date")
-        end_date = request.POST.get("end_date")
         if start_date and end_date:
             purchases = purchases.filter(purchase_date__range=[start_date, end_date])
-
-        filter_label = _build_filter_label(supplier, product, start_date, end_date)
 
         purchases = list(purchases)
         total = sum(p.amount for p in purchases)
         filter_label = _build_filter_label(
             supplier=supplier, product=product, start_date=start_date, end_date=end_date
         )
+        charts = _generate_purchase_charts(purchases)
 
         html_string = render_to_string(
             "reports/purchase_report.html",
@@ -59,6 +63,8 @@ class PurchaseReportView(View):
                 "filter_label": filter_label,
                 "generated": date.today(),
                 "total": total,
+                "chart_proveedores": charts['proveedores'],
+                "chart_productos":   charts['productos'],
             },
         )
 
@@ -82,7 +88,6 @@ class IncomeReportView(View):
         payment_method = request.POST.get("payment_method")
         bank = request.POST.get("bank")
         shift = request.POST.get("shift")
-
         business_name = "Todos los negocios"
 
         if business_id:
@@ -91,29 +96,22 @@ class IncomeReportView(View):
                 business_name = Business.objects.get(pk=business_id).name
             except Business.DoesNotExist:
                 pass
-
         if start_date and end_date:
             incomes = incomes.filter(date__range=[start_date, end_date])
-
         if payment_method:
             incomes = incomes.filter(payment_method=payment_method)
-
         if bank:
             incomes = incomes.filter(bank=bank)
-
         if shift:
             incomes = incomes.filter(shift=int(shift))
 
         incomes = list(incomes)
         total = sum(i.amount for i in incomes)
         filter_label = _build_income_filter_label(
-            business=business_name,
-            start_date=start_date,
-            end_date=end_date,
-            payment_method=payment_method,
-            bank=bank,
-            shift=shift,
+            business=business_name, start_date=start_date, end_date=end_date,
+            payment_method=payment_method, bank=bank, shift=shift,
         )
+        charts = _generate_income_charts(incomes)
 
         html_string = render_to_string(
             "reports/income_report.html",
@@ -123,6 +121,8 @@ class IncomeReportView(View):
                 "generated": date.today(),
                 "total": total,
                 "business_name": business_name,
+                "chart_por_negocio": charts['por_negocio'],
+                "chart_por_metodo":  charts['por_metodo'],
             },
         )
 
@@ -130,7 +130,6 @@ class IncomeReportView(View):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="reporte_ingresos.pdf"'
         return response
-
 
 class ExpenseReportView(View):
     def get(self, request):
@@ -146,7 +145,6 @@ class ExpenseReportView(View):
         supplier = request.POST.get("supplier")
         payment_method = request.POST.get("payment_method")
         bank = request.POST.get("bank")
-
         business_name = "Todos los negocios"
 
         if business_id:
@@ -155,29 +153,22 @@ class ExpenseReportView(View):
                 business_name = Business.objects.get(pk=business_id).name
             except Business.DoesNotExist:
                 pass
-
         if start_date and end_date:
             expenses = expenses.filter(date__range=[start_date, end_date])
-
         if supplier:
             expenses = expenses.filter(supplier__icontains=supplier)
-
         if payment_method:
             expenses = expenses.filter(payment_method=payment_method)
-
         if bank:
             expenses = expenses.filter(bank=bank)
 
         expenses = list(expenses)
         total = sum(e.amount for e in expenses)
         filter_label = _build_expense_filter_label(
-            business=business_name,
-            start_date=start_date,
-            end_date=end_date,
-            supplier=supplier,
-            payment_method=payment_method,
-            bank=bank,
+            business=business_name, start_date=start_date, end_date=end_date,
+            supplier=supplier, payment_method=payment_method, bank=bank,
         )
+        charts = _generate_expense_charts(expenses)
 
         html_string = render_to_string(
             "reports/expense_report.html",
@@ -187,6 +178,8 @@ class ExpenseReportView(View):
                 "generated": date.today(),
                 "total": total,
                 "business_name": business_name,
+                "chart_por_negocio":   charts['por_negocio'],
+                "chart_por_proveedor": charts['por_proveedor'],
             },
         )
 
@@ -194,7 +187,6 @@ class ExpenseReportView(View):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = 'attachment; filename="reporte_egresos.pdf"'
         return response
-
 
 def _build_filter_label(
     supplier=None, product=None, business=None, start_date=None, end_date=None
@@ -268,6 +260,376 @@ def _build_expense_filter_label(
         parts.append(f"Banco: {_get_bank_display(bank)}")
     return " · ".join(parts) if parts else "Todos los registros"
 
+def _generate_daily_charts(incomes, expenses, purchases, total_incomes, total_expenses, total_purchases):
+    charts = {}
+
+    # Colores corporativos
+    C_INCOME   = '#1a7c4a'
+    C_EXPENSE  = '#1a3a7c'
+    C_PURCHASE = '#c8421a'
+    C_FAINT    = '#999999'
+
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig)
+        return encoded
+
+    # ── GRÁFICA 1: Dona — distribución del día ──
+    valores = [float(total_incomes), float(total_expenses), float(total_purchases)]
+    etiquetas = ['Ingresos', 'Egresos', 'Compras']
+    colores = [C_INCOME, C_EXPENSE, C_PURCHASE]
+    valores_filtrados = [(v, e, c) for v, e, c in zip(valores, etiquetas, colores) if v > 0]
+
+    if valores_filtrados:
+        v, e, c = zip(*valores_filtrados)
+        fig, ax = plt.subplots(figsize=(4, 3))
+        wedges, texts, autotexts = ax.pie(
+            v, labels=None, colors=c,
+            autopct='%1.0f%%', startangle=90,
+            wedgeprops={'linewidth': 1.5, 'edgecolor': 'white'},
+            pctdistance=0.75,
+        )
+        for at in autotexts:
+            at.set_fontsize(8)
+            at.set_color('white')
+            at.set_fontweight('bold')
+        ax.legend(
+            wedges, e,
+            loc='lower center',
+            bbox_to_anchor=(0.5, -0.12),
+            ncol=3,
+            fontsize=7,
+            frameon=False,
+        )
+        ax.set_title('Distribución del día', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        charts['dona'] = fig_to_base64(fig)
+    else:
+        charts['dona'] = None
+
+    # ── GRÁFICA 2: Barras — ingresos por negocio ──
+    from collections import defaultdict
+    income_by_biz = defaultdict(float)
+    for i in incomes:
+        income_by_biz[i.business.name] += float(i.amount)
+
+    if income_by_biz:
+        negocios = list(income_by_biz.keys())
+        valores_biz = [income_by_biz[n] for n in negocios]
+        
+        fig, ax = plt.subplots(figsize=(5, max(2, len(negocios) * 0.8)))
+        bars = ax.barh(negocios, valores_biz, color=C_INCOME, height=0.4,  # ← barra más delgada
+                    edgecolor='white')
+        ax.set_xlim(0, max(valores_biz) * 1.25)  # ← deja espacio a la derecha
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        ax.set_facecolor('#f9fafb')  # ← fondo gris muy suave
+        for bar, val in zip(bars, valores_biz):
+            ax.text(bar.get_width() + max(valores_biz) * 0.02,
+                    bar.get_y() + bar.get_height()/2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=C_INCOME, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Ingresos por negocio', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['ingresos_negocio'] = fig_to_base64(fig)
+    else:
+        charts['ingresos_negocio'] = None
+
+    # ── GRÁFICA 3: Barras — compras por proveedor ──
+    from collections import defaultdict
+    purchase_by_supplier = defaultdict(float)
+    for p in purchases:
+        purchase_by_supplier[p.supplier] += float(p.amount)
+
+    if purchase_by_supplier:
+        proveedores = list(purchase_by_supplier.keys())
+        valores_sup = [purchase_by_supplier[p] for p in proveedores]
+        # ordenar de mayor a menor
+        sorted_pairs = sorted(zip(valores_sup, proveedores), reverse=True)
+        valores_sup, proveedores = zip(*sorted_pairs)
+
+        fig, ax = plt.subplots(figsize=(5, max(2, len(proveedores) * 0.6)))
+        bars = ax.barh(proveedores, valores_sup, color=C_PURCHASE, height=0.5)
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores_sup):
+            ax.text(bar.get_width() + max(valores_sup) * 0.01, bar.get_y() + bar.get_height()/2,
+                    f'${val:,.0f}'.replace(',', '.'), va='center', fontsize=7, color=C_PURCHASE)
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.set_title('Compras por proveedor', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['compras_proveedor'] = fig_to_base64(fig)
+    else:
+        charts['compras_proveedor'] = None
+
+    return charts
+
+def _generate_purchase_charts(purchases):
+    import io, base64
+    from collections import defaultdict
+    charts = {}
+    C_PURCHASE = '#c8421a'
+
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig)
+        return encoded
+
+    # ── Gráfica 1: Top proveedores ──
+    by_supplier = defaultdict(float)
+    for p in purchases:
+        by_supplier[p.supplier] += float(p.amount)
+
+    if by_supplier:
+        pairs = sorted(by_supplier.items(), key=lambda x: x[1], reverse=True)[:8]
+        proveedores, valores = zip(*pairs)
+        fig, ax = plt.subplots(figsize=(8, max(3, len(proveedores) * 0.9)))
+        bars = ax.barh(list(proveedores), list(valores),
+                       color=C_PURCHASE, height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=C_PURCHASE, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Top proveedores', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['proveedores'] = fig_to_base64(fig)
+    else:
+        charts['proveedores'] = None
+
+    # ── Gráfica 2: Top productos ──
+    by_product = defaultdict(float)
+    for p in purchases:
+        by_product[p.product] += float(p.amount)
+
+    if by_product:
+        pairs = sorted(by_product.items(), key=lambda x: x[1], reverse=True)[:8]
+        productos, valores = zip(*pairs)
+        fig, ax = plt.subplots(figsize=(8, max(3, len(productos) * 0.9)))
+        bars = ax.barh(list(productos), list(valores),
+                       color='#1a3a7c', height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color='#1a3a7c', fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Top productos', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['productos'] = fig_to_base64(fig)
+    else:
+        charts['productos'] = None
+
+    return charts
+
+def _generate_income_charts(incomes):
+    from collections import defaultdict
+    charts = {}
+    C_INCOME = '#1a7c4a'
+    C_DEPOSIT = '#1a3a7c'
+
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig)
+        return encoded
+
+    # ── Gráfica 1: Ingresos por negocio ──
+    by_biz = defaultdict(float)
+    for i in incomes:
+        by_biz[i.business.name] += float(i.amount)
+
+    if by_biz:
+        pairs = sorted(by_biz.items(), key=lambda x: x[1], reverse=True)
+        negocios, valores = zip(*pairs)
+        fig, ax = plt.subplots(figsize=(8, max(3, len(negocios) * 0.9)))
+        bars = ax.barh(list(negocios), list(valores),
+                       color=C_INCOME, height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=C_INCOME, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Ingresos por negocio', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['por_negocio'] = fig_to_base64(fig)
+    else:
+        charts['por_negocio'] = None
+
+    # ── Gráfica 2: Ingresos por método de pago ──
+    by_method = defaultdict(float)
+    for i in incomes:
+        label = i.get_payment_method_display()
+        by_method[label] += float(i.amount)
+
+    if by_method:
+        pairs = sorted(by_method.items(), key=lambda x: x[1], reverse=True)
+        metodos, valores = zip(*pairs)
+        colores = [C_INCOME if 'fectivo' in m else C_DEPOSIT for m in metodos]
+        fig, ax = plt.subplots(figsize=(8, max(2, len(metodos) * 0.9)))
+        bars = ax.barh(list(metodos), list(valores),
+                       color=colores, height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val, color in zip(bars, valores, colores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=color, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Ingresos por método de pago', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['por_metodo'] = fig_to_base64(fig)
+    else:
+        charts['por_metodo'] = None
+
+    return charts
+
+def _generate_expense_charts(expenses):
+    from collections import defaultdict
+    charts = {}
+    C_EXPENSE = '#1a3a7c'
+    C_SUPPLIER = '#c8421a'
+
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format='png', dpi=150, bbox_inches='tight',
+                    facecolor='white', edgecolor='none')
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode('utf-8')
+        plt.close(fig)
+        return encoded
+
+    # ── Gráfica 1: Egresos por negocio ──
+    by_biz = defaultdict(float)
+    for e in expenses:
+        by_biz[e.business.name] += float(e.amount)
+
+    if by_biz:
+        pairs = sorted(by_biz.items(), key=lambda x: x[1], reverse=True)
+        negocios, valores = zip(*pairs)
+        fig, ax = plt.subplots(figsize=(8, max(3, len(negocios) * 0.9)))
+        bars = ax.barh(list(negocios), list(valores),
+                       color=C_EXPENSE, height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=C_EXPENSE, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Egresos por negocio', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['por_negocio'] = fig_to_base64(fig)
+    else:
+        charts['por_negocio'] = None
+
+    # ── Gráfica 2: Top proveedores ──
+    by_supplier = defaultdict(float)
+    for e in expenses:
+        by_supplier[e.supplier] += float(e.amount)
+
+    if by_supplier:
+        pairs = sorted(by_supplier.items(), key=lambda x: x[1], reverse=True)[:8]
+        proveedores, valores = zip(*pairs)
+        fig, ax = plt.subplots(figsize=(8, max(3, len(proveedores) * 0.9)))
+        bars = ax.barh(list(proveedores), list(valores),
+                       color=C_SUPPLIER, height=0.4, edgecolor='white')
+        ax.set_xlim(0, max(valores) * 1.25)
+        ax.set_facecolor('#f9fafb')
+        ax.tick_params(axis='y', labelsize=8)
+        ax.tick_params(axis='x', labelsize=7)
+        ax.xaxis.set_major_formatter(
+            plt.FuncFormatter(lambda x, _: f'${x:,.0f}'.replace(',', '.'))
+        )
+        for bar, val in zip(bars, valores):
+            ax.text(bar.get_width() + max(valores) * 0.02,
+                    bar.get_y() + bar.get_height() / 2,
+                    f'${val:,.0f}'.replace(',', '.'),
+                    va='center', fontsize=7, color=C_SUPPLIER, fontweight='bold')
+        ax.spines['top'].set_visible(False)
+        ax.spines['right'].set_visible(False)
+        ax.spines['left'].set_visible(False)
+        ax.set_title('Top proveedores', fontsize=9, fontweight='bold', pad=8)
+        fig.patch.set_facecolor('white')
+        plt.tight_layout()
+        charts['por_proveedor'] = fig_to_base64(fig)
+    else:
+        charts['por_proveedor'] = None
+
+    return charts
 
 class DailyReportView(View):
 
@@ -284,39 +646,40 @@ class DailyReportView(View):
         )
 
     def post(self, request):
-        selected_date = request.POST.get("date") or str(timezone.localdate())
+        selected_date_str = request.POST.get('date') or str(timezone.localdate())
+        selected_date = date_type.fromisoformat(selected_date_str)
 
         purchases = list(Purchase.objects.filter(purchase_date=selected_date))
-        incomes = list(
-            Income.objects.filter(date=selected_date).select_related("business")
-        )
-        expenses = list(
-            Expense.objects.filter(date=selected_date).select_related("business")
-        )
+        incomes   = list(Income.objects.filter(date=selected_date).select_related('business'))
+        expenses  = list(Expense.objects.filter(date=selected_date).select_related('business'))
 
         total_purchases = sum(p.amount for p in purchases)
-        total_incomes = sum(i.amount for i in incomes)
-        total_expenses = sum(e.amount for e in expenses)
-        balance = total_incomes - total_expenses
+        total_incomes   = sum(i.amount for i in incomes)
+        total_expenses  = sum(e.amount for e in expenses)
+        balance         = total_incomes - total_expenses
 
-        html_string = render_to_string(
-            "reports/daily_report.html",
-            {
-                "selected_date": selected_date,
-                "generated": date.today(),
-                "purchases": purchases,
-                "incomes": incomes,
-                "expenses": expenses,
-                "total_purchases": total_purchases,
-                "total_incomes": total_incomes,
-                "total_expenses": total_expenses,
-                "balance": balance,
-            },
+        # ── Gráficas ──
+        charts = _generate_daily_charts(
+            incomes, expenses, purchases,
+            total_incomes, total_expenses, total_purchases
         )
+
+        html_string = render_to_string('reports/daily_report.html', {
+            'selected_date':   selected_date,
+            'generated':       date.today(),
+            'purchases':       purchases,
+            'incomes':         incomes,
+            'expenses':        expenses,
+            'total_purchases': total_purchases,
+            'total_incomes':   total_incomes,
+            'total_expenses':  total_expenses,
+            'balance':         balance,
+            'chart_dona':             charts['dona'],
+            'chart_ingresos_negocio': charts['ingresos_negocio'],
+            'chart_compras_proveedor':charts['compras_proveedor'],
+        })
 
         pdf = HTML(string=html_string).write_pdf()
-        response = HttpResponse(pdf, content_type="application/pdf")
-        response["Content-Disposition"] = (
-            f'attachment; filename="reporte_diario_{selected_date}.pdf"'
-        )
+        response = HttpResponse(pdf, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="reporte_diario_{selected_date}.pdf"'
         return response
