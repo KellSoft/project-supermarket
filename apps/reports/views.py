@@ -16,6 +16,7 @@ from datetime import date as date_type
 from apps.purchases.models import Purchase
 from apps.cash_closing.models import Expense, Income
 from apps.businesses.models import Business
+from apps.cash_closing.models import CashClosing
 
 
 class ReportIndexView(View):
@@ -808,5 +809,55 @@ class DailyReportView(View):
         response = HttpResponse(pdf, content_type="application/pdf")
         response["Content-Disposition"] = (
             f'attachment; filename="reporte_diario_{selected_date}.pdf"'
+        )
+        return response
+
+class CashClosingReportView(View):
+    def get(self, request):
+        businesses = Business.objects.all()
+        return render(request, "reports/report_index.html", {"businesses": businesses})
+
+    def post(self, request):
+        selected_date_str = request.POST.get("date") or str(timezone.localdate())
+        selected_date = date_type.fromisoformat(selected_date_str)
+
+        try:
+            closing = CashClosing.objects.get(date=selected_date)
+        except CashClosing.DoesNotExist:
+            closing = None
+
+        incomes = list(Income.objects.filter(date=selected_date).select_related("business"))
+        expenses = list(Expense.objects.filter(date=selected_date).select_related("business"))
+        denominations = list(closing.denominations.all()) if closing else []
+
+        total_income_cash = closing.total_income_cash if closing else 0
+        total_expense_cash = closing.total_expense_cash if closing else 0
+        expected_cash = closing.expected_cash if closing else 0
+        difference = closing.difference if closing else 0
+        physical_cash = closing.physical_cash if closing else 0
+        opening_balance = closing.opening_balance if closing else 0
+
+        html_string = render_to_string(
+            "reports/cash_closing_report.html",
+            {
+                "selected_date": selected_date,
+                "generated": date.today(),
+                "closing": closing,
+                "incomes": incomes,
+                "expenses": expenses,
+                "denominations": denominations,
+                "total_income_cash": total_income_cash,
+                "total_expense_cash": total_expense_cash,
+                "expected_cash": expected_cash,
+                "difference": difference,
+                "physical_cash": physical_cash,
+                "opening_balance": opening_balance,
+            },
+        )
+
+        pdf = HTML(string=html_string).write_pdf()
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = (
+            f'attachment; filename="cuadre_caja_{selected_date}.pdf"'
         )
         return response

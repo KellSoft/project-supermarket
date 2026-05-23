@@ -1,30 +1,34 @@
-{% extends 'base.html' %}
-
-{% block content %}
+{% extends 'base.html' %} {% block content %}
 <div class="container mt-5" style="max-width: 860px">
   <h2 class="mb-1">📄 Reportes</h2>
-  <p class="text-muted mb-4">Selecciona el reporte que quieres generar y descárgalo en PDF.</p>
+  <p class="text-muted mb-4">
+    Selecciona el reporte que quieres generar y descárgalo en PDF.
+  </p>
 
   <div class="row g-4">
-
     <!-- Tarjeta Reporte Diario -->
-  <div class="col-md-4">
-    <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #6f42c1 !important;">
-      <div class="card-body d-flex flex-column align-items-start p-4">
-        <div class="fs-2 mb-3">📅</div>
-        <h5 class="fw-semibold mb-1">Resumen del día</h5>
-        <p class="text-muted small mb-4">
-          Compras, ingresos y egresos de una fecha. Por defecto, hoy.
-        </p>
-        <button class="btn btn-sm mt-auto"
-                style="background:#6f42c1; color:#fff;"
-                data-bs-toggle="modal"
-                data-bs-target="#modalDiario">
-          Generar PDF
-        </button>
+    <div class="col-md-4">
+      <div
+        class="card h-100 shadow-sm border-0"
+        style="border-top: 3px solid #6f42c1 !important"
+      >
+        <div class="card-body d-flex flex-column align-items-start p-4">
+          <div class="fs-2 mb-3">📅</div>
+          <h5 class="fw-semibold mb-1">Resumen del día</h5>
+          <p class="text-muted small mb-4">
+            Compras, ingresos y egresos de una fecha. Por defecto, hoy.
+          </p>
+          <button
+            class="btn btn-sm mt-auto"
+            style="background: #6f42c1; color: #fff"
+            data-bs-toggle="modal"
+            data-bs-target="#modalDiario"
+          >
+            Generar PDF
+          </button>
+        </div>
       </div>
     </div>
-  </div>
 
     {# ── Tarjeta Compras ── #}
     <div class="col-md-4">
@@ -32,10 +36,14 @@
         <div class="card-body d-flex flex-column align-items-start p-4">
           <div class="fs-2 mb-3">🛒</div>
           <h5 class="fw-semibold mb-1">Compras</h5>
-          <p class="text-muted small mb-4">Filtra por fecha, proveedor o producto.</p>
-          <button class="btn btn-primary btn-sm mt-auto"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalCompras">
+          <p class="text-muted small mb-4">
+            Filtra por fecha, proveedor o producto.
+          </p>
+          <button
+            class="btn btn-primary btn-sm mt-auto"
+            data-bs-toggle="modal"
+            data-bs-target="#modalCompras"
+          >
             Generar PDF
           </button>
         </div>
@@ -48,10 +56,31 @@
         <div class="card-body d-flex flex-column align-items-start p-4">
           <div class="fs-2 mb-3">💰</div>
           <h5 class="fw-semibold mb-1">Ingresos</h5>
-          <p class="text-muted small mb-4">Filtra por negocio y rango de fechas.</p>
-          <button class="btn btn-success btn-sm mt-auto"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalIngresos">
+          <p class="text-muted small mb-4">
+            Filtra por negocio y rango de fechas.
+          </p>
+          <button
+            class="btn btn-success btn-sm mt-auto"
+            data-bs-toggle="modal"
+            data-bs-target="#modalIngresos"
+          >
+            Generar PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tarjeta Cuadre de Caja -->
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a7c4a !important">
+        <div class="card-body d-flex flex-column align-items-start p-4">
+          <div class="fs-2 mb-3">🏦</div>
+          <h5 class="fw-semibold mb-1">Cuadre de caja</h5>
+          <p class="text-muted small mb-4">
+            Resumen del conteo de efectivo, diferencia y movimientos del día.
+          </p>
+          <button class="btn btn-sm mt-auto" style="background: #1a7c4a; color: #fff"
+                  data-bs-toggle="modal" data-bs-target="#modalCuadreCaja">
             Generar PDF
           </button>
         </div>
@@ -64,16 +93,19 @@
         <div class="card-body d-flex flex-column align-items-start p-4">
           <div class="fs-2 mb-3">💸</div>
           <h5 class="fw-semibold mb-1">Egresos efectivo</h5>
-          <p class="text-muted small mb-4">Filtra por negocio y rango de fechas.</p>
-          <button class="btn btn-danger btn-sm mt-auto"
-                  data-bs-toggle="modal"
-                  data-bs-target="#modalEgresos">
+          <p class="text-muted small mb-4">
+            Filtra por negocio y rango de fechas.
+          </p>
+          <button
+            class="btn btn-danger btn-sm mt-auto"
+            data-bs-toggle="modal"
+            data-bs-target="#modalEgresos"
+          >
             Generar PDF
           </button>
         </div>
       </div>
     </div>
-
   </div>
 </div>
 <!-- MODAL COMPRAS -->
@@ -84,34 +116,60 @@
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title">🛒 Reporte de Compras</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body row g-3">
-
           <div class="col-12">
-            <label class="form-label small text-muted">Proveedor <span class="text-muted fw-normal">(opcional)</span></label>
-            <input type="text" name="supplier" class="form-control" placeholder="Ej: Colombina">
+            <label class="form-label small text-muted"
+              >Proveedor
+              <span class="text-muted fw-normal">(opcional)</span></label
+            >
+            <input
+              type="text"
+              name="supplier"
+              class="form-control"
+              placeholder="Ej: Colombina"
+            />
           </div>
 
           <div class="col-12">
-            <label class="form-label small text-muted">Productos <span class="text-muted fw-normal">(opcional)</span></label>
-            <input type="text" name="product" class="form-control" placeholder="Ej: Arroz">
+            <label class="form-label small text-muted"
+              >Productos
+              <span class="text-muted fw-normal">(opcional)</span></label
+            >
+            <input
+              type="text"
+              name="product"
+              class="form-control"
+              placeholder="Ej: Arroz"
+            />
           </div>
 
           <div class="col-6">
             <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control">
+            <input type="date" name="start_date" class="form-control" />
           </div>
 
           <div class="col-6">
             <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control">
+            <input type="date" name="end_date" class="form-control" />
           </div>
-
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary btn-sm">⬇ Descargar PDF</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-primary btn-sm">
+            ⬇ Descargar PDF
+          </button>
         </div>
       </form>
     </div>
@@ -125,10 +183,13 @@
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title">💰 Reporte de Ingresos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body row g-3">
-
           <div class="col-12">
             <label class="form-label small text-muted">Negocio</label>
             <select name="business" class="form-select">
@@ -141,12 +202,12 @@
 
           <div class="col-6">
             <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control">
+            <input type="date" name="start_date" class="form-control" />
           </div>
 
           <div class="col-6">
             <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control">
+            <input type="date" name="end_date" class="form-control" />
           </div>
 
           <div class="col-12">
@@ -176,21 +237,18 @@
               <option value="2">Turno 2</option>
             </select>
           </div>
-
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success btn-sm">⬇ Descargar PDF</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-success btn-sm">⬇ Descargar PDF</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-success btn-sm">
+            ⬇ Descargar PDF
+          </button>
         </div>
       </form>
     </div>
@@ -204,10 +262,13 @@
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title">💸 Reporte de Egresos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body row g-3">
-
           <div class="col-12">
             <label class="form-label small text-muted">Negocio</label>
             <select name="business" class="form-select">
@@ -220,17 +281,22 @@
 
           <div class="col-6">
             <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control">
+            <input type="date" name="start_date" class="form-control" />
           </div>
 
           <div class="col-6">
             <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control">
+            <input type="date" name="end_date" class="form-control" />
           </div>
 
           <div class="col-12">
             <label class="form-label small text-muted">Proveedor</label>
-            <input type="text" name="supplier" class="form-control" placeholder="Ej: Colombina">
+            <input
+              type="text"
+              name="supplier"
+              class="form-control"
+              placeholder="Ej: Colombina"
+            />
           </div>
 
           <div class="col-12">
@@ -251,11 +317,18 @@
               <option value="bogota">Banco de Bogotá</option>
             </select>
           </div>
-
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-danger btn-sm">⬇ Descargar PDF</button>
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            data-bs-dismiss="modal"
+          >
+            Cancelar
+          </button>
+          <button type="submit" class="btn btn-danger btn-sm">
+            ⬇ Descargar PDF
+          </button>
         </div>
       </form>
     </div>
@@ -270,18 +343,23 @@
         {% csrf_token %}
         <div class="modal-header">
           <h5 class="modal-title">📅 Resumen del día</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+          ></button>
         </div>
         <div class="modal-body row g-3">
-
           <div class="col-12">
             <label class="form-label small text-muted">
               Fecha <span class="text-muted fw-normal">(por defecto, hoy)</span>
             </label>
-            <input type="date"
-                   name="date"
-                   value="{{ selected_date }}"
-                   class="form-control">
+            <input
+              type="date"
+              name="date"
+              value="{{ selected_date }}"
+              class="form-control"
+            />
           </div>
 
           <div class="col-12">
@@ -291,14 +369,52 @@
               registrados en la fecha seleccionada, con un balance del día.
             </div>
           </div>
-
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-outline-secondary btn-sm"
+            data-bs-dismiss="modal">
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="btn btn-sm"
+            style="background: #6f42c1; color: #fff">
+            ⬇ Descargar PDF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- MODAL CUADRE DE CAJA -->
+<div class="modal fade" id="modalCuadreCaja" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:cash_closing_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">🏦 Cuadre de Caja</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <div class="col-12">
+            <label class="form-label small text-muted">Fecha</label>
+            <input type="date" name="date" value="{{ selected_date }}" class="form-control">
+          </div>
+          <div class="col-12">
+            <div class="alert alert-light border small text-muted mb-0 py-2">
+              Incluye el <strong>conteo de billetes y monedas</strong>,
+              ingresos y egresos en efectivo, efectivo esperado vs contado
+              y la <strong>diferencia</strong> del día.
+            </div>
+          </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-secondary btn-sm"
                   data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit"
-                  class="btn btn-sm"
-                  style="background:#6f42c1; color:#fff;">
+          <button type="submit" class="btn btn-sm" style="background:#1a7c4a; color:#fff">
             ⬇ Descargar PDF
           </button>
         </div>

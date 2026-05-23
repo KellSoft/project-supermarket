@@ -386,12 +386,12 @@
   <div class="metrics">
     <div class="metric-card">
       <div class="m-label">Total ingresos</div>
-      <div class="m-value"><span class="m-sym">$</span>{{ total_income|intcomma }}</div>
+      <div class="m-value"><span class="m-sym">$</span>{{ total_income|floatformat:"0"|intcomma }}</div>
     </div>
     {% for item in income_by_business %}
     <div class="metric-card">
       <div class="m-label">{{ item.business__name }}</div>
-      <div class="m-value"><span class="m-sym">$</span>{{ item.total|intcomma }}</div>
+      <div class="m-value"><span class="m-sym">$</span>{{ item.total|floatformat:"0"|intcomma }}</div>
     </div>
     {% endfor %}
   </div>
@@ -493,7 +493,7 @@
           </td>
           <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
           <td class="td-muted">{{ income.get_shift_display }}</td>
-          <td class="td-r td-amount">${{ income.amount|intcomma }}</td>
+          <td class="td-r td-amount">${{ income.amount|floatformat:"0"|intcomma }}</td>
           <td class="td-r td-muted">{{ income.created_at|time:"H:i" }}</td>
           <td class="td-r">
             <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
@@ -513,7 +513,7 @@
       <tfoot>
         <tr>
           <td colspan="5" style="color:var(--c-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Total</td>
-          <td class="tfoot-total">${{ total_income|intcomma }}</td>
+          <td class="tfoot-total">${{ total_income|floatformat:"0"|intcomma }}</td>
           <td colspan="2"></td>
         </tr>
       </tfoot>

@@ -9,4 +9,5 @@ urlpatterns = [
     path('ingresos/', views.IncomeReportView.as_view(), name='income_report'),
     path('egresos/', views.ExpenseReportView.as_view(), name='expense_report'),
     path('diario/', views.DailyReportView.as_view(), name='daily_report'),
+    path('cuadre-caja/', views.CashClosingReportView.as_view(), name='cash_closing_report'),
 ]

@@ -218,7 +218,7 @@
   <!-- MÉTRICAS HOY -->
    <div class="metric-row">
   <div class="metric-card mc-green">
-  <div class="mc-label">Ingresos hoy</div>
+  <div class="mc-label">Ingresos hoy (Transeferencia y Efectivo)</div>
   <div class="mc-value">
     <span class="mc-currency">$</span>{{ today_income|default:0|cop }}
   </div>
@@ -226,11 +226,11 @@
   </div>
 
   <div class="metric-card mc-red">
-    <div class="mc-label">Egresos hoy</div>
+    <div class="mc-label">Egresos hoy (Transeferencia y Efectivo)</div>
     <div class="mc-value">
       <span class="mc-currency">$</span>{{ today_expense|default:0|cop }}
     </div>
-    <div class="mc-sub">Efectivo</div>
+    <div class="mc-sub">Todos los negocios</div>
   </div>
 
   <div class="metric-card mc-blue">
@@ -249,7 +249,7 @@
     <div class="chart-box chart-full">
       <div class="cb-header">
         <div>
-          <div class="cb-title">Ingresos vs Egresos</div>
+          <div class="cb-title">Ingresos vs Egresos (Transeferencia y Efectivo)</div>
           <div class="cb-sub">Últimos 30 días</div>
         </div>
         <div class="cb-legend">

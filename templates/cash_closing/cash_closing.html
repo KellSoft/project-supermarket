@@ -45,9 +45,10 @@
   <form method="post" class="d-flex align-items-center gap-2">
     {% csrf_token %}
     <input type="hidden" name="_action" value="set_opening">
-    <input type="number" name="opening_balance" value="{{ closing.opening_balance }}"
-           class="form-control form-control-sm" style="width:160px"
-           placeholder="0" min="0" step="1" required>
+    <input type="text" inputmode="numeric" name="opening_balance" id="opening-balance-input"
+       value="{{ closing.opening_balance }}"
+       class="form-control form-control-sm" style="width:160px"
+       placeholder="0" required>
     <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
   </form>
 </div>
@@ -160,31 +161,31 @@
           <tbody>
             <tr>
               <td class="ps-3 text-muted small">Saldo inicial</td>
-              <td class="text-end pe-3 fw-semibold">${{ closing.opening_balance|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold">${{ closing.opening_balance|floatformat:"0"|intcomma }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">+ Ingresos efectivo</td>
-              <td class="text-end pe-3 fw-semibold text-success">+${{ total_income_cash|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold text-success">+${{ total_income_cash|floatformat:"0"|intcomma }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">− Egresos efectivo</td>
-              <td class="text-end pe-3 fw-semibold text-danger">−${{ total_expense_cash|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold text-danger">−${{ total_expense_cash|floatformat:"0"|intcomma }}</td>
             </tr>
             <tr class="table-light">
               <td class="ps-3 fw-semibold small">Efectivo esperado en caja</td>
-              <td class="text-end pe-3 fw-bold text-primary">${{ expected_cash|intcomma }}</td>
+              <td class="text-end pe-3 fw-bold text-primary">${{ expected_cash|floatformat:"0"|intcomma }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">Efectivo contado (calculadora)</td>
-              <td class="text-end pe-3 fw-semibold" id="summaryPhysical">${{ closing.physical_cash|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold" id="summaryPhysical">${{ closing.physical_cash|floatformat:"0"|intcomma }}</td>
             </tr>
             <tr class="{% if closing.difference == 0 %}table-success{% elif closing.difference > 0 %}table-primary{% else %}table-danger{% endif %}">
               <td class="ps-3 fw-semibold">Diferencia</td>
               <td class="text-end pe-3 fw-bold" id="summaryDiff" data-expected="{{ expected_cash }}">
                 {% if closing.difference > 0 %}
-                  +${{ closing.difference|intcomma }} (sobrante)
+                  +${{ closing.difference|floatformat:"0"|intcomma }} (sobrante)
                 {% elif closing.difference < 0 %}
-                  −${{ closing.difference|intcomma|slice:"1:" }} (faltante)
+                  −${{ closing.difference|floatformat:"0"|intcomma|slice:"1:" }} (faltante)
                 {% else %}
                   ✓ Cuadra
                 {% endif %}
@@ -229,7 +230,7 @@
     {% else %}
     <div class="alert alert-success py-2 small mb-0">
       <strong>Cuadre cerrado.</strong>
-      El efectivo final de ${{ closing.physical_cash|intcomma }} será el saldo inicial de mañana.
+      El efectivo final de ${{ closing.physical_cash|floatformat:"0"|intcomma }} será el saldo inicial de mañana.
     </div>
     {% endif %}
 
@@ -287,6 +288,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
   recalc();
 });
+const obInput = document.getElementById('opening-balance-input');
+if (obInput) {
+  obInput.addEventListener('input', function() {
+    const pos  = this.selectionStart;
+    const prev = this.value.length;
+    const digits = this.value.replace(/\D/g, '');
+    if (!digits) { this.value = ''; return; }
+    this.value = parseInt(digits).toLocaleString('es-CO');
+    const diff = this.value.length - prev;
+    this.setSelectionRange(pos + diff, pos + diff);
+  });
+  obInput.closest('form').addEventListener('submit', function() {
+    obInput.value = obInput.value.replace(/\./g, '') || '0';
+  });
+}
 </script>
 
 {% endblock %}
