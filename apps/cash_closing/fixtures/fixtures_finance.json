@@ -1,0 +1,4988 @@
+[
+  {
+    "model": "businesses.business",
+    "pk": 1,
+    "fields": {
+      "name": "Tienda Central"
+    }
+  },
+  {
+    "model": "businesses.business",
+    "pk": 2,
+    "fields": {
+      "name": "Sucursal Norte"
+    }
+  },
+  {
+    "model": "businesses.business",
+    "pk": 3,
+    "fields": {
+      "name": "Sucursal Sur"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 115,
+    "fields": {
+      "invoice_number": "FAC-0115",
+      "purchase_date": "2026-05-01",
+      "product": "Harina x10kg",
+      "supplier": "Harinera del Pacífico",
+      "amount": "68000",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 116,
+    "fields": {
+      "invoice_number": "FAC-0116",
+      "purchase_date": "2026-05-01",
+      "product": "Café molido x5kg",
+      "supplier": "Café Aguila Roja",
+      "amount": "132000",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 117,
+    "fields": {
+      "invoice_number": "FAC-0117",
+      "purchase_date": "2026-05-04",
+      "product": "Aceite x24un",
+      "supplier": "Oleaginosas del Valle",
+      "amount": "175000",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 118,
+    "fields": {
+      "invoice_number": "FAC-0118",
+      "purchase_date": "2026-05-04",
+      "product": "Arroz x50kg",
+      "supplier": "Distribuidora Granos SA",
+      "amount": "307000",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 119,
+    "fields": {
+      "invoice_number": "FAC-0119",
+      "purchase_date": "2026-05-04",
+      "product": "Leche x24un",
+      "supplier": "Alquería",
+      "amount": "112000",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 120,
+    "fields": {
+      "invoice_number": "FAC-0120",
+      "purchase_date": "2026-05-06",
+      "product": "Harina x10kg",
+      "supplier": "Harinera del Pacífico",
+      "amount": "65000",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 121,
+    "fields": {
+      "invoice_number": "FAC-0121",
+      "purchase_date": "2026-05-06",
+      "product": "Sal x20kg",
+      "supplier": "Refisal",
+      "amount": "25000",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 122,
+    "fields": {
+      "invoice_number": "FAC-0122",
+      "purchase_date": "2026-05-08",
+      "product": "Frijol x20kg",
+      "supplier": "Distribuidora Granos SA",
+      "amount": "158000",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 123,
+    "fields": {
+      "invoice_number": "FAC-0123",
+      "purchase_date": "2026-05-08",
+      "product": "Harina x10kg",
+      "supplier": "Harinera del Pacífico",
+      "amount": "64000",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 124,
+    "fields": {
+      "invoice_number": "FAC-0124",
+      "purchase_date": "2026-05-08",
+      "product": "Café molido x5kg",
+      "supplier": "Café Aguila Roja",
+      "amount": "123000",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 125,
+    "fields": {
+      "invoice_number": "FAC-0125",
+      "purchase_date": "2026-05-11",
+      "product": "Aceite x24un",
+      "supplier": "Oleaginosas del Valle",
+      "amount": "191000",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 126,
+    "fields": {
+      "invoice_number": "FAC-0126",
+      "purchase_date": "2026-05-11",
+      "product": "Leche x24un",
+      "supplier": "Alquería",
+      "amount": "97000",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 127,
+    "fields": {
+      "invoice_number": "FAC-0127",
+      "purchase_date": "2026-05-11",
+      "product": "Arroz x50kg",
+      "supplier": "Distribuidora Granos SA",
+      "amount": "322000",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 128,
+    "fields": {
+      "invoice_number": "FAC-0128",
+      "purchase_date": "2026-05-13",
+      "product": "Azúcar x25kg",
+      "supplier": "Incauca",
+      "amount": "102000",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 129,
+    "fields": {
+      "invoice_number": "FAC-0129",
+      "purchase_date": "2026-05-13",
+      "product": "Café molido x5kg",
+      "supplier": "Café Aguila Roja",
+      "amount": "116000",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 130,
+    "fields": {
+      "invoice_number": "FAC-0130",
+      "purchase_date": "2026-05-15",
+      "product": "Aceite x24un",
+      "supplier": "Oleaginosas del Valle",
+      "amount": "207000",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 131,
+    "fields": {
+      "invoice_number": "FAC-0131",
+      "purchase_date": "2026-05-18",
+      "product": "Leche x24un",
+      "supplier": "Alquería",
+      "amount": "106000",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 132,
+    "fields": {
+      "invoice_number": "FAC-0132",
+      "purchase_date": "2026-05-18",
+      "product": "Atún x24latas",
+      "supplier": "Van Camps",
+      "amount": "136000",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 133,
+    "fields": {
+      "invoice_number": "FAC-0133",
+      "purchase_date": "2026-05-20",
+      "product": "Harina x10kg",
+      "supplier": "Harinera del Pacífico",
+      "amount": "64000",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 134,
+    "fields": {
+      "invoice_number": "FAC-0134",
+      "purchase_date": "2026-05-20",
+      "product": "Leche x24un",
+      "supplier": "Alquería",
+      "amount": "103000",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 135,
+    "fields": {
+      "invoice_number": "FAC-0135",
+      "purchase_date": "2026-05-22",
+      "product": "Panela x10kg",
+      "supplier": "Panelera Los Andes",
+      "amount": "52000",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 136,
+    "fields": {
+      "invoice_number": "FAC-0136",
+      "purchase_date": "2026-05-22",
+      "product": "Detergente x12kg",
+      "supplier": "Unilever Colombia",
+      "amount": "183000",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 137,
+    "fields": {
+      "invoice_number": "FAC-0137",
+      "purchase_date": "2026-05-22",
+      "product": "Leche x24un",
+      "supplier": "Alquería",
+      "amount": "115000",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 138,
+    "fields": {
+      "invoice_number": "FAC-0138",
+      "purchase_date": "2026-05-25",
+      "product": "Papel higiénico x48",
+      "supplier": "Familia SA",
+      "amount": "207000",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 139,
+    "fields": {
+      "invoice_number": "FAC-0139",
+      "purchase_date": "2026-05-25",
+      "product": "Sal x20kg",
+      "supplier": "Refisal",
+      "amount": "21000",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 140,
+    "fields": {
+      "invoice_number": "FAC-0140",
+      "purchase_date": "2026-05-25",
+      "product": "Café molido x5kg",
+      "supplier": "Café Aguila Roja",
+      "amount": "112000",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 141,
+    "fields": {
+      "invoice_number": "FAC-0141",
+      "purchase_date": "2026-05-27",
+      "product": "Panela x10kg",
+      "supplier": "Panelera Los Andes",
+      "amount": "46000",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "purchases.purchase",
+    "pk": 142,
+    "fields": {
+      "invoice_number": "FAC-0142",
+      "purchase_date": "2026-05-29",
+      "product": "Harina x10kg",
+      "supplier": "Harinera del Pacífico",
+      "amount": "61000",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 595,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 596,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 597,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 598,
+    "fields": {
+      "business": 2,
+      "amount": "1700000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 599,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 600,
+    "fields": {
+      "business": 3,
+      "amount": "1200000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-01",
+      "created_at": "2026-05-01T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 601,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 602,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 603,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 604,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 605,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 606,
+    "fields": {
+      "business": 3,
+      "amount": "900000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-02",
+      "created_at": "2026-05-02T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 607,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-04",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 608,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-04",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 609,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-04",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 610,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-04",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 611,
+    "fields": {
+      "business": 3,
+      "amount": "1500000",
+      "payment_method": "deposit",
+      "bank": "agrario",
+      "shift": 1,
+      "date": "2026-05-04",
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 612,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-05",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 613,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-05",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 614,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-05",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 615,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-05",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 616,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-05",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 617,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 618,
+    "fields": {
+      "business": 1,
+      "amount": "1300000",
+      "payment_method": "deposit",
+      "bank": "agrario",
+      "shift": 1,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 619,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 620,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 621,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 622,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 623,
+    "fields": {
+      "business": 3,
+      "amount": "800000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-06",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 624,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-07",
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 625,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-07",
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 626,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-07",
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 627,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-07",
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 628,
+    "fields": {
+      "business": 3,
+      "amount": "1200000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-07",
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 629,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 630,
+    "fields": {
+      "business": 1,
+      "amount": "500000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 631,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 632,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 633,
+    "fields": {
+      "business": 2,
+      "amount": "1600000",
+      "payment_method": "deposit",
+      "bank": "agrario",
+      "shift": 1,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 634,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 635,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-08",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 636,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 637,
+    "fields": {
+      "business": 1,
+      "amount": "800000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 638,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 639,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 640,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 641,
+    "fields": {
+      "business": 3,
+      "amount": "500000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-09",
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 642,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-11",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 643,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-11",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 644,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-11",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 645,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-11",
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 646,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 647,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 648,
+    "fields": {
+      "business": 1,
+      "amount": "1100000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 649,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 650,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 651,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 652,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-12",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 653,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 654,
+    "fields": {
+      "business": 1,
+      "amount": "1400000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 655,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 656,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 657,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 658,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-13",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 659,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-14",
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 660,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-14",
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 661,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-14",
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 662,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-14",
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 663,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 664,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 665,
+    "fields": {
+      "business": 1,
+      "amount": "1600000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 666,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 667,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 668,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-15",
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 669,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 670,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 671,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 672,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 673,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 674,
+    "fields": {
+      "business": 3,
+      "amount": "900000",
+      "payment_method": "deposit",
+      "bank": "agrario",
+      "shift": 1,
+      "date": "2026-05-16",
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 675,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 676,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 677,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 678,
+    "fields": {
+      "business": 2,
+      "amount": "1300000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 679,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 680,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-18",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 681,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 682,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 683,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 684,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 685,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 686,
+    "fields": {
+      "business": 3,
+      "amount": "900000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-19",
+      "created_at": "2026-05-19T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 687,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 688,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 689,
+    "fields": {
+      "business": 1,
+      "amount": "1400000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 690,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 691,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 692,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 693,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 694,
+    "fields": {
+      "business": 3,
+      "amount": "700000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-20",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 695,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-21",
+      "created_at": "2026-05-21T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 696,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-21",
+      "created_at": "2026-05-21T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 697,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-21",
+      "created_at": "2026-05-21T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 698,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-21",
+      "created_at": "2026-05-21T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 699,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 700,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 701,
+    "fields": {
+      "business": 1,
+      "amount": "800000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 702,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 703,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 704,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 705,
+    "fields": {
+      "business": 3,
+      "amount": "700000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-22",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 706,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 707,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 708,
+    "fields": {
+      "business": 1,
+      "amount": "1300000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 709,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 710,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 711,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 712,
+    "fields": {
+      "business": 3,
+      "amount": "600000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-23",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 713,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 714,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 715,
+    "fields": {
+      "business": 1,
+      "amount": "1100000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 716,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 717,
+    "fields": {
+      "business": 2,
+      "amount": "1600000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 718,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-25",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 719,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 720,
+    "fields": {
+      "business": 1,
+      "amount": "900000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 721,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 722,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 723,
+    "fields": {
+      "business": 2,
+      "amount": "1700000",
+      "payment_method": "deposit",
+      "bank": "agrario",
+      "shift": 1,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 724,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 725,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-26",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 726,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 727,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 728,
+    "fields": {
+      "business": 1,
+      "amount": "700000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 729,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 730,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 731,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-27",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 732,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-28",
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 733,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-28",
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 734,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-28",
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 735,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-28",
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 736,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-28",
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 737,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 738,
+    "fields": {
+      "business": 1,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 739,
+    "fields": {
+      "business": 1,
+      "amount": "1000000",
+      "payment_method": "deposit",
+      "bank": "bancolombia",
+      "shift": 1,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 740,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 741,
+    "fields": {
+      "business": 2,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 2,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 742,
+    "fields": {
+      "business": 3,
+      "amount": "0",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 743,
+    "fields": {
+      "business": 3,
+      "amount": "900000",
+      "payment_method": "deposit",
+      "bank": "bogota",
+      "shift": 1,
+      "date": "2026-05-29",
+      "created_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 744,
+    "fields": {
+      "business": 1,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-30",
+      "created_at": "2026-05-30T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 745,
+    "fields": {
+      "business": 2,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-30",
+      "created_at": "2026-05-30T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.income",
+    "pk": 746,
+    "fields": {
+      "business": 3,
+      "amount": "1000",
+      "payment_method": "cash",
+      "bank": null,
+      "shift": 1,
+      "date": "2026-05-30",
+      "created_at": "2026-05-30T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 111,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Distribuidora Granos SA",
+      "invoice_number": "EGR-0111",
+      "amount": "284000",
+      "date": "2026-05-04",
+      "bank": null,
+      "created_at": "2026-05-04T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 112,
+    "fields": {
+      "business": 2,
+      "payment_method": "deposit",
+      "supplier": "Van Camps",
+      "invoice_number": "EGR-0112",
+      "amount": "116000",
+      "date": "2026-05-05",
+      "bank": "bogota",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 113,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Harinera del Pacífico",
+      "invoice_number": "EGR-0113",
+      "amount": "66000",
+      "date": "2026-05-05",
+      "bank": "bancolombia",
+      "created_at": "2026-05-05T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 114,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Distribuidora Granos SA",
+      "invoice_number": "EGR-0114",
+      "amount": "289000",
+      "date": "2026-05-06",
+      "bank": null,
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 115,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Panelera Los Andes",
+      "invoice_number": "EGR-0115",
+      "amount": "50000",
+      "date": "2026-05-06",
+      "bank": "bogota",
+      "created_at": "2026-05-06T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 116,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Van Camps",
+      "invoice_number": "EGR-0116",
+      "amount": "124000",
+      "date": "2026-05-07",
+      "bank": null,
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 117,
+    "fields": {
+      "business": 2,
+      "payment_method": "cash",
+      "supplier": "Oleaginosas del Valle",
+      "invoice_number": "EGR-0117",
+      "amount": "205000",
+      "date": "2026-05-07",
+      "bank": null,
+      "created_at": "2026-05-07T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 118,
+    "fields": {
+      "business": 1,
+      "payment_method": "deposit",
+      "supplier": "Unilever Colombia",
+      "invoice_number": "EGR-0118",
+      "amount": "166000",
+      "date": "2026-05-08",
+      "bank": "bancolombia",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 119,
+    "fields": {
+      "business": 2,
+      "payment_method": "deposit",
+      "supplier": "Alquería",
+      "invoice_number": "EGR-0119",
+      "amount": "98000",
+      "date": "2026-05-08",
+      "bank": "bancolombia",
+      "created_at": "2026-05-08T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 120,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0120",
+      "amount": "20000",
+      "date": "2026-05-09",
+      "bank": null,
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 121,
+    "fields": {
+      "business": 2,
+      "payment_method": "cash",
+      "supplier": "Alquería",
+      "invoice_number": "EGR-0121",
+      "amount": "102000",
+      "date": "2026-05-09",
+      "bank": null,
+      "created_at": "2026-05-09T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 122,
+    "fields": {
+      "business": 2,
+      "payment_method": "cash",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0122",
+      "amount": "25000",
+      "date": "2026-05-11",
+      "bank": null,
+      "created_at": "2026-05-11T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 123,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Familia SA",
+      "invoice_number": "EGR-0123",
+      "amount": "184000",
+      "date": "2026-05-12",
+      "bank": "bancolombia",
+      "created_at": "2026-05-12T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 124,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Café Aguila Roja",
+      "invoice_number": "EGR-0124",
+      "amount": "107000",
+      "date": "2026-05-13",
+      "bank": "agrario",
+      "created_at": "2026-05-13T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 125,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Alquería",
+      "invoice_number": "EGR-0125",
+      "amount": "126000",
+      "date": "2026-05-14",
+      "bank": null,
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 126,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Unilever Colombia",
+      "invoice_number": "EGR-0126",
+      "amount": "175000",
+      "date": "2026-05-14",
+      "bank": "bogota",
+      "created_at": "2026-05-14T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 127,
+    "fields": {
+      "business": 3,
+      "payment_method": "cash",
+      "supplier": "Unilever Colombia",
+      "invoice_number": "EGR-0127",
+      "amount": "154000",
+      "date": "2026-05-15",
+      "bank": null,
+      "created_at": "2026-05-15T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 128,
+    "fields": {
+      "business": 3,
+      "payment_method": "cash",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0128",
+      "amount": "20000",
+      "date": "2026-05-16",
+      "bank": null,
+      "created_at": "2026-05-16T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 129,
+    "fields": {
+      "business": 1,
+      "payment_method": "deposit",
+      "supplier": "Van Camps",
+      "invoice_number": "EGR-0129",
+      "amount": "121000",
+      "date": "2026-05-18",
+      "bank": "agrario",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 130,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Unilever Colombia",
+      "invoice_number": "EGR-0130",
+      "amount": "215000",
+      "date": "2026-05-18",
+      "bank": "bancolombia",
+      "created_at": "2026-05-18T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 131,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0131",
+      "amount": "20000",
+      "date": "2026-05-20",
+      "bank": "agrario",
+      "created_at": "2026-05-20T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 132,
+    "fields": {
+      "business": 2,
+      "payment_method": "deposit",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0132",
+      "amount": "22000",
+      "date": "2026-05-22",
+      "bank": "bancolombia",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 133,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0133",
+      "amount": "23000",
+      "date": "2026-05-22",
+      "bank": "bogota",
+      "created_at": "2026-05-22T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 134,
+    "fields": {
+      "business": 1,
+      "payment_method": "cash",
+      "supplier": "Familia SA",
+      "invoice_number": "EGR-0134",
+      "amount": "219000",
+      "date": "2026-05-23",
+      "bank": null,
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 135,
+    "fields": {
+      "business": 2,
+      "payment_method": "deposit",
+      "supplier": "Refisal",
+      "invoice_number": "EGR-0135",
+      "amount": "22000",
+      "date": "2026-05-23",
+      "bank": "agrario",
+      "created_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 136,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Panelera Los Andes",
+      "invoice_number": "EGR-0136",
+      "amount": "46000",
+      "date": "2026-05-25",
+      "bank": "agrario",
+      "created_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 137,
+    "fields": {
+      "business": 2,
+      "payment_method": "deposit",
+      "supplier": "Oleaginosas del Valle",
+      "invoice_number": "EGR-0137",
+      "amount": "179000",
+      "date": "2026-05-26",
+      "bank": "agrario",
+      "created_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 138,
+    "fields": {
+      "business": 1,
+      "payment_method": "deposit",
+      "supplier": "Familia SA",
+      "invoice_number": "EGR-0138",
+      "amount": "211000",
+      "date": "2026-05-27",
+      "bank": "agrario",
+      "created_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 139,
+    "fields": {
+      "business": 2,
+      "payment_method": "cash",
+      "supplier": "Unilever Colombia",
+      "invoice_number": "EGR-0139",
+      "amount": "154000",
+      "date": "2026-05-28",
+      "bank": null,
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 140,
+    "fields": {
+      "business": 3,
+      "payment_method": "cash",
+      "supplier": "Oleaginosas del Valle",
+      "invoice_number": "EGR-0140",
+      "amount": "167000",
+      "date": "2026-05-28",
+      "bank": null,
+      "created_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.expense",
+    "pk": 141,
+    "fields": {
+      "business": 3,
+      "payment_method": "deposit",
+      "supplier": "Van Camps",
+      "invoice_number": "EGR-0141",
+      "amount": "136000",
+      "date": "2026-05-30",
+      "bank": "bogota",
+      "created_at": "2026-05-30T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 103,
+    "fields": {
+      "date": "2026-05-01",
+      "opening_balance": "0",
+      "physical_cash": "16135",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-01T08:00:00Z",
+      "updated_at": "2026-05-01T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 104,
+    "fields": {
+      "date": "2026-05-02",
+      "opening_balance": "16135",
+      "physical_cash": "16652",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-02T08:00:00Z",
+      "updated_at": "2026-05-02T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 105,
+    "fields": {
+      "date": "2026-05-04",
+      "opening_balance": "16652",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Día tranquilo",
+      "created_at": "2026-05-04T08:00:00Z",
+      "updated_at": "2026-05-04T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 106,
+    "fields": {
+      "date": "2026-05-05",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-05T08:00:00Z",
+      "updated_at": "2026-05-05T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 107,
+    "fields": {
+      "date": "2026-05-06",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-06T08:00:00Z",
+      "updated_at": "2026-05-06T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 108,
+    "fields": {
+      "date": "2026-05-07",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Faltante en caja",
+      "created_at": "2026-05-07T08:00:00Z",
+      "updated_at": "2026-05-07T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 109,
+    "fields": {
+      "date": "2026-05-08",
+      "opening_balance": "0",
+      "physical_cash": "8789",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-08T08:00:00Z",
+      "updated_at": "2026-05-08T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 110,
+    "fields": {
+      "date": "2026-05-09",
+      "opening_balance": "8789",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Faltante en caja",
+      "created_at": "2026-05-09T08:00:00Z",
+      "updated_at": "2026-05-09T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 111,
+    "fields": {
+      "date": "2026-05-11",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-11T08:00:00Z",
+      "updated_at": "2026-05-11T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 112,
+    "fields": {
+      "date": "2026-05-12",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Quincena — ventas altas",
+      "created_at": "2026-05-12T08:00:00Z",
+      "updated_at": "2026-05-12T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 113,
+    "fields": {
+      "date": "2026-05-13",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Buena jornada",
+      "created_at": "2026-05-13T08:00:00Z",
+      "updated_at": "2026-05-13T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 114,
+    "fields": {
+      "date": "2026-05-14",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Faltante en caja",
+      "created_at": "2026-05-14T08:00:00Z",
+      "updated_at": "2026-05-14T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 115,
+    "fields": {
+      "date": "2026-05-15",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Sobrante pequeño",
+      "created_at": "2026-05-15T08:00:00Z",
+      "updated_at": "2026-05-15T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 116,
+    "fields": {
+      "date": "2026-05-16",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Semana buena",
+      "created_at": "2026-05-16T08:00:00Z",
+      "updated_at": "2026-05-16T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 117,
+    "fields": {
+      "date": "2026-05-18",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-18T08:00:00Z",
+      "updated_at": "2026-05-18T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 118,
+    "fields": {
+      "date": "2026-05-19",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-19T08:00:00Z",
+      "updated_at": "2026-05-19T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 119,
+    "fields": {
+      "date": "2026-05-20",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Buena jornada",
+      "created_at": "2026-05-20T08:00:00Z",
+      "updated_at": "2026-05-20T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 120,
+    "fields": {
+      "date": "2026-05-21",
+      "opening_balance": "0",
+      "physical_cash": "0",
+      "is_closed": true,
+      "notes": "Sobrante pequeño",
+      "created_at": "2026-05-21T08:00:00Z",
+      "updated_at": "2026-05-21T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 121,
+    "fields": {
+      "date": "2026-05-22",
+      "opening_balance": "0",
+      "physical_cash": "2978",
+      "is_closed": true,
+      "notes": "",
+      "created_at": "2026-05-22T08:00:00Z",
+      "updated_at": "2026-05-22T18:30:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 122,
+    "fields": {
+      "date": "2026-05-23",
+      "opening_balance": "2978",
+      "physical_cash": "0",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-23T08:00:00Z",
+      "updated_at": "2026-05-23T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 123,
+    "fields": {
+      "date": "2026-05-25",
+      "opening_balance": "2978",
+      "physical_cash": "3978",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-25T08:00:00Z",
+      "updated_at": "2026-05-25T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 124,
+    "fields": {
+      "date": "2026-05-26",
+      "opening_balance": "2978",
+      "physical_cash": "2978",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-26T08:00:00Z",
+      "updated_at": "2026-05-26T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 125,
+    "fields": {
+      "date": "2026-05-27",
+      "opening_balance": "2978",
+      "physical_cash": "3978",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-27T08:00:00Z",
+      "updated_at": "2026-05-27T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 126,
+    "fields": {
+      "date": "2026-05-28",
+      "opening_balance": "2978",
+      "physical_cash": "0",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-28T08:00:00Z",
+      "updated_at": "2026-05-28T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 127,
+    "fields": {
+      "date": "2026-05-29",
+      "opening_balance": "2978",
+      "physical_cash": "2978",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-29T08:00:00Z",
+      "updated_at": "2026-05-29T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashclosing",
+    "pk": 128,
+    "fields": {
+      "date": "2026-05-30",
+      "opening_balance": "2978",
+      "physical_cash": "5978",
+      "is_closed": false,
+      "notes": "Cuadre en proceso",
+      "created_at": "2026-05-30T08:00:00Z",
+      "updated_at": "2026-05-30T08:00:00Z"
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1123,
+    "fields": {
+      "closing": 103,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1124,
+    "fields": {
+      "closing": 103,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1125,
+    "fields": {
+      "closing": 103,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1126,
+    "fields": {
+      "closing": 103,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1127,
+    "fields": {
+      "closing": 103,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1128,
+    "fields": {
+      "closing": 103,
+      "value": 2000,
+      "quantity": 3
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1129,
+    "fields": {
+      "closing": 103,
+      "value": 1000,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1130,
+    "fields": {
+      "closing": 103,
+      "value": 500,
+      "quantity": 5
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1131,
+    "fields": {
+      "closing": 103,
+      "value": 200,
+      "quantity": 10
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1132,
+    "fields": {
+      "closing": 103,
+      "value": 100,
+      "quantity": 2
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1133,
+    "fields": {
+      "closing": 103,
+      "value": 50,
+      "quantity": 26
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1134,
+    "fields": {
+      "closing": 104,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1135,
+    "fields": {
+      "closing": 104,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1136,
+    "fields": {
+      "closing": 104,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1137,
+    "fields": {
+      "closing": 104,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1138,
+    "fields": {
+      "closing": 104,
+      "value": 5000,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1139,
+    "fields": {
+      "closing": 104,
+      "value": 2000,
+      "quantity": 4
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1140,
+    "fields": {
+      "closing": 104,
+      "value": 1000,
+      "quantity": 3
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1141,
+    "fields": {
+      "closing": 104,
+      "value": 500,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1142,
+    "fields": {
+      "closing": 104,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1143,
+    "fields": {
+      "closing": 104,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1144,
+    "fields": {
+      "closing": 104,
+      "value": 50,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1145,
+    "fields": {
+      "closing": 105,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1146,
+    "fields": {
+      "closing": 105,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1147,
+    "fields": {
+      "closing": 105,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1148,
+    "fields": {
+      "closing": 105,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1149,
+    "fields": {
+      "closing": 105,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1150,
+    "fields": {
+      "closing": 105,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1151,
+    "fields": {
+      "closing": 105,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1152,
+    "fields": {
+      "closing": 105,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1153,
+    "fields": {
+      "closing": 105,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1154,
+    "fields": {
+      "closing": 105,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1155,
+    "fields": {
+      "closing": 105,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1156,
+    "fields": {
+      "closing": 106,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1157,
+    "fields": {
+      "closing": 106,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1158,
+    "fields": {
+      "closing": 106,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1159,
+    "fields": {
+      "closing": 106,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1160,
+    "fields": {
+      "closing": 106,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1161,
+    "fields": {
+      "closing": 106,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1162,
+    "fields": {
+      "closing": 106,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1163,
+    "fields": {
+      "closing": 106,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1164,
+    "fields": {
+      "closing": 106,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1165,
+    "fields": {
+      "closing": 106,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1166,
+    "fields": {
+      "closing": 106,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1167,
+    "fields": {
+      "closing": 107,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1168,
+    "fields": {
+      "closing": 107,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1169,
+    "fields": {
+      "closing": 107,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1170,
+    "fields": {
+      "closing": 107,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1171,
+    "fields": {
+      "closing": 107,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1172,
+    "fields": {
+      "closing": 107,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1173,
+    "fields": {
+      "closing": 107,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1174,
+    "fields": {
+      "closing": 107,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1175,
+    "fields": {
+      "closing": 107,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1176,
+    "fields": {
+      "closing": 107,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1177,
+    "fields": {
+      "closing": 107,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1178,
+    "fields": {
+      "closing": 108,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1179,
+    "fields": {
+      "closing": 108,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1180,
+    "fields": {
+      "closing": 108,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1181,
+    "fields": {
+      "closing": 108,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1182,
+    "fields": {
+      "closing": 108,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1183,
+    "fields": {
+      "closing": 108,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1184,
+    "fields": {
+      "closing": 108,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1185,
+    "fields": {
+      "closing": 108,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1186,
+    "fields": {
+      "closing": 108,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1187,
+    "fields": {
+      "closing": 108,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1188,
+    "fields": {
+      "closing": 108,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1189,
+    "fields": {
+      "closing": 109,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1190,
+    "fields": {
+      "closing": 109,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1191,
+    "fields": {
+      "closing": 109,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1192,
+    "fields": {
+      "closing": 109,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1193,
+    "fields": {
+      "closing": 109,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1194,
+    "fields": {
+      "closing": 109,
+      "value": 2000,
+      "quantity": 3
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1195,
+    "fields": {
+      "closing": 109,
+      "value": 1000,
+      "quantity": 2
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1196,
+    "fields": {
+      "closing": 109,
+      "value": 500,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1197,
+    "fields": {
+      "closing": 109,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1198,
+    "fields": {
+      "closing": 109,
+      "value": 100,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1199,
+    "fields": {
+      "closing": 109,
+      "value": 50,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1200,
+    "fields": {
+      "closing": 110,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1201,
+    "fields": {
+      "closing": 110,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1202,
+    "fields": {
+      "closing": 110,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1203,
+    "fields": {
+      "closing": 110,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1204,
+    "fields": {
+      "closing": 110,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1205,
+    "fields": {
+      "closing": 110,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1206,
+    "fields": {
+      "closing": 110,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1207,
+    "fields": {
+      "closing": 110,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1208,
+    "fields": {
+      "closing": 110,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1209,
+    "fields": {
+      "closing": 110,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1210,
+    "fields": {
+      "closing": 110,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1211,
+    "fields": {
+      "closing": 111,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1212,
+    "fields": {
+      "closing": 111,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1213,
+    "fields": {
+      "closing": 111,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1214,
+    "fields": {
+      "closing": 111,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1215,
+    "fields": {
+      "closing": 111,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1216,
+    "fields": {
+      "closing": 111,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1217,
+    "fields": {
+      "closing": 111,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1218,
+    "fields": {
+      "closing": 111,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1219,
+    "fields": {
+      "closing": 111,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1220,
+    "fields": {
+      "closing": 111,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1221,
+    "fields": {
+      "closing": 111,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1222,
+    "fields": {
+      "closing": 112,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1223,
+    "fields": {
+      "closing": 112,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1224,
+    "fields": {
+      "closing": 112,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1225,
+    "fields": {
+      "closing": 112,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1226,
+    "fields": {
+      "closing": 112,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1227,
+    "fields": {
+      "closing": 112,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1228,
+    "fields": {
+      "closing": 112,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1229,
+    "fields": {
+      "closing": 112,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1230,
+    "fields": {
+      "closing": 112,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1231,
+    "fields": {
+      "closing": 112,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1232,
+    "fields": {
+      "closing": 112,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1233,
+    "fields": {
+      "closing": 113,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1234,
+    "fields": {
+      "closing": 113,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1235,
+    "fields": {
+      "closing": 113,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1236,
+    "fields": {
+      "closing": 113,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1237,
+    "fields": {
+      "closing": 113,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1238,
+    "fields": {
+      "closing": 113,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1239,
+    "fields": {
+      "closing": 113,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1240,
+    "fields": {
+      "closing": 113,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1241,
+    "fields": {
+      "closing": 113,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1242,
+    "fields": {
+      "closing": 113,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1243,
+    "fields": {
+      "closing": 113,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1244,
+    "fields": {
+      "closing": 114,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1245,
+    "fields": {
+      "closing": 114,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1246,
+    "fields": {
+      "closing": 114,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1247,
+    "fields": {
+      "closing": 114,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1248,
+    "fields": {
+      "closing": 114,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1249,
+    "fields": {
+      "closing": 114,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1250,
+    "fields": {
+      "closing": 114,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1251,
+    "fields": {
+      "closing": 114,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1252,
+    "fields": {
+      "closing": 114,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1253,
+    "fields": {
+      "closing": 114,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1254,
+    "fields": {
+      "closing": 114,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1255,
+    "fields": {
+      "closing": 115,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1256,
+    "fields": {
+      "closing": 115,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1257,
+    "fields": {
+      "closing": 115,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1258,
+    "fields": {
+      "closing": 115,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1259,
+    "fields": {
+      "closing": 115,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1260,
+    "fields": {
+      "closing": 115,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1261,
+    "fields": {
+      "closing": 115,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1262,
+    "fields": {
+      "closing": 115,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1263,
+    "fields": {
+      "closing": 115,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1264,
+    "fields": {
+      "closing": 115,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1265,
+    "fields": {
+      "closing": 115,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1266,
+    "fields": {
+      "closing": 116,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1267,
+    "fields": {
+      "closing": 116,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1268,
+    "fields": {
+      "closing": 116,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1269,
+    "fields": {
+      "closing": 116,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1270,
+    "fields": {
+      "closing": 116,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1271,
+    "fields": {
+      "closing": 116,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1272,
+    "fields": {
+      "closing": 116,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1273,
+    "fields": {
+      "closing": 116,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1274,
+    "fields": {
+      "closing": 116,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1275,
+    "fields": {
+      "closing": 116,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1276,
+    "fields": {
+      "closing": 116,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1277,
+    "fields": {
+      "closing": 117,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1278,
+    "fields": {
+      "closing": 117,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1279,
+    "fields": {
+      "closing": 117,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1280,
+    "fields": {
+      "closing": 117,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1281,
+    "fields": {
+      "closing": 117,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1282,
+    "fields": {
+      "closing": 117,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1283,
+    "fields": {
+      "closing": 117,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1284,
+    "fields": {
+      "closing": 117,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1285,
+    "fields": {
+      "closing": 117,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1286,
+    "fields": {
+      "closing": 117,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1287,
+    "fields": {
+      "closing": 117,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1288,
+    "fields": {
+      "closing": 118,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1289,
+    "fields": {
+      "closing": 118,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1290,
+    "fields": {
+      "closing": 118,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1291,
+    "fields": {
+      "closing": 118,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1292,
+    "fields": {
+      "closing": 118,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1293,
+    "fields": {
+      "closing": 118,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1294,
+    "fields": {
+      "closing": 118,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1295,
+    "fields": {
+      "closing": 118,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1296,
+    "fields": {
+      "closing": 118,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1297,
+    "fields": {
+      "closing": 118,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1298,
+    "fields": {
+      "closing": 118,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1299,
+    "fields": {
+      "closing": 119,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1300,
+    "fields": {
+      "closing": 119,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1301,
+    "fields": {
+      "closing": 119,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1302,
+    "fields": {
+      "closing": 119,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1303,
+    "fields": {
+      "closing": 119,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1304,
+    "fields": {
+      "closing": 119,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1305,
+    "fields": {
+      "closing": 119,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1306,
+    "fields": {
+      "closing": 119,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1307,
+    "fields": {
+      "closing": 119,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1308,
+    "fields": {
+      "closing": 119,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1309,
+    "fields": {
+      "closing": 119,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1310,
+    "fields": {
+      "closing": 120,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1311,
+    "fields": {
+      "closing": 120,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1312,
+    "fields": {
+      "closing": 120,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1313,
+    "fields": {
+      "closing": 120,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1314,
+    "fields": {
+      "closing": 120,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1315,
+    "fields": {
+      "closing": 120,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1316,
+    "fields": {
+      "closing": 120,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1317,
+    "fields": {
+      "closing": 120,
+      "value": 500,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1318,
+    "fields": {
+      "closing": 120,
+      "value": 200,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1319,
+    "fields": {
+      "closing": 120,
+      "value": 100,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1320,
+    "fields": {
+      "closing": 120,
+      "value": 50,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1321,
+    "fields": {
+      "closing": 121,
+      "value": 100000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1322,
+    "fields": {
+      "closing": 121,
+      "value": 50000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1323,
+    "fields": {
+      "closing": 121,
+      "value": 20000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1324,
+    "fields": {
+      "closing": 121,
+      "value": 10000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1325,
+    "fields": {
+      "closing": 121,
+      "value": 5000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1326,
+    "fields": {
+      "closing": 121,
+      "value": 2000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1327,
+    "fields": {
+      "closing": 121,
+      "value": 1000,
+      "quantity": 0
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1328,
+    "fields": {
+      "closing": 121,
+      "value": 500,
+      "quantity": 1
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1329,
+    "fields": {
+      "closing": 121,
+      "value": 200,
+      "quantity": 6
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1330,
+    "fields": {
+      "closing": 121,
+      "value": 100,
+      "quantity": 4
+    }
+  },
+  {
+    "model": "cash_closing.cashdenomination",
+    "pk": 1331,
+    "fields": {
+      "closing": 121,
+      "value": 50,
+      "quantity": 15
+    }
+  }
+]
