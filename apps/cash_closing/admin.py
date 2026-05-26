@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from apps.cash_closing.models import Income, Expense
+from apps.cash_closing.models import Income, Expense, BankAccount
 
 
 @admin.register(Income)
@@ -68,3 +68,9 @@ class ExpenseAdmin(admin.ModelAdmin):
         )
     method_display.short_description = 'Método'
     method_display.admin_order_field = 'payment_method'
+
+@admin.register(BankAccount)
+class BankAccountAdmin(admin.ModelAdmin):
+    list_display = ['name', 'slug', 'initial_balance', 'current_balance', 'receives_transfers', 'is_active']
+    prepopulated_fields = {'slug': ('name',)}
+    readonly_fields = ['current_balance']

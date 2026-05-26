@@ -132,14 +132,14 @@
           </div>
 
           <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
-            <label class="form-label small text-muted mb-1">Banco</label>
-            <input type="hidden" name="bank" value="bancolombia">
-            <select class="form-select form-select-sm" disabled>
-              {% for val, label in bank_choices %}
-              <option {% if val == 'bancolombia' %}selected{% endif %}>{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
+  <label class="form-label small text-muted mb-1">Banco</label>
+  <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+    <option value="">— Banco —</option>
+    {% for bank in bank_accounts %}
+    <option value="{{ bank.pk }}">{{ bank.name }}</option>
+    {% endfor %}
+  </select>
+</div>
 
           <div class="col-md-2">
             <label class="form-label small text-muted mb-1">Turno</label>
@@ -350,14 +350,14 @@
           </div>
 
           <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
-            <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
-            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
-              <option value="">— Banco —</option>
-              {% for val, label in bank_choices %}
-              <option value="{{ val }}">{{ label }}</option>
-              {% endfor %}
-            </select>
-          </div>
+  <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
+  <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+    <option value="">— Banco —</option>
+    {% for bank in bank_accounts %}
+    <option value="{{ bank.pk }}">{{ bank.name }}</option>
+    {% endfor %}
+  </select>
+</div>
 
           <div class="col-md-1">
             <label class="form-label small text-muted mb-1">Monto ($)</label>

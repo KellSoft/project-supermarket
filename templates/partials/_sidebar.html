@@ -53,20 +53,32 @@
           <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/>
           <polyline points="17 18 23 18 23 12"/>
         </svg>
-        <span>Egresos efectivo</span>
+        <span>entradas efectivo</span>
       </a>
 
-      <a href="{% url 'purchases:purchase_list' %}"
+      {% comment %} <a href="{% url 'purchases:purchase_list' %}"
          class="mana-nav-item {% if request.resolver_match.app_name == 'purchases' %}active{% endif %}">
         <svg class="mana-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/>
           <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
         </svg>
         <span>Compras</span>
-      </a>
+      </a> {% endcomment %}
 
     </nav>
   </div>
+  <a href="{% url 'cash_closing:bank-accounts' %}"
+         class="mana-nav-item {% if request.resolver_match.url_name == 'bank-accounts' %}active{% endif %}">
+        <svg class="mana-nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="3" y1="22" x2="21" y2="22"/>
+          <line x1="6" y1="18" x2="6" y2="11"/>
+          <line x1="10" y1="18" x2="10" y2="11"/>
+          <line x1="14" y1="18" x2="14" y2="11"/>
+          <line x1="18" y1="18" x2="18" y2="11"/>
+          <polygon points="12 2 20 7 4 7"/>
+        </svg>
+        <span>Cuentas bancarias</span>
+      </a>
 
   <div class="mana-sidebar-section">
     <span class="mana-sidebar-section-label">Análisis</span>

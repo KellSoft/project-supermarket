@@ -3,7 +3,7 @@ from .models import (
     Income,
     Expense,
     PaymentMethod,
-    BankChoices,
+    BankAccount,
     CashClosing,
     CashDenomination,
 )

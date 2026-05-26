@@ -13,4 +13,5 @@ urlpatterns = [
     path("egresos/<int:pk>/eliminar/",views.ExpenseDeleteView.as_view(),name="expense-delete",),
     path("cuadre/", views.CashClosingView.as_view(), name="cash-closing"),
     path("cuadre/historial/",views.CashClosingHistoryView.as_view(),name="cash-closing-history",),
+    path("bancos/", views.BankAccountView.as_view(), name="bank-accounts"),
 ]

@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+{% load humanize %}
+
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+  :root {
+    --c-ink:     #0d0d0d;
+    --c-soft:    #555;
+    --c-faint:   #999;
+    --c-rule:    #e8e6e1;
+    --c-bg:      #f7f6f3;
+    --c-white:   #ffffff;
+    --c-blue:    #1a3a7c;
+    --c-blue-l:  #eef1fb;
+    --c-blue-b:  #c0caf0;
+    --c-green:   #1a7c4a;
+    --c-green-l: #edf7f2;
+    --c-green-b: #b8deca;
+    --c-red:     #c8421a;
+    --c-red-l:   #fdf1ee;
+    --c-red-b:   #f0c4b8;
+    --radius:    8px;
+  }
+
+  .page { font-family: 'Outfit', sans-serif; color: var(--c-ink); }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--c-rule);
+  }
+  .topbar-title { font-size: 1.4rem; font-weight: 700; letter-spacing: -0.3px; }
+  .topbar-title span { color: var(--c-blue); }
+  .filter-form { display: flex; align-items: center; gap: 8px; }
+  .filter-form label {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--c-faint); white-space: nowrap;
+  }
+  .filter-form select,
+  .filter-form input[type="date"] {
+    font-family: 'Outfit', sans-serif; font-size: 0.8rem;
+    border: 1px solid var(--c-rule); border-radius: var(--radius);
+    padding: 6px 10px; background: var(--c-white); color: var(--c-ink);
+    outline: none; transition: border-color 0.15s;
+  }
+  .filter-form select:focus,
+  .filter-form input[type="date"]:focus { border-color: var(--c-blue); }
+
+  /* ── BANK CARDS ── */
+  .bank-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .bank-card {
+    background: var(--c-white);
+    border: 1px solid var(--c-rule);
+    border-radius: var(--radius);
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .bank-card::before {
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: var(--c-blue);
+  }
+  .bank-card-name {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--c-faint); margin-bottom: 8px;
+  }
+  .bank-card-balance {
+    font-size: 1.5rem; font-weight: 600; color: var(--c-blue);
+    letter-spacing: -0.5px; line-height: 1; margin-bottom: 12px;
+  }
+  .bank-card-balance .sym {
+    font-size: 0.85rem; font-weight: 400; opacity: 0.5; margin-right: 1px;
+  }
+  .bank-card-sub {
+    display: flex; justify-content: space-between;
+    padding-top: 10px; border-top: 1px solid var(--c-rule);
+  }
+  .bank-card-sub-item { display: flex; flex-direction: column; gap: 2px; }
+  .bank-card-sub-label {
+    font-size: 0.58rem; font-weight: 600; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--c-faint);
+  }
+  .bank-card-sub-val { font-size: 0.82rem; font-weight: 600; }
+  .val-in  { color: var(--c-green); }
+  .val-out { color: var(--c-red); }
+
+  /* Badge transferencias */
+  .badge-transfer {
+    position: absolute; top: 12px; right: 12px;
+    font-size: 0.58rem; font-weight: 600; letter-spacing: 0.5px;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 20px;
+    background: var(--c-blue-l); color: var(--c-blue); border: 1px solid var(--c-blue-b);
+  }
+
+  /* ── SECCIÓN MOVIMIENTOS ── */
+  .section-label {
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 1.5px;
+    text-transform: uppercase; color: var(--c-faint);
+    margin-bottom: 10px; margin-top: 28px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .section-label::after {
+    content: ''; flex: 1; height: 1px; background: var(--c-rule);
+  }
+
+  /* ── TABLA ── */
+  .table-card {
+    background: var(--c-white); border: 1px solid var(--c-rule);
+    border-radius: var(--radius); overflow: hidden; margin-bottom: 20px;
+  }
+  .table-card-header {
+    padding: 10px 18px; border-bottom: 1px solid var(--c-rule);
+    background: var(--c-bg); display: flex; align-items: center; justify-content: space-between;
+  }
+  .table-card-header span {
+    font-size: 0.72rem; font-weight: 600; letter-spacing: 0.5px;
+    color: var(--c-soft); text-transform: uppercase;
+  }
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    padding: 9px 12px; font-size: 0.62rem; font-weight: 700;
+    letter-spacing: 1.2px; text-transform: uppercase; color: var(--c-faint);
+    border-bottom: 1px solid var(--c-rule); white-space: nowrap; background: var(--c-bg);
+  }
+  thead th.th-r { text-align: right; }
+  tbody tr { border-bottom: 1px solid var(--c-rule); transition: background 0.1s; }
+  tbody tr:hover { background: #fafaf8; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody td { padding: 9px 12px; font-size: 0.82rem; vertical-align: middle; }
+  .td-r { text-align: right; }
+  .td-muted { color: var(--c-soft); font-size: 0.78rem; }
+
+  .badge-biz-in {
+    display: inline-block; background: var(--c-green-l); color: var(--c-green);
+    border: 1px solid var(--c-green-b); border-radius: 4px; padding: 2px 8px;
+    font-size: 0.72rem; font-weight: 500;
+  }
+  .badge-biz-out {
+    display: inline-block; background: var(--c-red-l); color: var(--c-red);
+    border: 1px solid var(--c-red-b); border-radius: 4px; padding: 2px 8px;
+    font-size: 0.72rem; font-weight: 500;
+  }
+  .badge-bank {
+    display: inline-block; background: var(--c-blue-l); color: var(--c-blue);
+    border: 1px solid var(--c-blue-b); border-radius: 4px; padding: 2px 8px;
+    font-size: 0.72rem; font-weight: 500;
+  }
+  .amount-in  { font-weight: 600; color: var(--c-green); }
+  .amount-out { font-weight: 600; color: var(--c-red); }
+
+  tfoot td {
+    padding: 10px 12px; border-top: 2px solid var(--c-rule);
+    font-size: 0.82rem; font-weight: 600;
+  }
+  .tfoot-in  { color: var(--c-green); text-align: right; }
+  .tfoot-out { color: var(--c-red);   text-align: right; }
+
+  .empty-row td {
+    text-align: center; padding: 32px !important;
+    color: var(--c-faint); font-size: 0.82rem; font-style: italic;
+  }
+</style>
+
+<div class="page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-title">Cuentas <span>bancarias</span></div>
+    <form method="get" class="filter-form">
+      <label>Negocio</label>
+      <select name="business" onchange="this.form.submit()">
+        <option value="">Todos</option>
+        {% for b in businesses %}
+        <option value="{{ b.pk }}" {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>
+          {{ b.name }}
+        </option>
+        {% endfor %}
+      </select>
+      <label>Fecha</label>
+      <input type="date" name="date" value="{{ selected_date }}" onchange="this.form.submit()">
+    </form>
+  </div>
+
+  <!-- ALERTAS -->
+  {% for msg in messages %}
+  <div style="margin-bottom:12px; padding:10px 14px; border-radius:6px; font-size:0.8rem;
+    background:{% if msg.tags == 'error' %}#fdf1ee{% else %}#edf7f2{% endif %};
+    color:{% if msg.tags == 'error' %}#c8421a{% else %}#1a7c4a{% endif %};
+    border:1px solid {% if msg.tags == 'error' %}#f0c4b8{% else %}#b8deca{% endif %};">
+    {{ msg }}
+  </div>
+  {% endfor %}
+
+  <!-- CARDS BANCOS -->
+  <div class="bank-cards">
+    {% for stat in bank_stats %}
+    <div class="bank-card">
+      {% if stat.bank.receives_transfers %}
+      <span class="badge-transfer">Recibe transferencias</span>
+      {% endif %}
+      <div class="bank-card-name">{{ stat.bank.name }}</div>
+      <div class="bank-card-balance">
+        <span class="sym">$</span>{{ stat.bank.current_balance|floatformat:"0"|intcomma }}
+      </div>
+      <div class="bank-card-sub">
+        <div class="bank-card-sub-item">
+          <span class="bank-card-sub-label">Entradas hoy</span>
+          <span class="bank-card-sub-val val-in">+${{ stat.day_in|floatformat:"0"|intcomma }}</span>
+        </div>
+        <div class="bank-card-sub-item" style="text-align:right">
+          <span class="bank-card-sub-label">Salidas hoy</span>
+          <span class="bank-card-sub-val val-out">-${{ stat.day_out|floatformat:"0"|intcomma }}</span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div style="color: var(--c-faint); font-size: 0.85rem; font-style: italic; padding: 20px 0;">
+      No hay cuentas bancarias activas. Crea una desde el admin.
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- TABLA INGRESOS POR CONSIGNACIÓN -->
+  <div class="section-label">Ingresos por consignación — {{ selected_date }}</div>
+  <div class="table-card">
+    <div class="table-card-header">
+      <span>Entradas del día</span>
+      <span style="color:var(--c-faint); font-size:0.68rem;">{{ incomes|length }} registro{{ incomes|length|pluralize:"s" }}</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Negocio</th>
+          <th>Banco</th>
+          <th>Fecha</th>
+          <th>Turno</th>
+          <th>Persona</th>
+          <th class="th-r">Valor</th>
+          <th class="th-r">Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+        <tr>
+          <td><span class="badge-biz-in">{{ income.business.name }}</span></td>
+          <td><span class="badge-bank">{{ income.bank.name }}</span></td>
+          <td class="td-muted">{{ income.date }}</td>
+          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-muted">{{ income.person_name|default:"—" }}</td>
+          <td class="td-r amount-in">${{ income.amount|floatformat:"0"|intcomma }}</td>
+          <td class="td-r td-muted">{{ income.created_at|time:"H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="7">Sin ingresos por consignación para esta fecha.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      {% if incomes %}
+      <tfoot>
+        <tr>
+          <td colspan="5" style="color:var(--c-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Total entradas</td>
+          <td class="tfoot-in">
+            +${% with total=0 %}
+              {% for i in incomes %}{% endfor %}
+              {{ incomes|length }}
+            {% endwith %}
+            {# Calculamos en vista, usamos variable del contexto #}
+          </td>
+          <td></td>
+        </tr>
+      </tfoot>
+      {% endif %}
+    </table>
+  </div>
+
+  <!-- TABLA EGRESOS POR CONSIGNACIÓN -->
+  <div class="section-label">Egresos por consignación — {{ selected_date }}</div>
+  <div class="table-card">
+    <div class="table-card-header">
+      <span>Salidas del día</span>
+      <span style="color:var(--c-faint); font-size:0.68rem;">{{ expenses|length }} registro{{ expenses|length|pluralize:"s" }}</span>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>Negocio</th>
+          <th>Banco</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Fecha</th>
+          <th class="th-r">Monto</th>
+          <th class="th-r">Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr>
+          <td><span class="badge-biz-out">{{ expense.business.name }}</span></td>
+          <td><span class="badge-bank">{{ expense.bank.name }}</span></td>
+          <td class="td-muted">{{ expense.get_expense_type_display }}</td>
+          <td class="td-muted">{{ expense.description|default:expense.supplier|default:"—" }}</td>
+          <td class="td-muted">{{ expense.date }}</td>
+          <td class="td-r amount-out">${{ expense.amount|floatformat:"0"|intcomma }}</td>
+          <td class="td-r td-muted">{{ expense.created_at|time:"H:i" }}</td>
+        </tr>
+        {% empty %}
+        <tr class="empty-row">
+          <td colspan="7">Sin egresos por consignación para esta fecha.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+</div>
+{% endblock %}

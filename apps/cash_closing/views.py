@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils.timezone import localdate
 from django.db.models import Sum
 from apps.businesses.models import Business
-from .models import CashClosing, CashDenomination, Income, Expense, BankChoices, ExpenseType
+from .models import CashClosing, CashDenomination, Income, Expense, BankAccount, ExpenseType
 from .forms import ExpenseForm, IncomeForm, OpeningBalanceForm, CashClosingEditForm
 
 
@@ -150,7 +150,7 @@ class CashFlowView(View):
                 "businesses": Business.objects.all(),
                 "selected_date": date,
                 "selected_business": biz,
-                "bank_choices": BankChoices.choices,
+                "bank_accounts": BankAccount.objects.filter(is_active=True),
                 "expense_type_choices": ExpenseType.choices,
                 "total_income": total_income,
                 "total_expense": total_expense,
@@ -318,3 +318,55 @@ class CashClosingHistoryView(View):
     def get(self, request):
         closings = CashClosing.objects.all()
         return render(request, self.template_name, {"closings": closings})
+    
+# ── Agrega este import en views.py ──
+# from .models import BankAccount
+
+# ── Agrega esta vista al final de cash_closing/views.py ──
+
+class BankAccountView(View):
+    template_name = "cash_closing/bank_accounts.html"
+
+    def get(self, request):
+        from django.db.models import Sum, Q
+        from .models import BankAccount
+
+        selected_date  = request.GET.get("date", str(localdate()))
+        selected_biz   = request.GET.get("business", "")
+
+        banks = BankAccount.objects.filter(is_active=True)
+
+        # Movimientos del día filtrados por negocio
+        income_qs  = Income.objects.filter(
+            payment_method="deposit", date=selected_date
+        ).select_related("business", "bank")
+
+        expense_qs = Expense.objects.filter(
+            payment_method="deposit", date=selected_date
+        ).select_related("business", "bank")
+
+        if selected_biz:
+            income_qs  = income_qs.filter(business_id=selected_biz)
+            expense_qs = expense_qs.filter(business_id=selected_biz)
+
+        # Totales por banco en el día
+        bank_stats = []
+        for bank in banks:
+            day_in  = income_qs.filter(bank=bank).aggregate(
+                t=Sum("amount"))["t"] or 0
+            day_out = expense_qs.filter(bank=bank).aggregate(
+                t=Sum("amount"))["t"] or 0
+            bank_stats.append({
+                "bank":    bank,
+                "day_in":  day_in,
+                "day_out": day_out,
+            })
+
+        return render(request, self.template_name, {
+            "bank_stats":      bank_stats,
+            "incomes":         income_qs.order_by("-created_at"),
+            "expenses":        expense_qs.order_by("-created_at"),
+            "businesses":      Business.objects.all(),
+            "selected_date":   selected_date,
+            "selected_business": selected_biz,
+        })
