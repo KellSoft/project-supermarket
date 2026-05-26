@@ -7,6 +7,13 @@ from apps.core.models import TimeStampedModel
 from apps.businesses.models import Business
 
 
+class ExpenseType(models.TextChoices):
+    PURCHASE = "purchase", "Compra"
+    GENERAL_EXPENSE = "general_expense", "Gasto externo / retiro efectivo"
+    STAFF_PAYMENT = "staff_payment", "Pago a personal"
+    OTHER = "other", "Otros"
+
+
 class BankChoices(models.TextChoices):
     AGRARIO = "agrario", "Banco Agrario"
     BANCOLOMBIA = "bancolombia", "Bancolombia"
@@ -47,6 +54,12 @@ class Income(models.Model):
         choices=Shift.choices,
         verbose_name="Turno",
     )
+    person_name = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        verbose_name="Persona que ingresó",
+    )
     date = models.DateField(verbose_name="Fecha")
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -81,8 +94,12 @@ class Expense(models.Model):
         choices=PaymentMethod.choices,
         verbose_name="Método de pago",
     )
-    supplier = models.CharField(max_length=200, verbose_name="Proveedor")
-    invoice_number = models.CharField(max_length=100, verbose_name="N° Factura")
+    supplier = models.CharField(
+        max_length=200, verbose_name="Proveedor", null=True, blank=True
+    )
+    invoice_number = models.CharField(
+        max_length=100, verbose_name="N° Factura", null=True, blank=True
+    )
     amount = models.DecimalField(
         max_digits=12,
         decimal_places=2,
@@ -96,6 +113,23 @@ class Expense(models.Model):
         null=True,
         verbose_name="Banco",
     )
+    expense_type = models.CharField(
+        max_length=30,
+        choices=ExpenseType.choices,
+        default=ExpenseType.GENERAL_EXPENSE,
+        verbose_name="Tipo de egreso",
+    )
+    employee_name = models.CharField(
+        max_length=150,
+        blank=True,
+        null=True,
+        verbose_name="Persona pagada",
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name="Descripción",
+    )
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -104,17 +138,56 @@ class Expense(models.Model):
         verbose_name_plural = "Egresos"
 
     def clean(self):
+        if self.employee_name:
+            self.employee_name = self.employee_name.strip()
+
+        if self.supplier:
+            self.supplier = self.supplier.strip()
+
+        if self.invoice_number:
+            self.invoice_number = self.invoice_number.strip()
+
+        if self.description:
+            self.description = self.description.strip()
+
+        # Banco obligatorio para consignación
         if self.payment_method == PaymentMethod.DEPOSIT and not self.bank:
             raise ValidationError(
-                {"bank": "El banco es obligatorio para egresos por consignación."}
-            )
-        if self.payment_method == PaymentMethod.CASH and self.bank:
-            raise ValidationError(
-                {"bank": "Un egreso en efectivo no debe tener banco asociado."}
+                {"bank": "El banco es obligatorio para consignaciones."}
             )
 
+        # Efectivo no debe tener banco
+        if self.payment_method == PaymentMethod.CASH and self.bank:
+            raise ValidationError(
+                {"bank": "Un movimiento en efectivo no debe tener banco."}
+            )
+
+        # COMPRA
+        if self.expense_type == ExpenseType.PURCHASE:
+
+            if not self.supplier:
+                raise ValidationError({"supplier": "El proveedor es obligatorio."})
+
+            if not self.invoice_number:
+                raise ValidationError({"invoice_number": "La factura es obligatoria."})
+
+        else:
+            self.supplier = None
+            self.invoice_number = None
+
+        # PAGO A PERSONAL
+        if self.expense_type == ExpenseType.STAFF_PAYMENT and not self.employee_name:
+            raise ValidationError({"employee_name": "Debe indicar la persona."})
+
+        if self.expense_type != ExpenseType.STAFF_PAYMENT:
+            self.employee_name = None
+
     def __str__(self):
-        return f"{self.date} | {self.business} | {self.supplier} | ${self.amount:,.0f}"
+        return (
+            f"{self.date} | "
+            f"{self.get_expense_type_display()} | "
+            f"${self.amount:,.0f}"
+        )
 
 
 class CashClosing(TimeStampedModel):
