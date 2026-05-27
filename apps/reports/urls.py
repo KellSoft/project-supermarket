@@ -10,4 +10,5 @@ urlpatterns = [
     path('egresos/', views.ExpenseReportView.as_view(), name='expense_report'),
     path('diario/', views.DailyReportView.as_view(), name='daily_report'),
     path('cuadre-caja/', views.CashClosingReportView.as_view(), name='cash_closing_report'),
+    path('bancos/', views.BankReportView.as_view(), name='bank_report'),
 ]

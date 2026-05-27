@@ -241,7 +241,7 @@
                   <span class="badge text-bg-primary">Consignación</span>
                 {% endif %}
               </td>
-              <td class="text-muted small">{{ income.get_bank_display|default:"—" }}</td>
+              <td class="text-muted small">{{ income.bank.name|default:"—" }}</td>
               <td class="text-muted small">{{ income.date }}</td>
               <td><span class="badge text-bg-secondary">T{{ income.shift }}</span></td>
               <td class="text-muted small">{{ income.person_name|default:"—" }}</td>
@@ -477,7 +477,9 @@
                   <span class="badge text-bg-warning text-dark">Consignación</span>
                 {% endif %}
               </td>
-              <td class="text-muted small">{{ expense.get_bank_display|default:"—" }}</td>
+              <td class="text-muted small">
+                {{ expense.bank.name|default:"—" }}
+              </td>
               <td class="text-muted small">{{ expense.date }}</td>
               <td class="text-end fw-semibold text-danger">${{ expense.amount|floatformat:"0g" }}</td>
               <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>

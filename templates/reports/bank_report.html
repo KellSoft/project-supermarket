@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="es">
+  {% load cop_filters %}
+  <head>
+    <meta charset="UTF-8" />
+    <title>Reporte de Bancos</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap");
+
+      :root {
+        --ink: #0f0f0f;
+        --ink-soft: #555;
+        --ink-faint: #999;
+        --rule: #e0e0e0;
+        --accent: #1a3a7c;
+        --accent-light: #eef1fb;
+        --accent-border: #c0caf0;
+        --green: #1a7c4a;
+        --green-light: #edf7f2;
+        --green-border: #b8deca;
+        --red: #c8421a;
+        --red-light: #fdf1ee;
+        --red-border: #f0c4b8;
+        --row-alt: #fafafa;
+        --white: #ffffff;
+      }
+
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        font-family: "DM Sans", Arial, sans-serif;
+        font-size: 9.5pt;
+        color: var(--ink);
+        background: var(--white);
+        padding: 36px 44px 44px;
+      }
+
+      .masthead {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0;
+      }
+      .masthead-left .label {
+        font-size: 7pt; font-weight: 600; letter-spacing: 2px;
+        text-transform: uppercase; color: var(--accent); margin-bottom: 4px;
+      }
+      .masthead-left h1 {
+        font-family: "DM Serif Display", Georgia, serif;
+        font-size: 26pt; font-weight: 400; color: var(--ink);
+        line-height: 1.1; letter-spacing: -0.5px;
+      }
+      .masthead-right { text-align: right; padding-top: 6px; }
+      .masthead-right .company { font-size: 11pt; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+      .masthead-right .date-block { font-size: 8pt; color: var(--ink-soft); line-height: 1.8; }
+
+      .divider { display: flex; align-items: center; margin: 14px 0 18px; }
+      .divider-thick { height: 3px; width: 48px; background: var(--accent); }
+      .divider-thin { flex: 1; height: 1px; background: var(--rule); }
+
+      .filter-row { display: flex; align-items: center; gap: 8px; margin-bottom: 22px; }
+      .filter-label { font-size: 7pt; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-faint); }
+      .filter-value {
+        font-size: 8pt; color: var(--ink-soft);
+        background: var(--accent-light); border: 1px solid var(--accent-border);
+        border-radius: 3px; padding: 3px 10px;
+      }
+
+      /* ── Resumen por banco ── */
+      .summary-grid {
+        display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+      }
+      .summary-card {
+        flex: 1; min-width: 140px;
+        border: 1px solid var(--rule); border-radius: 6px;
+        padding: 12px 16px; position: relative; overflow: hidden;
+      }
+      .summary-card::before {
+        content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        background: var(--accent);
+      }
+      .summary-card-name {
+        font-size: 6.5pt; font-weight: 600; letter-spacing: 1.5px;
+        text-transform: uppercase; color: var(--ink-faint); margin-bottom: 8px;
+      }
+      .summary-card-row {
+        display: flex; justify-content: space-between;
+        font-size: 8pt; margin-bottom: 3px;
+      }
+      .summary-card-row .lbl { color: var(--ink-soft); }
+      .summary-card-row .val-in  { color: var(--green); font-weight: 600; }
+      .summary-card-row .val-out { color: var(--red);   font-weight: 600; }
+      .summary-card-net {
+        margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--rule);
+        display: flex; justify-content: space-between; font-size: 8.5pt;
+      }
+      .summary-card-net .lbl { font-weight: 600; color: var(--ink-soft); }
+      .net-pos { color: var(--green); font-weight: 600; }
+      .net-neg { color: var(--red);   font-weight: 600; }
+
+      /* ── Totales globales ── */
+      .global-totals {
+        display: flex; gap: 8px; margin-bottom: 28px;
+      }
+      .global-box {
+        flex: 1; padding: 10px 14px; border-radius: 4px; text-align: center;
+      }
+      .global-box .glabel { font-size: 6.5pt; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+      .global-box .gval   { font-family: "DM Serif Display", Georgia, serif; font-size: 14pt; }
+      .box-in  { background: var(--green-light); border: 1px solid var(--green-border); }
+      .box-in  .glabel { color: var(--green); }
+      .box-in  .gval   { color: var(--green); }
+      .box-out { background: var(--red-light);   border: 1px solid var(--red-border); }
+      .box-out .glabel { color: var(--red); }
+      .box-out .gval   { color: var(--red); }
+      .box-net { background: var(--accent-light); border: 1px solid var(--accent-border); }
+      .box-net .glabel { color: var(--accent); }
+      .box-net .gval   { color: var(--accent); }
+
+      /* ── Sección label ── */
+      .section-label {
+        font-size: 7pt; font-weight: 600; letter-spacing: 1.5px;
+        text-transform: uppercase; color: var(--ink-faint);
+        margin-bottom: 10px; margin-top: 28px;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .section-label::after { content: ''; flex: 1; height: 1px; background: var(--rule); }
+
+      /* ── Tablas ── */
+      table { width: 100%; border-collapse: collapse; }
+      thead tr { border-bottom: 2px solid var(--ink); }
+      thead th {
+        padding: 8px 10px; text-align: left;
+        font-size: 6.5pt; font-weight: 600; text-transform: uppercase;
+        letter-spacing: 1.2px; color: var(--ink-soft);
+      }
+      thead th.th-right { text-align: right; }
+      tbody tr { border-bottom: 1px solid var(--rule); }
+      tbody tr:nth-child(even) { background: var(--row-alt); }
+      tbody td { padding: 9px 6px; font-size: 8pt; vertical-align: middle; }
+      .td-num  { font-size: 8pt; color: var(--ink-faint); width: 28px; }
+      .td-right { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .td-muted { color: var(--ink-soft); font-size: 8.5pt; }
+
+      .badge-in {
+        display: inline-block; background: var(--green-light);
+        border: 1px solid var(--green-border); border-radius: 3px;
+        padding: 2px 8px; font-size: 8pt; font-weight: 500; color: var(--green);
+      }
+      .badge-out {
+        display: inline-block; background: var(--red-light);
+        border: 1px solid var(--red-border); border-radius: 3px;
+        padding: 2px 8px; font-size: 8pt; font-weight: 500; color: var(--red);
+      }
+      .badge-bank {
+        display: inline-block; background: var(--accent-light);
+        border: 1px solid var(--accent-border); border-radius: 3px;
+        padding: 2px 8px; font-size: 8pt; font-weight: 500; color: var(--accent);
+      }
+
+      tfoot tr { border-top: 2px solid var(--ink); }
+      tfoot td { padding: 11px 10px; }
+      .tfoot-label { font-size: 7.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); text-align: right; }
+      .tfoot-amount-in  { text-align: right; font-family: "DM Serif Display", Georgia, serif; font-size: 14pt; color: var(--green); }
+      .tfoot-amount-out { text-align: right; font-family: "DM Serif Display", Georgia, serif; font-size: 14pt; color: var(--red); }
+
+      .empty {
+        text-align: center; padding: 32px 0; color: var(--ink-faint);
+        font-size: 9pt; font-style: italic;
+        border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+      }
+
+      .doc-footer {
+        margin-top: 28px; padding-top: 10px; border-top: 1px solid var(--rule);
+        display: flex; justify-content: space-between;
+        font-size: 7pt; color: var(--ink-faint);
+      }
+      .doc-footer .total-count { font-weight: 600; color: var(--ink-soft); }
+    </style>
+  </head>
+  <body>
+
+    <!-- ENCABEZADO -->
+    <div class="masthead">
+      <div class="masthead-left">
+        <div class="label">Reporte oficial</div>
+        <h1>Bancos</h1>
+      </div>
+      <div class="masthead-right">
+        <div class="company">Maná y Asociados</div>
+        <div class="date-block">
+          Generado el {{ generated|date:"d \d\e F \d\e Y" }}<br/>
+          Solo lectura · Uso interno
+        </div>
+      </div>
+    </div>
+
+    <div class="divider">
+      <div class="divider-thick"></div>
+      <div class="divider-thin"></div>
+    </div>
+
+    <div class="filter-row">
+      <span class="filter-label">Filtros</span>
+      <span class="filter-value">{{ filter_label }}</span>
+    </div>
+
+    <!-- TOTALES GLOBALES -->
+    <div class="global-totals">
+      <div class="global-box box-in">
+        <div class="glabel">Total entradas</div>
+        <div class="gval">+${{ total_in_global|cop }}</div>
+      </div>
+      <div class="global-box box-out">
+        <div class="glabel">Total salidas</div>
+        <div class="gval">-${{ total_out_global|cop }}</div>
+      </div>
+      <div class="global-box box-net">
+        <div class="glabel">Balance neto</div>
+        <div class="gval">
+          {% if net_global >= 0 %}+{% endif %}${{ net_global|cop }}
+        </div>
+      </div>
+    </div>
+
+    <!-- RESUMEN POR BANCO -->
+    {% if bank_summary %}
+    <div class="section-label">Resumen por banco</div>
+    <div class="summary-grid">
+      {% for row in bank_summary %}
+      <div class="summary-card">
+        <div class="summary-card-name">{{ row.bank.name }}</div>
+        <div class="summary-card-row">
+          <span class="lbl">Entradas</span>
+          <span class="val-in">+${{ row.total_in|cop }}</span>
+        </div>
+        <div class="summary-card-row">
+          <span class="lbl">Salidas</span>
+          <span class="val-out">-${{ row.total_out|cop }}</span>
+        </div>
+        <div class="summary-card-net">
+          <span class="lbl">Neto</span>
+          <span class="{% if row.net >= 0 %}net-pos{% else %}net-neg{% endif %}">
+            {% if row.net >= 0 %}+{% endif %}${{ row.net|cop }}
+          </span>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- TABLA INGRESOS POR CONSIGNACIÓN -->
+    <div class="section-label">Ingresos por consignación</div>
+    {% if incomes %}
+    <table>
+      <thead>
+        <tr>
+          <th style="width:28px">#</th>
+          <th>Negocio</th>
+          <th>Banco</th>
+          <th>Fecha</th>
+          <th>Turno</th>
+          <th>Persona</th>
+          <th class="th-right">Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for income in incomes %}
+        <tr>
+          <td class="td-num">{{ forloop.counter }}</td>
+          <td><span class="badge-in">{{ income.business.name }}</span></td>
+          <td><span class="badge-bank">{{ income.bank.name|default:"—" }}</span></td>
+          <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
+          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-muted">{{ income.person_name|default:"—" }}</td>
+          <td class="td-right">+${{ income.amount|cop }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"></td>
+          <td class="tfoot-label">Total entradas</td>
+          <td class="tfoot-amount-in">+${{ total_in_global|cop }}</td>
+        </tr>
+      </tfoot>
+    </table>
+    {% else %}
+    <div class="empty">No hay ingresos por consignación para los filtros seleccionados.</div>
+    {% endif %}
+
+    <!-- TABLA EGRESOS POR CONSIGNACIÓN -->
+    <div class="section-label">Egresos por consignación</div>
+    {% if expenses %}
+    <table>
+      <thead>
+        <tr>
+          <th style="width:28px">#</th>
+          <th>Negocio</th>
+          <th>Banco</th>
+          <th>Tipo</th>
+          <th>Descripción</th>
+          <th>Fecha</th>
+          <th class="th-right">Monto</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for expense in expenses %}
+        <tr>
+          <td class="td-num">{{ forloop.counter }}</td>
+          <td><span class="badge-out">{{ expense.business.name }}</span></td>
+          <td><span class="badge-bank">{{ expense.bank.name|default:"—" }}</span></td>
+          <td class="td-muted">{{ expense.get_expense_type_display }}</td>
+          <td class="td-muted">{{ expense.description|default:expense.supplier|default:"—" }}</td>
+          <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
+          <td class="td-right">-${{ expense.amount|cop }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="5"></td>
+          <td class="tfoot-label">Total salidas</td>
+          <td class="tfoot-amount-out">-${{ total_out_global|cop }}</td>
+        </tr>
+      </tfoot>
+    </table>
+    {% else %}
+    <div class="empty">No hay egresos por consignación para los filtros seleccionados.</div>
+    {% endif %}
+
+    <!-- GRÁFICAS -->
+    {% if chart_por_banco or chart_evolucion %}
+    <div style="margin-top:32px; padding-top:16px; border-top:1px solid var(--rule);">
+      <div style="font-size:7pt; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-faint); margin-bottom:20px;">
+        Análisis visual
+      </div>
+      {% if chart_por_banco %}
+      <div style="margin-bottom:24px;">
+        <img src="data:image/png;base64,{{ chart_por_banco }}" style="width:100%; height:auto;" />
+      </div>
+      {% endif %}
+      {% if chart_evolucion %}
+      <div>
+        <img src="data:image/png;base64,{{ chart_evolucion }}" style="width:100%; height:auto;" />
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    <div class="doc-footer">
+      <span>Documento generado automáticamente · Maná y Asociados</span>
+      <span class="total-count">
+        {{ incomes|length }} ingreso{% if incomes|length != 1 %}s{% endif %} ·
+        {{ expenses|length }} egreso{% if expenses|length != 1 %}s{% endif %}
+      </span>
+    </div>
+
+  </body>
+</html>
