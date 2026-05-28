@@ -12,9 +12,11 @@ from django.utils import timezone
 from weasyprint import HTML
 from datetime import date
 from datetime import date as date_type
+from collections import defaultdict
+from django.db.models import Sum
 
 from apps.purchases.models import Purchase
-from apps.cash_closing.models import Expense, Income
+from apps.cash_closing.models import BankAccount, Expense, Income, PaymentMethod
 from apps.businesses.models import Business
 from apps.cash_closing.models import CashClosing
 
@@ -22,7 +24,12 @@ from apps.cash_closing.models import CashClosing
 class ReportIndexView(View):
     def get(self, request):
         businesses = Business.objects.all()
-        return render(request, "reports/report_index.html", {"businesses": businesses})
+        bank_accounts = BankAccount.objects.filter(is_active=True)
+        return render(request, "reports/report_index.html", {
+            "businesses": businesses,
+            "bank_accounts": bank_accounts,
+            "selected_date": str(timezone.localdate()),
+        })
 
 
 class PurchaseReportView(View):
@@ -861,3 +868,189 @@ class CashClosingReportView(View):
             f'attachment; filename="cuadre_caja_{selected_date}.pdf"'
         )
         return response
+
+class BankReportView(View):
+    def get(self, request):
+        businesses = Business.objects.all()
+        bank_accounts = BankAccount.objects.filter(is_active=True)
+        return render(request, "reports/report_index.html", {
+            "businesses": businesses,
+            "bank_accounts": bank_accounts,
+        })
+
+    def post(self, request):
+        start_date = request.POST.get("start_date")
+        end_date = request.POST.get("end_date")
+        business_id = request.POST.get("business")
+        bank_id = request.POST.get("bank")
+        business_name = "Todos los negocios"
+
+        income_qs = Income.objects.select_related("business", "bank").filter(
+            payment_method=PaymentMethod.DEPOSIT
+        )
+        expense_qs = Expense.objects.select_related("business", "bank").filter(
+            payment_method=PaymentMethod.DEPOSIT
+        )
+
+        if start_date and end_date:
+            income_qs = income_qs.filter(date__range=[start_date, end_date])
+            expense_qs = expense_qs.filter(date__range=[start_date, end_date])
+        if business_id:
+            income_qs = income_qs.filter(business_id=business_id)
+            expense_qs = expense_qs.filter(business_id=business_id)
+            try:
+                business_name = Business.objects.get(pk=business_id).name
+            except Business.DoesNotExist:
+                pass
+        if bank_id:
+            income_qs = income_qs.filter(bank_id=bank_id)
+            expense_qs = expense_qs.filter(bank_id=bank_id)
+
+        incomes = list(income_qs.order_by("date"))
+        expenses = list(expense_qs.order_by("date"))
+
+        # Totales por banco
+        banks = BankAccount.objects.filter(is_active=True)
+        if bank_id:
+            banks = banks.filter(pk=bank_id)
+
+        bank_summary = []
+        for bank in banks:
+            total_in = sum(i.amount for i in incomes if i.bank_id == bank.pk)
+            total_out = sum(e.amount for e in expenses if e.bank_id == bank.pk)
+            bank_summary.append({
+                "bank": bank,
+                "total_in": total_in,
+                "total_out": total_out,
+                "net": total_in - total_out,
+            })
+
+        total_in_global = sum(i.amount for i in incomes)
+        total_out_global = sum(e.amount for e in expenses)
+
+        charts = _generate_bank_charts(incomes, expenses, banks)
+
+        filter_label = _build_bank_filter_label(
+            business=business_name,
+            start_date=start_date,
+            end_date=end_date,
+            bank_id=bank_id,
+            banks=banks,
+        )
+
+        html_string = render_to_string(
+            "reports/bank_report.html",
+            {
+                "incomes": incomes,
+                "expenses": expenses,
+                "bank_summary": bank_summary,
+                "total_in_global": total_in_global,
+                "total_out_global": total_out_global,
+                "net_global": total_in_global - total_out_global,
+                "filter_label": filter_label,
+                "generated": date.today(),
+                "business_name": business_name,
+                "start_date": start_date,
+                "end_date": end_date,
+                "chart_por_banco": charts["por_banco"],
+                "chart_evolucion": charts["evolucion"],
+            },
+        )
+
+        pdf = HTML(string=html_string).write_pdf()
+        response = HttpResponse(pdf, content_type="application/pdf")
+        response["Content-Disposition"] = 'attachment; filename="reporte_bancos.pdf"'
+        return response
+
+
+def _build_bank_filter_label(business=None, start_date=None, end_date=None, bank_id=None, banks=None):
+    parts = []
+    if business and business != "Todos los negocios":
+        parts.append(f"Negocio: {business}")
+    if start_date and end_date:
+        parts.append(f"Período: {start_date} → {end_date}")
+    if bank_id and banks:
+        bank = next((b for b in banks if str(b.pk) == str(bank_id)), None)
+        if bank:
+            parts.append(f"Banco: {bank.name}")
+    return " · ".join(parts) if parts else "Todos los registros"
+
+
+def _generate_bank_charts(incomes, expenses, banks):
+    from collections import defaultdict
+
+    charts = {}
+    C_IN = "#1a7c4a"
+    C_OUT = "#c8421a"
+
+    def fig_to_base64(fig):
+        buf = io.BytesIO()
+        fig.savefig(buf, format="png", dpi=150, bbox_inches="tight",
+                    facecolor="white", edgecolor="none")
+        buf.seek(0)
+        encoded = base64.b64encode(buf.read()).decode("utf-8")
+        plt.close(fig)
+        return encoded
+
+    # ── Gráfica 1: Entradas vs Salidas por banco ──
+    bank_names = [b.name for b in banks]
+    ins  = [sum(i.amount for i in incomes  if i.bank_id == b.pk) for b in banks]
+    outs = [sum(e.amount for e in expenses if e.bank_id == b.pk) for b in banks]
+
+    if any(v > 0 for v in ins + outs):
+        x = range(len(bank_names))
+        fig, ax = plt.subplots(figsize=(8, max(3, len(bank_names) * 1.2)))
+        width = 0.35
+        bars_in  = ax.bar([i - width/2 for i in x], ins,  width, label="Entradas", color=C_IN,  edgecolor="white")
+        bars_out = ax.bar([i + width/2 for i in x], outs, width, label="Salidas",  color=C_OUT, edgecolor="white")
+        ax.set_xticks(list(x))
+        ax.set_xticklabels(bank_names, fontsize=8)
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", ".")))
+        ax.tick_params(axis="y", labelsize=7)
+        ax.legend(fontsize=8, frameon=False)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.set_facecolor("#f9fafb")
+        ax.set_title("Entradas vs Salidas por banco", fontsize=9, fontweight="bold", pad=8)
+        fig.patch.set_facecolor("white")
+        plt.tight_layout()
+        charts["por_banco"] = fig_to_base64(fig)
+    else:
+        charts["por_banco"] = None
+
+    # ── Gráfica 2: Evolución diaria (entradas - salidas) ──
+    from collections import defaultdict
+    daily_in  = defaultdict(float)
+    daily_out = defaultdict(float)
+    for i in incomes:
+        daily_in[str(i.date)]  += float(i.amount)
+    for e in expenses:
+        daily_out[str(e.date)] += float(e.amount)
+
+    all_dates = sorted(set(daily_in.keys()) | set(daily_out.keys()))
+
+    if len(all_dates) > 1:
+        vals_in  = [daily_in[d]  for d in all_dates]
+        vals_out = [daily_out[d] for d in all_dates]
+        fig, ax = plt.subplots(figsize=(8, 3))
+        ax.plot(all_dates, vals_in,  color=C_IN,  linewidth=1.5, marker="o", markersize=4, label="Entradas")
+        ax.plot(all_dates, vals_out, color=C_OUT, linewidth=1.5, marker="o", markersize=4, label="Salidas")
+        ax.fill_between(all_dates, vals_in, alpha=0.08, color=C_IN)
+        ax.fill_between(all_dates, vals_out, alpha=0.08, color=C_OUT)
+        step = max(1, len(all_dates) // 8)
+        ax.set_xticks(all_dates[::step])
+        ax.set_xticklabels(all_dates[::step], rotation=30, fontsize=7)
+        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", ".")))
+        ax.tick_params(axis="y", labelsize=7)
+        ax.legend(fontsize=8, frameon=False)
+        ax.spines["top"].set_visible(False)
+        ax.spines["right"].set_visible(False)
+        ax.set_facecolor("#f9fafb")
+        ax.set_title("Evolución diaria de movimientos bancarios", fontsize=9, fontweight="bold", pad=8)
+        fig.patch.set_facecolor("white")
+        plt.tight_layout()
+        charts["evolucion"] = fig_to_base64(fig)
+    else:
+        charts["evolucion"] = None
+
+    return charts

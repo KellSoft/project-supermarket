@@ -86,7 +86,72 @@
         </div>
       </div>
     </div>
+{# ── Tarjeta Bancos ── #}
+<div class="col-md-4">
+  <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a3a7c !important">
+    <div class="card-body d-flex flex-column align-items-start p-4">
+      <div class="fs-2 mb-3">🏦</div>
+      <h5 class="fw-semibold mb-1">Bancos</h5>
+      <p class="text-muted small mb-4">
+        Ingresos y egresos por consignación, agrupados por banco y período.
+      </p>
+      <button class="btn btn-sm mt-auto" style="background:#1a3a7c; color:#fff"
+              data-bs-toggle="modal" data-bs-target="#modalBancos">
+        Generar PDF
+      </button>
+    </div>
+  </div>
+</div>
 
+<!-- MODAL BANCOS -->
+<div class="modal fade" id="modalBancos" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'reports:bank_report' %}">
+        {% csrf_token %}
+        <div class="modal-header">
+          <h5 class="modal-title">🏦 Reporte de Bancos</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body row g-3">
+          <div class="col-12">
+            <label class="form-label small text-muted">Negocio</label>
+            <select name="business" class="form-select">
+              <option value="">Todos los negocios</option>
+              {% for b in businesses %}
+              <option value="{{ b.pk }}">{{ b.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label small text-muted">Banco</label>
+            <select name="bank" class="form-select">
+              <option value="">Todos los bancos</option>
+              {% for bank in bank_accounts %}
+              <option value="{{ bank.pk }}">{{ bank.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label small text-muted">Desde</label>
+            <input type="date" name="start_date" class="form-control">
+          </div>
+          <div class="col-6">
+            <label class="form-label small text-muted">Hasta</label>
+            <input type="date" name="end_date" class="form-control">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary btn-sm"
+                  data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm" style="background:#1a3a7c; color:#fff">
+            ⬇ Descargar PDF
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
     {# ── Tarjeta Egresos ── #}
     <div class="col-md-4">
       <div class="card h-100 shadow-sm border-0">
