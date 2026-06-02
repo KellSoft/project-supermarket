@@ -99,9 +99,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 import dj_database_url
 
 DATABASES = {
-    "default": dj_database_url.config(
+    'default': dj_database_url.config(
         default=f"postgres://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME')}",
-        conn_max_age=600,
+        conn_max_age=600
     )
 }
 
@@ -152,3 +152,7 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "dashboard:index"
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://mana-negocios.up.railway.app",
+]
