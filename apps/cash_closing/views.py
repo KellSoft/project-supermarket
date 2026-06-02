@@ -370,3 +370,32 @@ class BankAccountView(View):
             "selected_date":   selected_date,
             "selected_business": selected_biz,
         })
+
+class IncomeEditView(View):
+    def post(self, request, pk):
+        income = get_object_or_404(Income, pk=pk)
+        form = IncomeForm(request.POST, instance=income)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Ingreso actualizado.")
+        else:
+            for error in form.errors.values():
+                messages.error(request, error.as_text())
+        url = reverse("cash_closing:cash-flow")
+        date = request.POST.get("date", str(localdate()))
+        return HttpResponseRedirect(f"{url}?date={date}&tab=income")
+
+
+class ExpenseEditView(View):
+    def post(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        form = ExpenseForm(request.POST, instance=expense)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Egreso actualizado.")
+        else:
+            for error in form.errors.values():
+                messages.error(request, error.as_text())
+        url = reverse("cash_closing:cash-flow")
+        date = request.POST.get("date", str(localdate()))
+        return HttpResponseRedirect(f"{url}?date={date}&tab=expense")

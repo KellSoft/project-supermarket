@@ -247,7 +247,12 @@
               <td class="text-muted small">{{ income.person_name|default:"—" }}</td>
               <td class="text-end fw-semibold text-success">${{ income.amount|floatformat:"0g" }}</td>
               <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
-              <td class="text-end pe-3">
+              <td class="text-end pe-3 d-flex gap-2 justify-content-end align-items-center">
+                <button type="button"
+                        class="btn btn-link btn-sm text-primary p-0"
+                        onclick="openIncomeEdit({{ income.pk }}, '{{ income.business.pk }}', '{{ income.date }}', '{{ income.payment_method }}', '{{ income.bank.pk|default:'' }}', {{ income.shift }}, '{{ income.person_name|default:'' }}', {{ income.amount }})">
+                  Editar
+                </button>
                 <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
                       class="delete-form" data-kind="income" style="display:inline">
                   {% csrf_token %}
@@ -483,14 +488,18 @@
               <td class="text-muted small">{{ expense.date }}</td>
               <td class="text-end fw-semibold text-danger">${{ expense.amount|floatformat:"0g" }}</td>
               <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>
-              <td class="text-end pe-3">
+              <td class="text-end pe-3 d-flex gap-2 justify-content-end align-items-center">
+                <button type="button"
+                        class="btn btn-link btn-sm text-primary p-0"
+                        onclick="openExpenseEdit({{ expense.pk }}, '{{ expense.business.pk }}', '{{ expense.date }}', '{{ expense.expense_type }}', '{{ expense.payment_method }}', '{{ expense.bank.pk|default:'' }}', '{{ expense.supplier|default:'' }}', '{{ expense.invoice_number|default:'' }}', '{{ expense.employee_name|default:'' }}', {{ expense.amount }}, '{{ expense.description|default:'' }}')">
+                  Editar
+                </button>
                 <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
                       class="delete-form" data-kind="expense" style="display:inline">
                   {% csrf_token %}
                   <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
                 </form>
               </td>
-            </tr>
             {% empty %}
             <tr>
               <td colspan="10" class="text-center text-muted py-4 small">Sin egresos para esta fecha.</td>
@@ -531,11 +540,187 @@
     </div>
   </div>
 </div>
+<!-- Modal editar ingreso -->
+<div class="modal fade" id="editIncomeModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-success bg-opacity-10 border-0">
+        <h6 class="modal-title fw-semibold text-success">✏️ Editar ingreso</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" id="editIncomeForm" x-data="{ method: 'cash' }">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row g-3 align-items-end">
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Negocio</label>
+              <select name="business" id="ei_business" class="form-select form-select-sm" required>
+                {% for b in businesses %}
+                <option value="{{ b.pk }}">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label small text-muted mb-1">Fecha</label>
+              <input type="date" name="date" id="ei_date" class="form-control form-control-sm" required>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Método de pago</label>
+              <div class="btn-group w-100" role="group">
+                <button type="button" class="btn btn-sm"
+                        :class="method === 'cash' ? 'btn-success' : 'btn-outline-success'"
+                        @click="method = 'cash'">Efectivo</button>
+                <button type="button" class="btn btn-sm"
+                        :class="method === 'deposit' ? 'btn-primary' : 'btn-outline-primary'"
+                        @click="method = 'deposit'">Consignación</button>
+              </div>
+              <input type="hidden" name="payment_method" :value="method">
+            </div>
+
+            <div class="col-md-3" x-show="method === 'deposit'" x-cloak>
+              <label class="form-label small text-muted mb-1">Banco</label>
+              <select name="bank" id="ei_bank" class="form-select form-select-sm">
+                <option value="">— Banco —</option>
+                {% for bank in bank_accounts %}
+                <option value="{{ bank.pk }}">{{ bank.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label small text-muted mb-1">Turno</label>
+              <select name="shift" id="ei_shift" class="form-select form-select-sm" required>
+                <option value="1">Turno 1</option>
+                <option value="2">Turno 2</option>
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Persona</label>
+              <input type="text" name="person_name" id="ei_person" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Valor ($)</label>
+              <input type="text" inputmode="numeric" name="amount" id="ei_amount"
+                     class="form-control form-control-sm" required>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm btn-success px-4">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- Modal editar egreso -->
+<div class="modal fade" id="editExpenseModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header bg-danger bg-opacity-10 border-0">
+        <h6 class="modal-title fw-semibold text-danger">✏️ Editar egreso</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <form method="post" id="editExpenseForm" x-data="{ method: 'cash', expType: 'general_expense' }">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="row g-3 align-items-end">
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Tipo de egreso</label>
+              <select name="expense_type" id="ee_type" class="form-select form-select-sm"
+                      x-model="expType" required>
+                {% for val, label in expense_type_choices %}
+                <option value="{{ val }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Negocio</label>
+              <select name="business" id="ee_business" class="form-select form-select-sm" required>
+                {% for b in businesses %}
+                <option value="{{ b.pk }}">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label small text-muted mb-1">Fecha</label>
+              <input type="date" name="date" id="ee_date" class="form-control form-control-sm" required>
+            </div>
+
+            <div class="col-md-3" x-show="expType === 'purchase'" x-cloak>
+              <label class="form-label small text-muted mb-1">Proveedor</label>
+              <input type="text" name="supplier" id="ee_supplier" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-2" x-show="expType === 'purchase'" x-cloak>
+              <label class="form-label small text-muted mb-1">N° Factura</label>
+              <input type="text" name="invoice_number" id="ee_invoice" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-3" x-show="expType === 'staff_payment'" x-cloak>
+              <label class="form-label small text-muted mb-1">Persona pagada</label>
+              <input type="text" name="employee_name" id="ee_employee" class="form-control form-control-sm">
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label small text-muted mb-1">Método</label>
+              <div class="btn-group w-100" role="group">
+                <button type="button" class="btn btn-sm"
+                        :class="method === 'cash' ? 'btn-danger' : 'btn-outline-danger'"
+                        @click="method = 'cash'">Efectivo</button>
+                <button type="button" class="btn btn-sm"
+                        :class="method === 'deposit' ? 'btn-warning' : 'btn-outline-warning'"
+                        @click="method = 'deposit'">Consignación</button>
+              </div>
+              <input type="hidden" name="payment_method" :value="method">
+            </div>
+
+            <div class="col-md-3" x-show="method === 'deposit'" x-cloak>
+              <label class="form-label small text-muted mb-1">Banco</label>
+              <select name="bank" id="ee_bank" class="form-select form-select-sm">
+                <option value="">— Banco —</option>
+                {% for bank in bank_accounts %}
+                <option value="{{ bank.pk }}">{{ bank.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <label class="form-label small text-muted mb-1">Monto ($)</label>
+              <input type="text" inputmode="numeric" name="amount" id="ee_amount"
+                     class="form-control form-control-sm" required>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label small text-muted mb-1">Descripción</label>
+              <input type="text" name="description" id="ee_description" class="form-control form-control-sm">
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-sm btn-light" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-sm btn-danger px-4">Guardar cambios</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
 
 <style>
 [x-cloak] { display: none !important; }
 </style>
-
+<span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit' pk=0 %}"  hidden></span>
+<span id="expense-edit-url" data-url="{% url 'cash_closing:expense-edit' pk=0 %}" hidden></span>
 <script>
 function liveFormat(input) {
   const start = input.selectionStart;
@@ -560,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function() {
   bindAmount("incomeAmount");
   bindAmount("expenseAmount");
 
+  // ── Modal confirmar eliminación ──
   const modal      = new bootstrap.Modal(document.getElementById("confirmModal"));
   const confirmBtn = document.getElementById("confirmBtn");
   let pendingForm  = null;
@@ -582,6 +768,85 @@ document.addEventListener("DOMContentLoaded", function() {
       pendingForm = null;
     }
   });
+
+  // ── Formateo en vivo para modales de edición ──
+  ["ei_amount", "ee_amount"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener("input", function() { liveFormat(this); });
+  });
+
+  // Limpiar monto antes de enviar modal ingreso
+  document.getElementById("editIncomeForm").addEventListener("submit", function() {
+    const a = document.getElementById("ei_amount");
+    a.value = a.value.replace(/\./g, "") || "0";
+  });
+
+  // Limpiar monto antes de enviar modal egreso
+  document.getElementById("editExpenseForm").addEventListener("submit", function() {
+    const a = document.getElementById("ee_amount");
+    a.value = a.value.replace(/\./g, "") || "0";
+  });
+
+  // ── Abrir modal editar ingreso ──
+  window.openIncomeEdit = function(pk, business, date, method, bank, shift, person, amount) {
+    const form = document.getElementById("editIncomeForm");
+    const urlTemplate = document.getElementById("income-edit-url").dataset.url;
+    form.action = urlTemplate.replace("/0/", `/${pk}/`);
+
+    document.getElementById("ei_business").value = business;
+    document.getElementById("ei_date").value     = date;
+    document.getElementById("ei_shift").value    = shift;
+    document.getElementById("ei_person").value   = person;
+
+    const amtInput = document.getElementById("ei_amount");
+    amtInput.value = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
+
+    // Sincronizar método de pago con Alpine
+    const alpineData = Alpine.$data(form);
+    if (alpineData) {
+      alpineData.method = method;
+    }
+
+    setTimeout(() => {
+      document.getElementById("ei_bank").value = bank;
+    }, 50);
+
+    new bootstrap.Modal(document.getElementById("editIncomeModal")).show();
+  };
+
+  // ── Abrir modal editar egreso ──
+  window.openExpenseEdit = function(pk, business, date, expType, method, bank, supplier, invoice, employee, amount, description) {
+    const form = document.getElementById("editExpenseForm");
+    const urlTemplate = document.getElementById("expense-edit-url").dataset.url;
+    form.action = urlTemplate.replace("/0/", `/${pk}/`);
+
+    document.getElementById("ee_business").value    = business;
+    document.getElementById("ee_date").value        = date;
+    document.getElementById("ee_supplier").value    = supplier;
+    document.getElementById("ee_invoice").value     = invoice;
+    document.getElementById("ee_employee").value    = employee;
+    document.getElementById("ee_description").value = description;
+
+    const amtInput = document.getElementById("ee_amount");
+    amtInput.value = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
+
+    // Sincronizar tipo y método con Alpine, luego banco
+    const alpineData = Alpine.$data(form);
+    if (alpineData) {
+      alpineData.expType = expType;
+      alpineData.method  = method;
+    }
+
+    setTimeout(() => {
+      document.getElementById("ee_bank").value = bank;
+      // Disparar change para que Alpine reactive x-model si no usó $data
+      document.getElementById("ee_type").dispatchEvent(new Event("change"));
+    }, 50);
+
+    new bootstrap.Modal(document.getElementById("editExpenseModal")).show();
+  };
+
 });
 </script>
 

@@ -14,4 +14,6 @@ urlpatterns = [
     path("cuadre/", views.CashClosingView.as_view(), name="cash-closing"),
     path("cuadre/historial/",views.CashClosingHistoryView.as_view(),name="cash-closing-history",),
     path("bancos/", views.BankAccountView.as_view(), name="bank-accounts"),
+    path("income/<int:pk>/edit/",  views.IncomeEditView.as_view(),  name="income-edit"),
+    path("expense/<int:pk>/edit/", views.ExpenseEditView.as_view(), name="expense-edit"),
 ]
