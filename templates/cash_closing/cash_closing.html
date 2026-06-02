@@ -3,29 +3,33 @@
 
 {% block content %}
 
-{% for msg in messages %}
-<div class="alert alert-{% if msg.tags == 'error' %}danger{% else %}{{ msg.tags }}{% endif %} alert-dismissible fade show py-2 small mb-3" role="alert">
-  {{ msg }}
-  <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-{% endfor %}
-
 <div class="d-flex align-items-center justify-content-between mb-4">
   <div>
     <h5 class="mb-0 fw-semibold">🏦 Cuadre de Caja</h5>
     <small class="text-muted">{{ closing.date }}</small>
   </div>
   <div class="d-flex align-items-center gap-2">
+    <form method="get" class="mb-0" novalidate>
+      <input type="date"
+       id="dateFilter"
+       value="{{ selected_date }}"
+       max="{% now 'Y-m-d' %}"
+       class="form-control form-control-sm"
+       style="width:155px"
+       title="Ver cuadre de otra fecha">
+
+      <script>
+      document.getElementById('dateFilter').addEventListener('change', function () {
+        const val = this.value;
+        if (!val) return;
+        const today = new Date().toISOString().split('T')[0];
+        if (val > today) { this.value = today; return; }
+        window.location.href = '?date=' + val;
+      });
+      </script>
+    </form>
     {% if closing.is_closed %}
       <span class="badge bg-success px-3 py-2">✓ Cerrado</span>
-      <form method="post">
-        {% csrf_token %}
-        <input type="hidden" name="_action" value="reopen_closing">
-        <button type="submit" class="btn btn-sm btn-outline-warning"
-                onclick="return confirm('¿Reabrir el cuadre? Solo hazlo si necesitas corregir algo.')">
-          Reabrir
-        </button>
-      </form>
     {% else %}
       <span class="badge bg-warning text-dark px-3 py-2">⏳ Abierto</span>
     {% endif %}
@@ -35,22 +39,37 @@
   </div>
 </div>
 
-{% if is_first and not closing.is_closed %}
-<div class="alert alert-info d-flex align-items-center gap-3 mb-4">
-  <span class="fs-4">💡</span>
-  <div class="flex-grow-1">
-    <div class="fw-semibold mb-1">Primer cuadre del sistema</div>
-    <div class="small">No hay cierre anterior. Ingresa el efectivo inicial que hay en caja ahora.</div>
+{% if is_first and not closing.is_closed and is_today %}
+<div class="alert alert-info border-0 mb-4 p-0 overflow-hidden">
+  <div class="d-flex align-items-stretch">
+    <div class="d-flex align-items-center justify-content-center px-4 bg-info bg-opacity-25">
+      <span style="font-size:2rem">🏦</span>
+    </div>
+    <div class="flex-grow-1 p-3">
+      <div class="fw-semibold mb-1">Bienvenido — primer cuadre del sistema</div>
+      <div class="text-muted small mb-3">
+        No existe un cierre anterior. Ingresa el efectivo físico que hay en caja en este momento para comenzar.
+      </div>
+      <form method="post" class="d-flex align-items-center gap-2">
+        {% csrf_token %}
+        <input type="hidden" name="_action" value="set_opening">
+        <div class="input-group input-group-sm" style="width:220px">
+          <span class="input-group-text text-muted">$</span>
+          <input type="text"
+                 inputmode="numeric"
+                 name="opening_balance"
+                 id="opening-balance-input"
+                 value="{{ closing.opening_balance|floatformat:'0g' }}"
+                 class="form-control"
+                 placeholder="0"
+                 required>
+        </div>
+        <button type="submit" class="btn btn-info btn-sm text-white">
+          Guardar saldo inicial
+        </button>
+      </form>
+    </div>
   </div>
-  <form method="post" class="d-flex align-items-center gap-2">
-    {% csrf_token %}
-    <input type="hidden" name="_action" value="set_opening">
-    <input type="text" inputmode="numeric" name="opening_balance" id="opening-balance-input"
-       value="{{ closing.opening_balance }}"
-       class="form-control form-control-sm" style="width:160px"
-       placeholder="0" required>
-    <button type="submit" class="btn btn-primary btn-sm">Guardar</button>
-  </form>
 </div>
 {% endif %}
 
@@ -65,6 +84,7 @@
         <form method="post" id="denominationsForm">
           {% csrf_token %}
           <input type="hidden" name="_action" value="save_denominations">
+          <input type="hidden" name="_date" value="{{ closing.date|date:'Y-m-d' }}">
 
           <table class="table table-sm align-middle mb-0">
             <thead class="table-light">
@@ -97,7 +117,7 @@
                            {% if closing.is_closed %}readonly{% endif %}
                            style="width:90px;margin:auto">
                   </td>
-                  <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|intcomma }}</td>
+                  <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|floatformat:"0g" }}</td>
                 </tr>
                 {% endif %}
               {% endfor %}
@@ -128,7 +148,7 @@
                            {% if closing.is_closed %}readonly{% endif %}
                            style="width:90px;margin:auto">
                   </td>
-                  <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|intcomma }}</td>
+                  <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|floatformat:"0g" }}</td>
                 </tr>
                 {% endif %}
               {% endfor %}
@@ -140,12 +160,6 @@
 
             </tbody>
           </table>
-
-          {% if not closing.is_closed %}
-          <div class="p-3 border-top">
-            <button type="submit" class="btn btn-primary btn-sm w-100">💾 Guardar conteo</button>
-          </div>
-          {% endif %}
 
         </form>
       </div>
@@ -161,31 +175,31 @@
           <tbody>
             <tr>
               <td class="ps-3 text-muted small">Saldo inicial</td>
-              <td class="text-end pe-3 fw-semibold">${{ closing.opening_balance|floatformat:"0"|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold">${{ closing.opening_balance|floatformat:"0g" }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">+ Ingresos efectivo</td>
-              <td class="text-end pe-3 fw-semibold text-success">+${{ total_income_cash|floatformat:"0"|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold text-success">+${{ total_income_cash|floatformat:"0g" }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">− Egresos efectivo</td>
-              <td class="text-end pe-3 fw-semibold text-danger">−${{ total_expense_cash|floatformat:"0"|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold text-danger">−${{ total_expense_cash|floatformat:"0g" }}</td>
             </tr>
             <tr class="table-light">
               <td class="ps-3 fw-semibold small">Efectivo esperado en caja</td>
-              <td class="text-end pe-3 fw-bold text-primary">${{ expected_cash|floatformat:"0"|intcomma }}</td>
+              <td class="text-end pe-3 fw-bold text-primary">${{ expected_cash|floatformat:"0g" }}</td>
             </tr>
             <tr>
               <td class="ps-3 text-muted small">Efectivo contado (calculadora)</td>
-              <td class="text-end pe-3 fw-semibold" id="summaryPhysical">${{ closing.physical_cash|floatformat:"0"|intcomma }}</td>
+              <td class="text-end pe-3 fw-semibold" id="summaryPhysical">${{ closing.physical_cash|floatformat:"0g" }}</td>
             </tr>
             <tr class="{% if closing.difference == 0 %}table-success{% elif closing.difference > 0 %}table-primary{% else %}table-danger{% endif %}">
               <td class="ps-3 fw-semibold">Diferencia</td>
               <td class="text-end pe-3 fw-bold" id="summaryDiff" data-expected="{{ expected_cash }}">
                 {% if closing.difference > 0 %}
-                  +${{ closing.difference|floatformat:"0"|intcomma }} (sobrante)
+                  +${{ closing.difference|floatformat:"0g" }} (sobrante)
                 {% elif closing.difference < 0 %}
-                  −${{ closing.difference|floatformat:"0"|intcomma|slice:"1:" }} (faltante)
+                  −${{ closing.difference|floatformat:"0g"|slice:"1:" }} (faltante)
                 {% else %}
                   ✓ Cuadra
                 {% endif %}
@@ -197,41 +211,25 @@
     </div>
 
     {% if not closing.is_closed %}
-    <div class="card border mb-3">
-      <div class="card-header bg-white py-2 small fw-semibold text-muted">✏️ Ajustes</div>
-      <div class="card-body py-2">
-        <form method="post" class="row g-2 align-items-end">
-          {% csrf_token %}
-          <input type="hidden" name="_action" value="edit_closing">
-          <div class="col-md-5">
-            <label class="form-label small text-muted mb-1">Saldo inicial ($)</label>
-            <input type="number" name="opening_balance" value="{{ closing.opening_balance }}"
-                   class="form-control form-control-sm" min="0" step="1">
-          </div>
-          <div class="col-md-5">
-            <label class="form-label small text-muted mb-1">Notas</label>
-            <input type="text" name="notes" value="{{ closing.notes }}"
-                   class="form-control form-control-sm" placeholder="Observaciones...">
-          </div>
-          <div class="col-md-2 d-grid">
-            <button type="submit" class="btn btn-outline-secondary btn-sm">Guardar</button>
-          </div>
-        </form>
-      </div>
-    </div>
-    {% endif %}
-
-    {% if not closing.is_closed %}
-    <form method="post" onsubmit="return confirm('¿Cerrar el cuadre del día? Esta acción bloqueará nuevas modificaciones.')">
+    <form method="post">
       {% csrf_token %}
+      <input type="hidden" name="_date" value="{{ closing.date|date:'Y-m-d' }}">
       <input type="hidden" name="_action" value="close_closing">
-      <button type="submit" class="btn btn-success w-100">🔒 Cerrar cuadre del día</button>
+      <button type="submit" class="btn btn-success w-100"
+              onclick="return confirm('¿Cerrar el cuadre del día?')">
+        🔒 Cerrar cuadre
+      </button>
     </form>
     {% else %}
-    <div class="alert alert-success py-2 small mb-0">
-      <strong>Cuadre cerrado.</strong>
-      El efectivo final de ${{ closing.physical_cash|floatformat:"0"|intcomma }} será el saldo inicial de mañana.
-    </div>
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="_date" value="{{ closing.date|date:'Y-m-d' }}">
+      <input type="hidden" name="_action" value="reopen_closing">
+      <button type="submit" class="btn btn-sm btn-outline-warning w-100"
+              onclick="return confirm('¿Reabrir el cuadre?')">
+        Reabrir
+      </button>
+    </form>
     {% endif %}
 
   </div>
@@ -240,6 +238,42 @@
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const fmt = n => "$" + Math.round(n).toLocaleString("es-CO");
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  const closingDate = "{{ closing.date|date:'Y-m-d' }}";
+  const isClosed = {{ closing.is_closed|yesno:"true,false" }};
+
+  let saveTimer = null;
+  let saveIndicator = document.getElementById("saveIndicator");
+
+  function showStatus(msg, ok) {
+    if (!saveIndicator) return;
+    saveIndicator.textContent = msg;
+    saveIndicator.className = "small ms-2 " + (ok ? "text-success" : "text-danger");
+    clearTimeout(saveIndicator._hide);
+    saveIndicator._hide = setTimeout(() => saveIndicator.textContent = "", 3000);
+  }
+
+  function scheduleAutoSave() {
+    if (isClosed) return;
+    clearTimeout(saveTimer);
+    showStatus("...", true);
+    saveTimer = setTimeout(doSave, 600);
+  }
+
+  function doSave() {
+    const form = document.getElementById("denominationsForm");
+    const data = new FormData();
+    data.append("csrfmiddlewaretoken", csrfToken);
+    data.append("_action", "save_denominations");
+    data.append("_date", closingDate);
+    form.querySelectorAll(".denom-input").forEach(inp => {
+      data.append("qty_" + inp.dataset.value, inp.value || 0);
+    });
+
+    fetch(form.action || window.location.pathname, { method: "POST", body: data })
+      .then(r => showStatus(r.ok ? "✓ Guardado" : "Error al guardar", r.ok))
+      .catch(() => showStatus("Error de conexión", false));
+  }
 
   function recalc() {
     let totalBills = 0;
@@ -251,7 +285,6 @@ document.addEventListener("DOMContentLoaded", function () {
       const sub = qty * val;
       const target = document.getElementById(inp.dataset.target);
       if (target) target.textContent = fmt(sub);
-
       if (val >= 1000) totalBills += sub;
       else             totalCoins += sub;
     });
@@ -283,23 +316,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.querySelectorAll(".denom-input").forEach(function (inp) {
-    inp.addEventListener("input", recalc);
+    inp.addEventListener("input", function () {
+      recalc();
+      scheduleAutoSave();
+    });
   });
 
   recalc();
 });
+
 const obInput = document.getElementById('opening-balance-input');
 if (obInput) {
-  obInput.addEventListener('input', function() {
-    const pos  = this.selectionStart;
-    const prev = this.value.length;
+  obInput.addEventListener('input', function () {
+    const pos    = this.selectionStart;
+    const prev   = this.value.length;
     const digits = this.value.replace(/\D/g, '');
     if (!digits) { this.value = ''; return; }
-    this.value = parseInt(digits).toLocaleString('es-CO');
+    this.value = parseInt(digits, 10).toLocaleString('es-CO');
     const diff = this.value.length - prev;
     this.setSelectionRange(pos + diff, pos + diff);
   });
-  obInput.closest('form').addEventListener('submit', function() {
+  obInput.closest('form').addEventListener('submit', function () {
     obInput.value = obInput.value.replace(/\./g, '') || '0';
   });
 }

@@ -30,7 +30,6 @@
     padding: 0 4px;
   }
 
-  /* ── TOP BAR ── */
   .dash-topbar {
     display: flex;
     justify-content: space-between;
@@ -57,19 +56,11 @@
     font-weight: 500;
   }
 
-  /* ── METRIC PILLS ── */
   .metric-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     margin-bottom: 28px;
-  }
-
-  .metric-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-bottom: 28px;
   }
 
   .metric-card {
@@ -89,7 +80,6 @@
   }
 
   .metric-card.mc-green::before { background: var(--green); }
-  .metric-card.mc-blue::before  { background: var(--blue);  }
   .metric-card.mc-red::before   { background: var(--red);   }
 
   .metric-card .mc-label {
@@ -118,7 +108,6 @@
   }
 
   .mc-green .mc-value { color: var(--green); }
-  .mc-blue  .mc-value { color: var(--blue);  }
   .mc-red   .mc-value { color: var(--red);   }
 
   .metric-card .mc-sub {
@@ -129,17 +118,6 @@
     border-top: 1px solid var(--rule);
   }
 
-  .mc-green .mc-value { color: var(--green); }
-  .mc-blue  .mc-value { color: var(--blue);  }
-  .mc-red   .mc-value { color: var(--red);   }
-
-  .metric-card .mc-sub {
-    font-size: 0.72rem;
-    color: var(--ink-faint);
-    margin-top: 4px;
-  }
-
-  /* ── CHART GRID ── */
   .chart-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -209,47 +187,35 @@
 
 <div class="dash-wrap">
 
-  <!-- TOP BAR -->
   <div class="dash-topbar">
     <h1>Dashboard</h1>
     <span class="date-tag" id="js-today"></span>
   </div>
 
-  <!-- MÉTRICAS HOY -->
-   <div class="metric-row">
-  <div class="metric-card mc-green">
-  <div class="mc-label">Ingresos hoy (Transeferencia y Efectivo)</div>
-  <div class="mc-value">
-    <span class="mc-currency">$</span>{{ today_income|default:0|cop }}
-  </div>
-  <div class="mc-sub">Todos los negocios</div>
-  </div>
-
-  <div class="metric-card mc-red">
-    <div class="mc-label">Egresos hoy (Transeferencia y Efectivo)</div>
-    <div class="mc-value">
-      <span class="mc-currency">$</span>{{ today_expense|default:0|cop }}
+  <div class="metric-row">
+    <div class="metric-card mc-green">
+      <div class="mc-label">Ingresos hoy (Transferencia y Efectivo)</div>
+      <div class="mc-value">
+        <span class="mc-currency">$</span>{{ today_income|default:0|cop }}
+      </div>
+      <div class="mc-sub">Todos los negocios</div>
     </div>
-    <div class="mc-sub">Todos los negocios</div>
-  </div>
 
-  <div class="metric-card mc-blue">
-    <div class="mc-label">Compras hoy</div>
-    <div class="mc-value">
-      <span class="mc-currency">$</span>{{ today_purchases|default:0|cop }}
+    <div class="metric-card mc-red">
+      <div class="mc-label">Egresos hoy (Transferencia y Efectivo)</div>
+      <div class="mc-value">
+        <span class="mc-currency">$</span>{{ today_expense|default:0|cop }}
+      </div>
+      <div class="mc-sub">Todos los negocios</div>
     </div>
-    <div class="mc-sub">Total facturado</div>
-  </div>
   </div>
 
-  <!-- GRÁFICAS -->
   <div class="chart-grid">
 
-    <!-- Gráfica 1: Ingresos vs Egresos 30 días — FULL WIDTH -->
     <div class="chart-box chart-full">
       <div class="cb-header">
         <div>
-          <div class="cb-title">Ingresos vs Egresos (Transeferencia y Efectivo)</div>
+          <div class="cb-title">Ingresos vs Egresos (Transferencia y Efectivo)</div>
           <div class="cb-sub">Últimos 30 días</div>
         </div>
         <div class="cb-legend">
@@ -260,7 +226,6 @@
       <canvas id="chart1" height="90"></canvas>
     </div>
 
-    <!-- Gráfica 2: Ingresos vs Egresos por negocio -->
     <div class="chart-box">
       <div class="cb-header">
         <div>
@@ -275,40 +240,25 @@
       <canvas id="chart2" height="180"></canvas>
     </div>
 
-    <!-- Gráfica 4: Top proveedores -->
     <div class="chart-box">
-      <div class="cb-header">
-        <div>
-          <div class="cb-title">Top proveedores</div>
-          <div class="cb-sub">Por monto total comprado</div>
-        </div>
-      </div>
-      <canvas id="chart4" height="180"></canvas>
-    </div>
-
-    <!-- Gráfica 7: Ingresos por negocio este mes -->
-    <div class="chart-box chart-full">
       <div class="cb-header">
         <div>
           <div class="cb-title">Ingresos por negocio</div>
           <div class="cb-sub">Mes actual</div>
         </div>
       </div>
-      <canvas id="chart7" height="70"></canvas>
+      <canvas id="chart7" height="180"></canvas>
     </div>
 
   </div>
 </div>
 
-<!-- Chart.js -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
 <script>
-  // Fecha de hoy
   document.getElementById('js-today').textContent = new Date().toLocaleDateString('es-CO', {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
   });
 
-  // Datos desde Django
   const c1Labels   = {{ chart1_labels|safe }};
   const c1Incomes  = {{ chart1_incomes|safe }};
   const c1Expenses = {{ chart1_expenses|safe }};
@@ -317,26 +267,21 @@
   const c2Incomes  = {{ chart2_incomes|safe }};
   const c2Expenses = {{ chart2_expenses|safe }};
 
-  const c4Labels = {{ chart4_labels|safe }};
-  const c4Values = {{ chart4_values|safe }};
-
   const c7Labels = {{ chart7_labels|safe }};
   const c7Values = {{ chart7_values|safe }};
 
-  // Defaults globales
   Chart.defaults.font.family = "'DM Sans', sans-serif";
   Chart.defaults.font.size   = 11;
   Chart.defaults.color       = '#888';
 
-  const gridColor = '#e8e6e1';
-  const green = '#2d6a4f';
+  const gridColor  = '#e8e6e1';
+  const green      = '#2d6a4f';
   const greenAlpha = 'rgba(45,106,79,0.10)';
-  const blue = '#14213D';
-  const blueAlpha = 'rgba(20,33,61,0.10)';
-  const red = '#8b2e12';
-  const gold = '#b8860b';
+  const blue       = '#14213D';
+  const blueAlpha  = 'rgba(20,33,61,0.10)';
+  const red        = '#8b2e12';
+  const gold       = '#b8860b';
 
-  // ── GRÁFICA 1: línea doble ──
   new Chart(document.getElementById('chart1'), {
     type: 'line',
     data: {
@@ -373,22 +318,16 @@
       scales: {
         x: {
           grid: { color: gridColor },
-          ticks: {
-            maxTicksLimit: 10,
-            maxRotation: 0,
-          },
+          ticks: { maxTicksLimit: 10, maxRotation: 0 },
         },
         y: {
           grid: { color: gridColor },
-          ticks: {
-            callback: v => '$' + v.toLocaleString('es-CO'),
-          },
+          ticks: { callback: v => '$' + v.toLocaleString('es-CO') },
         },
       },
     },
   });
 
-  // ── GRÁFICA 2: barras agrupadas ──
   new Chart(document.getElementById('chart2'), {
     type: 'bar',
     data: {
@@ -423,39 +362,6 @@
     },
   });
 
-  // ── GRÁFICA 4: barras horizontales proveedores ──
-  new Chart(document.getElementById('chart4'), {
-    type: 'bar',
-    data: {
-      labels: c4Labels,
-      datasets: [
-        {
-          label: 'Monto',
-          data: c4Values,
-          backgroundColor: [
-            gold, blue, green, red,
-            '#7c3aed', '#0891b2', '#be185d', '#065f46'
-          ],
-          borderRadius: 4,
-          barPercentage: 0.65,
-        },
-      ],
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: {
-          grid: { color: gridColor },
-          ticks: { callback: v => '$' + v.toLocaleString('es-CO') },
-        },
-        y: { grid: { display: false } },
-      },
-    },
-  });
-
-  // ── GRÁFICA 7: barras ingresos por negocio mes actual ──
   new Chart(document.getElementById('chart7'), {
     type: 'bar',
     data: {

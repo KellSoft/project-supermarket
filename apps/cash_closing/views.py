@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 from django.views import View
@@ -9,6 +10,7 @@ from django.db.models import Sum
 from apps.businesses.models import Business
 from .models import CashClosing, CashDenomination, Income, Expense, BankAccount, ExpenseType, Shift
 from .forms import ExpenseForm, IncomeForm, OpeningBalanceForm, CashClosingEditForm
+from datetime import date as date_type
 
 
 class BaseListView(ListView):
@@ -209,49 +211,97 @@ class ExpenseDeleteView(View):
         return HttpResponseRedirect(f"{url}?date={date}&tab=expense")
 
 
-
-
 def _build_denominations(closing):
     saved = {d.value: d.quantity for d in closing.denominations.all()}
     rows = []
     for value, label in CashDenomination.DENOMINATIONS:
         qty = saved.get(value, 0)
-        rows.append({
-            "value":    value,
-            "label":    label,
-            "quantity": qty,
-            "subtotal": value * qty,
-            "is_bill":  value in CashDenomination.BILLS,
-        })
+        rows.append(
+            {
+                "value": value,
+                "label": label,
+                "quantity": qty,
+                "subtotal": value * qty,
+                "is_bill": value in CashDenomination.BILLS,
+            }
+        )
     return rows
- 
- 
+
+
 def _closing_context(closing):
     """Contexto financiero completo para el template del cuadre."""
     return {
-        "closing":               closing,
-        "is_first":              not CashClosing.has_previous_closing(closing),
-        "opening_form":          OpeningBalanceForm(instance=closing),
-        "edit_form":             CashClosingEditForm(instance=closing),
-        "denominations":         _build_denominations(closing),
-        "total_income_cash":     closing.total_income_cash,
-        "total_expense_cash":    closing.total_expense_cash,
-        "expected_cash":         closing.expected_cash,
-        "difference":            closing.difference,
+        "closing": closing,
+        "is_first": not CashClosing.has_previous_closing(closing),
+        "opening_form": OpeningBalanceForm(instance=closing),
+        "edit_form": CashClosingEditForm(instance=closing),
+        "denominations": _build_denominations(closing),
+        "total_income_cash": closing.total_income_cash,
+        "total_expense_cash": closing.total_expense_cash,
+        "expected_cash": closing.expected_cash,
+        "difference": closing.difference,
     }
- 
- 
+
+
 class CashClosingView(View):
     template_name = "cash_closing/cash_closing.html"
- 
+
+    def _get_closing(self, request):
+        date_str = request.GET.get("date", "").strip()
+        if date_str:
+            try:
+                target_date = date_type.fromisoformat(date_str)
+            except ValueError:
+                return None, None, "Fecha inválida."
+            if target_date == localdate():
+                closing, _ = CashClosing.get_or_create_for_today()
+                return None, None, "No puedes consultar fechas futuras."
+            if target_date == localdate():
+                closing, _ = CashClosing.get_or_create_for_today()
+                return closing, True, None
+            try:
+                closing = CashClosing.objects.get(date=target_date)
+                return closing, False, None
+            except CashClosing.DoesNotExist:
+                return (
+                    None,
+                    None,
+                    f"No hay cuadre para el {target_date.strftime('%d/%m/%Y')}.",
+                )
+        else:
+            closing, _ = CashClosing.get_or_create_for_today()
+            return closing, True, None
+
     def get(self, request):
-        closing, _ = CashClosing.get_or_create_for_today()
-        return render(request, self.template_name, _closing_context(closing))
- 
+        date_str = request.GET.get("date", "").strip()
+        closing, is_today, error = self._get_closing(request)
+
+        if error:
+            messages.error(request, error)
+            closing, _ = CashClosing.get_or_create_for_today()
+            is_today = True
+            selected_date = date_str or localdate().isoformat()
+        else:
+            selected_date = closing.date.isoformat()
+
+        ctx = _closing_context(closing)
+        ctx["is_today"] = is_today
+        ctx["selected_date"] = selected_date
+        return render(request, self.template_name, ctx)
+
     def post(self, request):
-        closing, _ = CashClosing.get_or_create_for_today()
+        date_str = request.POST.get("_date", "").strip()
+        if date_str:
+            try:
+                target_date = date_type.fromisoformat(date_str)
+                closing = CashClosing.objects.get(date=target_date)
+            except (ValueError, CashClosing.DoesNotExist):
+                closing, _ = CashClosing.get_or_create_for_today()
+        else:
+            closing, _ = CashClosing.get_or_create_for_today()
+
         action = request.POST.get("_action", "")
- 
+
         if action == "set_opening":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
@@ -263,7 +313,7 @@ class CashClosingView(View):
             else:
                 messages.error(request, "Valor inválido para el saldo inicial.")
             return redirect("cash_closing:cash-closing")
- 
+
         if action == "edit_closing":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
@@ -275,7 +325,7 @@ class CashClosingView(View):
             else:
                 messages.error(request, "Error al actualizar el cuadre.")
             return redirect("cash_closing:cash-closing")
- 
+
         if action == "save_denominations":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
@@ -290,7 +340,7 @@ class CashClosingView(View):
             closing.recalculate_physical_cash()
             messages.success(request, "Conteo guardado.")
             return redirect("cash_closing:cash-closing")
- 
+
         if action == "close_closing":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya estaba cerrado.")
@@ -298,32 +348,38 @@ class CashClosingView(View):
             closing.close()
             messages.success(
                 request,
-                f"Cuadre cerrado. Efectivo final: ${closing.physical_cash:,.0f}"
+                f"Cuadre cerrado. Efectivo final: ${closing.physical_cash:,.0f}",
             )
             return redirect("cash_closing:cash-closing")
- 
+
         if action == "reopen_closing":
             if closing.is_closed:
                 closing.is_closed = False
                 closing.save(update_fields=["is_closed"])
-                messages.warning(request, "Cuadre reabierto. Recuerda volver a cerrarlo.")
+                messages.warning(
+                    request, "Cuadre reabierto. Recuerda volver a cerrarlo."
+                )
             return redirect("cash_closing:cash-closing")
- 
+
         messages.error(request, "Acción no reconocida.")
         return redirect("cash_closing:cash-closing")
- 
- 
+
+
 class CashClosingHistoryView(View):
     template_name = "cash_closing/cash_closing_history.html"
- 
+
     def get(self, request):
-        closings = CashClosing.objects.all()
-        return render(request, self.template_name, {"closings": closings})
-    
+        closings_qs = CashClosing.objects.all().order_by("-date")
+        paginator = Paginator(closings_qs, 20)
+        page_obj = paginator.get_page(request.GET.get("page"))
+        return render(request, self.template_name, {"page_obj": page_obj})
+
+
 # ── Agrega este import en views.py ──
 # from .models import BankAccount
 
 # ── Agrega esta vista al final de cash_closing/views.py ──
+
 
 class BankAccountView(View):
     template_name = "cash_closing/bank_accounts.html"
@@ -332,13 +388,13 @@ class BankAccountView(View):
         from django.db.models import Sum, Q
         from .models import BankAccount
 
-        selected_date  = request.GET.get("date", str(localdate()))
-        selected_biz   = request.GET.get("business", "")
+        selected_date = request.GET.get("date", str(localdate()))
+        selected_biz = request.GET.get("business", "")
 
         banks = BankAccount.objects.filter(is_active=True)
 
         # Movimientos del día filtrados por negocio
-        income_qs  = Income.objects.filter(
+        income_qs = Income.objects.filter(
             payment_method="deposit", date=selected_date
         ).select_related("business", "bank")
 
@@ -347,30 +403,35 @@ class BankAccountView(View):
         ).select_related("business", "bank")
 
         if selected_biz:
-            income_qs  = income_qs.filter(business_id=selected_biz)
+            income_qs = income_qs.filter(business_id=selected_biz)
             expense_qs = expense_qs.filter(business_id=selected_biz)
 
         # Totales por banco en el día
         bank_stats = []
         for bank in banks:
-            day_in  = income_qs.filter(bank=bank).aggregate(
-                t=Sum("amount"))["t"] or 0
-            day_out = expense_qs.filter(bank=bank).aggregate(
-                t=Sum("amount"))["t"] or 0
-            bank_stats.append({
-                "bank":    bank,
-                "day_in":  day_in,
-                "day_out": day_out,
-            })
+            day_in = income_qs.filter(bank=bank).aggregate(t=Sum("amount"))["t"] or 0
+            day_out = expense_qs.filter(bank=bank).aggregate(t=Sum("amount"))["t"] or 0
+            bank_stats.append(
+                {
+                    "bank": bank,
+                    "day_in": day_in,
+                    "day_out": day_out,
+                }
+            )
 
-        return render(request, self.template_name, {
-            "bank_stats":      bank_stats,
-            "incomes":         income_qs.order_by("-created_at"),
-            "expenses":        expense_qs.order_by("-created_at"),
-            "businesses":      Business.objects.all(),
-            "selected_date":   selected_date,
-            "selected_business": selected_biz,
-        })
+        return render(
+            request,
+            self.template_name,
+            {
+                "bank_stats": bank_stats,
+                "incomes": income_qs.order_by("-created_at"),
+                "expenses": expense_qs.order_by("-created_at"),
+                "businesses": Business.objects.all(),
+                "selected_date": selected_date,
+                "selected_business": selected_biz,
+            },
+        )
+
 
 class IncomeEditView(View):
     def post(self, request, pk):
