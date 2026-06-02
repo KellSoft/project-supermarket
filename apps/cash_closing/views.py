@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.utils.timezone import localdate
 from django.db.models import Sum
 from apps.businesses.models import Business
-from .models import CashClosing, CashDenomination, Income, Expense, BankAccount, ExpenseType
+from .models import CashClosing, CashDenomination, Income, Expense, BankAccount, ExpenseType, Shift
 from .forms import ExpenseForm, IncomeForm, OpeningBalanceForm, CashClosingEditForm
 
 
@@ -151,6 +151,7 @@ class CashFlowView(View):
                 "selected_date": date,
                 "selected_business": biz,
                 "bank_accounts": BankAccount.objects.filter(is_active=True),
+                "shifts": Shift.objects.filter(is_active=True),
                 "expense_type_choices": ExpenseType.choices,
                 "total_income": total_income,
                 "total_expense": total_expense,

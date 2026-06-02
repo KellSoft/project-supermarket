@@ -6,6 +6,7 @@ from .models import (
     BankAccount,
     CashClosing,
     CashDenomination,
+    Shift,
 )
 
 
@@ -23,6 +24,7 @@ class IncomeForm(forms.ModelForm):
             field.widget.attrs["class"] = "form-control"
         self.fields["bank"].required = False
         self.fields["shift"].required = True
+        self.fields["shift"].queryset = Shift.objects.filter(is_active=True)  # ← único cambio
 
     def clean(self):
         cleaned_data = super().clean()

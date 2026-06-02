@@ -132,20 +132,23 @@
           </div>
 
           <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
-  <label class="form-label small text-muted mb-1">Banco</label>
-  <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
-    <option value="">— Banco —</option>
-    {% for bank in bank_accounts %}
-    <option value="{{ bank.pk }}">{{ bank.name }}</option>
-    {% endfor %}
-  </select>
-</div>
+            <label class="form-label small text-muted mb-1">Banco</label>
+            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+              <option value="">— Banco —</option>
+              {% for bank in bank_accounts %}
+              <option value="{{ bank.pk }}">{{ bank.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
+          <!-- CAMBIO 1: select turno dinámico -->
           <div class="col-md-2">
             <label class="form-label small text-muted mb-1">Turno</label>
             <select name="shift" class="form-select form-select-sm" required>
-              <option value="1">Turno 1</option>
-              <option value="2">Turno 2</option>
+              <option value="">— Turno —</option>
+              {% for shift in shifts %}
+              <option value="{{ shift.pk }}">{{ shift.name }}</option>
+              {% endfor %}
             </select>
           </div>
 
@@ -194,10 +197,12 @@
         <option value="cash">Efectivo</option>
         <option value="deposit">Consignación</option>
       </select>
+      <!-- CAMBIO 2: filtro de turno dinámico -->
       <select class="form-select form-select-sm" style="width:120px" x-model="fShift">
         <option value="">Todos los turnos</option>
-        <option value="1">Turno 1</option>
-        <option value="2">Turno 2</option>
+        {% for shift in shifts %}
+        <option value="{{ shift.pk }}">{{ shift.name }}</option>
+        {% endfor %}
       </select>
       <button type="button" class="btn btn-sm btn-outline-success ms-auto"
               x-show="fBusiness || fMethod || fShift"
@@ -227,10 +232,11 @@
           </thead>
           <tbody>
             {% for income in incomes %}
+            <!-- CAMBIO 3: data-shift y badge usan shift.pk / shift.name -->
             <tr x-show="visible($el)"
                 data-business="{{ income.business.pk }}"
                 data-method="{{ income.payment_method }}"
-                data-shift="{{ income.shift }}">
+                data-shift="{{ income.shift.pk }}">
               <td class="ps-3">
                 <span class="badge rounded-pill text-bg-secondary">{{ income.business.name }}</span>
               </td>
@@ -243,14 +249,14 @@
               </td>
               <td class="text-muted small">{{ income.bank.name|default:"—" }}</td>
               <td class="text-muted small">{{ income.date }}</td>
-              <td><span class="badge text-bg-secondary">T{{ income.shift }}</span></td>
+              <td><span class="badge text-bg-secondary">{{ income.shift.name }}</span></td>
               <td class="text-muted small">{{ income.person_name|default:"—" }}</td>
               <td class="text-end fw-semibold text-success">${{ income.amount|floatformat:"0g" }}</td>
               <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
               <td class="text-end pe-3 d-flex gap-2 justify-content-end align-items-center">
                 <button type="button"
                         class="btn btn-link btn-sm text-primary p-0"
-                        onclick="openIncomeEdit({{ income.pk }}, '{{ income.business.pk }}', '{{ income.date }}', '{{ income.payment_method }}', '{{ income.bank.pk|default:'' }}', {{ income.shift }}, '{{ income.person_name|default:'' }}', {{ income.amount }})">
+                        onclick="openIncomeEdit({{ income.pk }}, '{{ income.business.pk }}', '{{ income.date }}', '{{ income.payment_method }}', '{{ income.bank.pk|default:'' }}', {{ income.shift.pk }}, '{{ income.person_name|default:'' }}', {{ income.amount }})">
                   Editar
                 </button>
                 <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
@@ -355,14 +361,14 @@
           </div>
 
           <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
-  <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
-  <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
-    <option value="">— Banco —</option>
-    {% for bank in bank_accounts %}
-    <option value="{{ bank.pk }}">{{ bank.name }}</option>
-    {% endfor %}
-  </select>
-</div>
+            <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
+            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+              <option value="">— Banco —</option>
+              {% for bank in bank_accounts %}
+              <option value="{{ bank.pk }}">{{ bank.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
           <div class="col-md-1">
             <label class="form-label small text-muted mb-1">Monto ($)</label>
@@ -590,11 +596,14 @@
               </select>
             </div>
 
+            <!-- CAMBIO 4: select turno dinámico en modal editar -->
             <div class="col-md-2">
               <label class="form-label small text-muted mb-1">Turno</label>
               <select name="shift" id="ei_shift" class="form-select form-select-sm" required>
-                <option value="1">Turno 1</option>
-                <option value="2">Turno 2</option>
+                <option value="">— Turno —</option>
+                {% for shift in shifts %}
+                <option value="{{ shift.pk }}">{{ shift.name }}</option>
+                {% endfor %}
               </select>
             </div>
 

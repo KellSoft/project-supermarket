@@ -19,9 +19,18 @@ class PaymentMethod(models.TextChoices):
     DEPOSIT = "deposit", "Consignación"
 
 
-class Shift(models.IntegerChoices):
-    SHIFT_1 = 1, "Turno 1"
-    SHIFT_2 = 2, "Turno 2"
+class Shift(models.Model):
+    name = models.CharField(max_length=50, verbose_name="Nombre del turno")
+    order = models.PositiveSmallIntegerField(default=0, verbose_name="Orden")
+    is_active = models.BooleanField(default=True, verbose_name="Activo")
+
+    class Meta:
+        ordering = ["order", "name"]
+        verbose_name = "Turno"
+        verbose_name_plural = "Turnos"
+
+    def __str__(self):
+        return self.name
 
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -94,8 +103,9 @@ class Income(models.Model):
         related_name="incomes",
         verbose_name="Banco",
     )
-    shift = models.IntegerField(
-        choices=Shift.choices,
+    shift = models.ForeignKey(
+        "Shift",
+        on_delete=models.PROTECT,
         verbose_name="Turno",
     )
     person_name = models.CharField(

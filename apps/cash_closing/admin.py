@@ -1,6 +1,11 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from apps.cash_closing.models import Income, Expense, BankAccount
+from apps.cash_closing.models import Income, Expense, BankAccount, Shift
+
+@admin.register(Shift)
+class ShiftAdmin(admin.ModelAdmin):
+    list_display = ["name", "order", "is_active"]
+    list_editable = ["order", "is_active"]
 
 
 @admin.register(Income)
