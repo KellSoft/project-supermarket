@@ -7,4 +7,6 @@ nixPkgs = [
   "freetype",
   "cairo",
   "gobject-introspection",
-]
+  "libffi",
+  "pkg-config",
+]x
