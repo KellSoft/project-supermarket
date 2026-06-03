@@ -36,9 +36,10 @@ SECRET_KEY = "django-insecure-pa$enyd$t@^8z#r+hb3bl%d8fr&pf@nlygvmmt5b+obgzie*jd
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "project-supermarket-production.up.railway.app",
-    "localhost",
-    "127.0.0.1",
+    'project-supermarket-production.up.railway.app',
+    'mana-dagua.up.railway.app',
+    'localhost',
+    '127.0.0.1',
 ]
 
 # Application definition
