@@ -36,7 +36,11 @@ class Migration(migrations.Migration):
                 "ordering": ["name"],
             },
         ),
-        migrations.AlterField(
+        migrations.RemoveField(
+            model_name="expense",
+            name="supplier",
+        ),
+        migrations.AddField(
             model_name="expense",
             name="supplier",
             field=models.ForeignKey(
