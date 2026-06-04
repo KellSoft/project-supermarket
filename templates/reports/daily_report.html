@@ -365,10 +365,10 @@
         <div class="s-label">Total egresos</div>
         <div class="s-amount">${{ total_expenses|cop }}</div>
       </div>
-      <div class="summary-card card-purchase">
+      {% comment %} <div class="summary-card card-purchase">
         <div class="s-label">Total compras</div>
         <div class="s-amount">${{ total_purchases|cop }}</div>
-      </div>
+      </div> {% endcomment %}
       {% if balance >= 0 %}
       <div class="summary-card card-balance">
         <div class="s-label">Balance neto</div>
@@ -412,8 +412,8 @@
           </td>
           <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ income.get_payment_method_display }}</td>
-          <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
-          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-muted">{{ income.bank.name|default:"—" }}</td>
+          <td class="td-muted">{{ income.shift.name|default:"—" }}</td>
           <td class="td-right" style="color: var(--c-income)">
             ${{ income.amount|cop }}
           </td>
@@ -474,7 +474,7 @@
           </td>
           <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ expense.get_payment_method_display }}</td>
-          <td class="td-muted">{{ expense.get_bank_display|default:"—" }}</td>
+          <td class="td-muted">{{ expense.bank.name|default:"—" }}</td>
           <td class="td-right" style="color: var(--c-expense)">
             ${{ expense.amount|cop }}
           </td>
@@ -498,12 +498,12 @@
       {% endif %}
     </table>
 
-    <!-- SECCIÓN COMPRAS -->
+    {% comment %} <!-- SECCIÓN COMPRAS -->
     <div class="section-header">
       <div class="section-dot" style="background: var(--c-purchase)"></div>
       <div class="section-title" style="color: var(--c-purchase)">Compras</div>
       <div class="section-rule"></div>
-    </div>
+    </div> {% endcomment %}
 
     <table>
       <thead>
@@ -531,8 +531,8 @@
         {% empty %}
         <tr class="empty-row">
           <td colspan="6">Sin compras registradas para este día.</td>
-          {% endfor %}
         </tr>
+        {% endfor %}
       </tbody>
       {% if purchases %}
       <tfoot>
