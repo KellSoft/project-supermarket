@@ -289,18 +289,15 @@ class CashClosing(TimeStampedModel):
     @classmethod
     def get_or_create_for_today(cls):
         from django.utils.timezone import localdate
-
         today = localdate()
         closing, created = cls.objects.get_or_create(date=today)
         if created:
-            prev = (
-                cls.objects.filter(date__lt=today, is_closed=True)
-                .order_by("-date")
-                .first()
-            )
-            if prev:
+            prev = cls.objects.filter(date__lt=today).order_by("-date").first()
+            if prev and (prev.is_closed or prev.physical_cash > 0):
                 closing.opening_balance = prev.physical_cash
-                closing.save(update_fields=["opening_balance"])
+            else:
+                closing.opening_balance = Decimal("0")
+            closing.save(update_fields=["opening_balance"])
         return closing, created
 
     @classmethod

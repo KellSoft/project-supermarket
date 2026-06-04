@@ -39,7 +39,7 @@
   </div>
 </div>
 
-{% if is_first and not closing.is_closed and is_today %}
+{% if closing.opening_balance == 0 and not closing.is_closed %}
 <div class="alert alert-info border-0 mb-4 p-0 overflow-hidden">
   <div class="d-flex align-items-stretch">
     <div class="d-flex align-items-center justify-content-center px-4 bg-info bg-opacity-25">
