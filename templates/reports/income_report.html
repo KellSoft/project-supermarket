@@ -277,8 +277,8 @@
           </td>
           <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ income.get_payment_method_display }}</td>
-          <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
-          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-muted">{{ income.bank.name|default:"—" }}</td>
+          <td class="td-muted">{{ income.shift.name|default:"—" }}</td>
           <td class="td-right">${{ income.amount|cop }}</td>
         </tr>
         {% endfor %}

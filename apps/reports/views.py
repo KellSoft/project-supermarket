@@ -16,18 +16,19 @@ from collections import defaultdict
 from django.db.models import Sum
 
 from apps.purchases.models import Purchase
-from apps.cash_closing.models import BankAccount, Expense, Income, PaymentMethod
+from apps.cash_closing.models import BankAccount, Expense, Income, PaymentMethod, Shift, CashClosing
 from apps.businesses.models import Business
-from apps.cash_closing.models import CashClosing
 
 
 class ReportIndexView(View):
     def get(self, request):
         businesses = Business.objects.all()
         bank_accounts = BankAccount.objects.filter(is_active=True)
+        shifts = Shift.objects.filter(is_active=True)
         return render(request, "reports/report_index.html", {
             "businesses": businesses,
             "bank_accounts": bank_accounts,
+            "shifts": shifts,
             "selected_date": str(timezone.localdate()),
         })
 
@@ -223,22 +224,9 @@ def _get_payment_method_display(value):
     return choices.get(value, value)
 
 
-def _get_bank_display(value):
-    choices = {
-        "agrario": "Banco Agrario",
-        "bancolombia": "Bancolombia",
-        "bogota": "Banco de Bogotá",
-    }
-    return choices.get(value, value)
-
-
 def _build_income_filter_label(
-    business=None,
-    start_date=None,
-    end_date=None,
-    payment_method=None,
-    bank=None,
-    shift=None,
+    business=None, start_date=None, end_date=None,
+    payment_method=None, bank=None, shift=None,
 ):
     parts = []
     if business and business != "Todos los negocios":
@@ -248,19 +236,24 @@ def _build_income_filter_label(
     if payment_method:
         parts.append(f"Método: {_get_payment_method_display(payment_method)}")
     if bank:
-        parts.append(f"Banco: {_get_bank_display(bank)}")
+        try:
+            bank_name = BankAccount.objects.get(pk=bank).name
+        except BankAccount.DoesNotExist:
+            bank_name = bank
+        parts.append(f"Banco: {bank_name}")
     if shift:
-        parts.append(f"Turno: {shift}")
+        from apps.cash_closing.models import Shift
+        try:
+            shift_name = Shift.objects.get(pk=shift).name
+        except Shift.DoesNotExist:
+            shift_name = shift
+        parts.append(f"Turno: {shift_name}")
     return " · ".join(parts) if parts else "Todos los registros"
 
 
 def _build_expense_filter_label(
-    business=None,
-    start_date=None,
-    end_date=None,
-    supplier=None,
-    payment_method=None,
-    bank=None,
+    business=None, start_date=None, end_date=None,
+    supplier=None, payment_method=None, bank=None,
 ):
     parts = []
     if business and business != "Todos los negocios":
@@ -272,9 +265,12 @@ def _build_expense_filter_label(
     if payment_method:
         parts.append(f"Método: {_get_payment_method_display(payment_method)}")
     if bank:
-        parts.append(f"Banco: {_get_bank_display(bank)}")
+        try:
+            bank_name = BankAccount.objects.get(pk=bank).name
+        except BankAccount.DoesNotExist:
+            bank_name = bank
+        parts.append(f"Banco: {bank_name}")
     return " · ".join(parts) if parts else "Todos los registros"
-
 
 def _generate_daily_charts(
     incomes, expenses, purchases, total_incomes, total_expenses, total_purchases
@@ -672,7 +668,8 @@ def _generate_expense_charts(expenses):
     # ── Gráfica 1: Egresos por negocio ──
     by_biz = defaultdict(float)
     for e in expenses:
-        by_biz[e.business.name] += float(e.amount)
+        name = str(e.business.name) if e.business and e.business.name else "Sin negocio"
+        by_biz[name] += float(e.amount)
 
     if by_biz:
         pairs = sorted(by_biz.items(), key=lambda x: x[1], reverse=True)
@@ -715,7 +712,7 @@ def _generate_expense_charts(expenses):
     # ── Gráfica 2: Top proveedores ──
     by_supplier = defaultdict(float)
     for e in expenses:
-        by_supplier[e.supplier] += float(e.amount)
+        by_supplier[str(e.supplier) if e.supplier else "Sin proveedor"] += float(e.amount)
 
     if by_supplier:
         pairs = sorted(by_supplier.items(), key=lambda x: x[1], reverse=True)[:8]
