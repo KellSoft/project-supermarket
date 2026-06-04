@@ -26,32 +26,56 @@
     <small class="text-muted">Ingresos y egresos — {{ selected_date }}</small>
   </div>
   <form method="get" id="filterForm" class="d-flex align-items-center gap-2 flex-wrap">
-    <div x-data="{ open: false, bizPk: '{{ selected_business }}', bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}' }"
-         style="width:160px; position:relative;">
-      <input type="hidden" name="business" :value="bizPk">
-      <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
-              @click="open = !open" @click.outside="open = false">
-        <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()"
-              x-text="bizName" style="font-size:0.8rem; padding:6px 12px;"></span>
+    <div x-data="{ 
+    open: false, 
+    bizPk: '{{ selected_business }}', 
+    bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}',
+    getBadgeClass(name) {
+        if (!name) return 'business-badge-otros';
+        const n = name.toLowerCase();
+        if (n.includes('maná') || n.includes('mana')) return 'business-badge-mana';
+        if (n.includes('mercatodo')) return 'business-badge-mercatodo';
+        if (n.includes('primavera')) return 'business-badge-primavera';
+        if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan')) return 'business-badge-panaderia';
+        return 'business-badge-otros';
+    }
+}" style="width:160px; position:relative;">
+    <input type="hidden" name="business" :value="bizPk">
+    <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+            @click="open = !open" @click.outside="open = false">
+        <template x-if="bizPk">
+            <span class="badge rounded-pill" :class="getBadgeClass(bizName)" x-text="bizName" style="font-size:0.8rem; padding:6px 12px;"></span>
+        </template>
         <span x-show="!bizPk" class="text-muted small">Todos los negocios</span>
-      </button>
-      <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
-           style="z-index:999; top:calc(100% + 4px); min-width:160px;">
+    </button>
+    <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+         style="z-index:999; top:calc(100% + 4px); min-width:160px;">
         <div class="px-3 py-1 text-muted small" style="cursor:pointer"
              @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
              @click="bizPk=''; bizName=''; open=false; $nextTick(() => document.getElementById('filterForm').submit())">
-          Todos los negocios
+            Todos los negocios
         </div>
         {% for b in businesses %}
         <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
              @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
              @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false; $nextTick(() => document.getElementById('filterForm').submit())">
-          <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
-                style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+            {% with name=b.name|lower %}
+                {% if 'maná' in name or 'mana' in name %}
+                    <span class="badge rounded-pill business-badge-mana" style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+                {% elif 'mercatodo' in name %}
+                    <span class="badge rounded-pill business-badge-mercatodo" style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+                {% elif 'primavera' in name %}
+                    <span class="badge rounded-pill business-badge-primavera" style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+                {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+                    <span class="badge rounded-pill business-badge-panaderia" style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+                {% else %}
+                    <span class="badge rounded-pill business-badge-otros" style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+                {% endif %}
+            {% endwith %}
         </div>
         {% endfor %}
-      </div>
     </div>
+</div>
     <input type="date" name="date" value="{{ selected_date }}"
            class="form-control form-control-sm" style="width:150px" onchange="this.form.submit()">
   </form>
@@ -146,9 +170,19 @@
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                      @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
-                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
-                        style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
-                </div>
+                  {% with name=b.name|lower %}
+  {% if 'maná' in name or 'mana' in name %}
+    <span class="badge rounded-pill business-badge-mana" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'mercatodo' in name %}
+    <span class="badge rounded-pill business-badge-mercatodo" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'primavera' in name %}
+    <span class="badge rounded-pill business-badge-primavera" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+    <span class="badge rounded-pill business-badge-panaderia" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% else %}
+    <span class="badge rounded-pill business-badge-otros" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% endif %}
+{% endwith %}                </div>
                 {% endfor %}
               </div>
             </div>
@@ -244,7 +278,19 @@
             <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                  @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                  @click="fBusiness='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
-              <span class="badge rounded-pill business-badge-{{ b.name|lower }}">{{ b.name }}</span>
+              {% with name=b.name|lower %}
+  {% if 'maná' in name or 'mana' in name %}
+    <span class="badge rounded-pill business-badge-mana" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'mercatodo' in name %}
+    <span class="badge rounded-pill business-badge-mercatodo" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'primavera' in name %}
+    <span class="badge rounded-pill business-badge-primavera" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+    <span class="badge rounded-pill business-badge-panaderia" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% else %}
+    <span class="badge rounded-pill business-badge-otros" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% endif %}
+{% endwith %}
             </div>
             {% endfor %}
           </div>
@@ -294,8 +340,20 @@
                 data-method="{{ income.payment_method }}"
                 data-shift="{{ income.shift.pk }}">
               <td class="ps-3">
-                <span class="badge rounded-pill business-badge-{{ income.business.name|lower }}">{{ income.business.name }}</span>
-              </td>
+                {% with name=income.business.name|lower %}
+                    {% if 'maná' in name or 'mana' in name %}
+                        <span class="badge rounded-pill business-badge-mana">{{ income.business.name }}</span>
+                    {% elif 'mercatodo' in name %}
+                        <span class="badge rounded-pill business-badge-mercatodo">{{ income.business.name }}</span>
+                    {% elif 'primavera' in name %}
+                        <span class="badge rounded-pill business-badge-primavera">{{ income.business.name }}</span>
+                    {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+                        <span class="badge rounded-pill business-badge-panaderia">{{ income.business.name }}</span>
+                    {% else %}
+                        <span class="badge rounded-pill business-badge-otros">{{ income.business.name }}</span>
+                    {% endif %}
+                {% endwith %}
+            </td>
               <td>
                 {% if income.payment_method == 'cash' %}
                   <span class="badge text-bg-success">Efectivo</span>
@@ -396,8 +454,19 @@
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                      @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
-                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
-                        style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+                  {% with name=b.name|lower %}
+  {% if 'maná' in name or 'mana' in name %}
+    <span class="badge rounded-pill business-badge-mana" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'mercatodo' in name %}
+    <span class="badge rounded-pill business-badge-mercatodo" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'primavera' in name %}
+    <span class="badge rounded-pill business-badge-primavera" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+    <span class="badge rounded-pill business-badge-panaderia" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% else %}
+    <span class="badge rounded-pill business-badge-otros" style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
+  {% endif %}
+{% endwith %}
                 </div>
                 {% endfor %}
               </div>
@@ -539,8 +608,20 @@
                 data-method="{{ expense.payment_method }}"
                 data-exptype="{{ expense.expense_type }}">
               <td class="ps-3">
-                <span class="badge rounded-pill business-badge-{{ expense.business.name|lower }}">{{ expense.business.name }}</span>
-              </td>
+                {% with name=expense.business.name|lower %}
+                    {% if 'maná' in name or 'mana' in name %}
+                        <span class="badge rounded-pill business-badge-mana">{{ expense.business.name }}</span>
+                    {% elif 'mercatodo' in name %}
+                        <span class="badge rounded-pill business-badge-mercatodo">{{ expense.business.name }}</span>
+                    {% elif 'primavera' in name %}
+                        <span class="badge rounded-pill business-badge-primavera">{{ expense.business.name }}</span>
+                    {% elif 'panadería' in name or 'panaderia' in name or 'delipan' in name %}
+                        <span class="badge rounded-pill business-badge-panaderia">{{ expense.business.name }}</span>
+                    {% else %}
+                        <span class="badge rounded-pill business-badge-otros">{{ expense.business.name }}</span>
+                    {% endif %}
+                {% endwith %}
+            </td>
               <td>
                 {% if expense.expense_type == 'purchase' %}
                   <span class="badge text-bg-info">Compra</span>
@@ -809,41 +890,88 @@
 
 <style>
 [x-cloak] { display: none !important; }
-.business-badge-maná,
-.business-badge-mana      { background: #1d6fa5; color: #fff; }
-.business-badge-mercatodo { background: #dc2626; color: #fff; }
-.business-badge-primavera { background: #16a34a; color: #fff; }
-.business-badge-panadería,
-.business-badge-panaderia { background: #ca8a04; color: #fff; }
-.business-badge-otros     { background: #7c3aed; color: #fff; }
+
+/* Colores específicos para cada negocio */
+.business-badge-mana {
+    background: #2E75B6 !important;
+    color: #ffffff !important;
+}
+
+.business-badge-mercatodo {
+    background: #E53935 !important;
+    color: #ffffff !important;
+}
+
+.business-badge-primavera {
+    background: #00A94F !important;
+    color: #ffffff !important;
+}
+
+.business-badge-panaderia {
+    background: #FFC000 !important;
+    color: #1a1a1a !important;
+}
+
+.business-badge-otros {
+    background: #AB47BC !important;
+    color: #ffffff !important;
+}
 </style>
 
 <span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit'  pk=0 %}" hidden></span>
 <span id="expense-edit-url" data-url="{% url 'cash_closing:expense-edit' pk=0 %}" hidden></span>
 
 <script>
-function liveFormat(input) {
-  const start = input.selectionStart;
-  const prev  = input.value.length;
-  const digits = input.value.replace(/\D/g, "");
-  if (!digits) { input.value = ""; return; }
-  input.value = parseInt(digits).toLocaleString("de-DE", { maximumFractionDigits: 0 });
-  const diff = input.value.length - prev;
-  input.setSelectionRange(start + diff, start + diff);
+
+function formatCOP(value) {
+    if (!value) return '';
+    // Eliminar todo lo que no sea dígito
+    let digits = value.toString().replace(/\D/g, '');
+    if (digits === '') return '';
+    // Convertir a número y formatear con puntos como separador de miles (estilo colombiano)
+    return parseInt(digits, 10).toLocaleString('es-CO', {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    });
 }
 
-function bindAmount(id) {
-  const input = document.getElementById(id);
-  if (!input) return;
-  input.addEventListener("input", function() { liveFormat(this); });
-  input.closest("form").addEventListener("submit", function() {
-    input.value = input.value.replace(/\./g, "") || "0";
-  });
+function liveFormatCOP(input) {
+    if (!input) return;
+    const cursorPosition = input.selectionStart;
+    const originalLength = input.value.length;
+    const formattedValue = formatCOP(input.value);
+    
+    if (formattedValue !== input.value) {
+        input.value = formattedValue;
+        const newLength = formattedValue.length;
+        const offset = newLength - originalLength;
+        input.setSelectionRange(cursorPosition + offset, cursorPosition + offset);
+    }
+}
+
+function bindAmountCOP(id) {
+    const input = document.getElementById(id);
+    if (!input) return;
+    
+    input.addEventListener('input', function() { 
+        liveFormatCOP(this); 
+    });
+    
+    const form = input.closest('form');
+    if (form) {
+        form.addEventListener('submit', function() {
+            // Eliminar puntos para enviar solo números al servidor
+            const rawValue = input.value.replace(/\./g, '');
+            input.value = rawValue || '0';
+        });
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {
-  bindAmount("incomeAmount");
-  bindAmount("expenseAmount");
+  bindAmountCOP("incomeAmount");
+  bindAmountCOP("expenseAmount");
+  bindAmountCOP("ei_amount");
+  bindAmountCOP("ee_amount");
 
   // ── Confirmar eliminación ──
   const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
@@ -873,7 +1001,7 @@ document.addEventListener("DOMContentLoaded", function() {
   ["ei_amount", "ee_amount"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.addEventListener("input", function() { liveFormat(this); });
+    el.addEventListener("input", function() { liveFormatCOP(this); });
   });
 
   document.getElementById("editIncomeForm").addEventListener("submit", function() {
@@ -889,48 +1017,63 @@ document.addEventListener("DOMContentLoaded", function() {
   // ── Abrir modal editar ingreso ──
   window.openIncomeEdit = function(pk, business, date, method, bank, shift, person, amount) {
     const form = document.getElementById("editIncomeForm");
-    form.action = document.getElementById("income-edit-url").dataset.url.replace("/0/", `/${pk}/`);
-
-    document.getElementById("ei_business").value = business;
-    document.getElementById("ei_date").value     = date;
-    document.getElementById("ei_shift").value    = shift;
-    document.getElementById("ei_person").value   = person;
-    document.getElementById("ei_amount").value   = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
-
+    const urlTemplate = document.getElementById("income-edit-url");
+    if (!form || !urlTemplate) return;
+    
+    form.action = urlTemplate.dataset.url.replace("/0/", `/${pk}/`);
+    
+    document.getElementById("ei_business").value = business || '';
+    document.getElementById("ei_date").value = date || '';
+    document.getElementById("ei_shift").value = shift || '';
+    document.getElementById("ei_person").value = person || '';
+    // Formatear el monto como COP
+    document.getElementById("ei_amount").value = formatCOP(amount.toString());
+    
     const alpineData = Alpine.$data(form);
-    if (alpineData) alpineData.method = method;
-
+    if (alpineData) {
+        alpineData.method = method || 'cash';
+    }
+    
     setTimeout(() => {
-      document.getElementById("ei_bank").value = bank;
+        const bankSelect = document.getElementById("ei_bank");
+        if (bankSelect) bankSelect.value = bank || '';
     }, 50);
-
-    new bootstrap.Modal(document.getElementById("editIncomeModal")).show();
+    
+    const modal = new bootstrap.Modal(document.getElementById("editIncomeModal"));
+    modal.show();
   };
 
   // ── Abrir modal editar egreso ──
   window.openExpenseEdit = function(pk, business, date, expType, method, bank, supplier, invoice, employee, amount, description) {
-    const form = document.getElementById("editExpenseForm");
-    form.action = document.getElementById("expense-edit-url").dataset.url.replace("/0/", `/${pk}/`);
-
-    document.getElementById("ee_business").value    = business;
-    document.getElementById("ee_date").value        = date;
-    document.getElementById("ee_invoice").value     = invoice;
-    document.getElementById("ee_employee").value    = employee;
-    document.getElementById("ee_description").value = description;
-    document.getElementById("ee_amount").value      = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
-
-    const alpineData = Alpine.$data(form);
-    if (alpineData) {
-      alpineData.expType = expType;
-      alpineData.method  = method;
-    }
-
-    setTimeout(() => {
-      document.getElementById("ee_bank").value     = bank;
-      document.getElementById("ee_supplier").value = supplier;
-    }, 50);
-
-    new bootstrap.Modal(document.getElementById("editExpenseModal")).show();
+      const form = document.getElementById("editExpenseForm");
+      const urlTemplate = document.getElementById("expense-edit-url");
+      if (!form || !urlTemplate) return;
+      
+      form.action = urlTemplate.dataset.url.replace("/0/", `/${pk}/`);
+      
+      document.getElementById("ee_business").value = business || '';
+      document.getElementById("ee_date").value = date || '';
+      document.getElementById("ee_invoice").value = invoice || '';
+      document.getElementById("ee_employee").value = employee || '';
+      document.getElementById("ee_description").value = description || '';
+      // Formatear el monto como COP
+      document.getElementById("ee_amount").value = formatCOP(amount.toString());
+      
+      const alpineData = Alpine.$data(form);
+      if (alpineData) {
+          alpineData.expType = expType || 'general_expense';
+          alpineData.method = method || 'cash';
+      }
+      
+      setTimeout(() => {
+          const bankSelect = document.getElementById("ee_bank");
+          const supplierSelect = document.getElementById("ee_supplier");
+          if (bankSelect) bankSelect.value = bank || '';
+          if (supplierSelect) supplierSelect.value = supplier || '';
+      }, 50);
+      
+      const modal = new bootstrap.Modal(document.getElementById("editExpenseModal"));
+      modal.show();
   };
 
 });
