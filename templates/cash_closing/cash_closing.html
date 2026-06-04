@@ -53,6 +53,7 @@
       <form method="post" class="d-flex align-items-center gap-2">
         {% csrf_token %}
         <input type="hidden" name="_action" value="set_opening">
+        <input type="hidden" name="_date" value="{{ closing.date|date:'Y-m-d' }}">
         <div class="input-group input-group-sm" style="width:220px">
           <span class="input-group-text text-muted">$</span>
           <input type="text"
@@ -77,8 +78,9 @@
 
   <div class="col-lg-6">
     <div class="card border h-100">
-      <div class="card-header bg-primary bg-opacity-10 py-2 small fw-semibold text-primary">
+      <div class="card-header bg-primary bg-opacity-10 py-2 small fw-semibold text-primary d-flex justify-content-between align-items-center">
         💵 Calculadora de billetes y monedas
+        <span id="saveIndicator" class="small fw-normal"></span>
       </div>
       <div class="card-body p-0">
         <form method="post" id="denominationsForm">
@@ -108,14 +110,15 @@
                   <td class="ps-3"><span class="badge bg-secondary">{{ d.label }}</span></td>
                   <td class="text-center">
                     <input type="number"
-                           name="qty_{{ d.value }}"
-                           value="{{ d.quantity }}"
-                           min="0"
-                           class="form-control form-control-sm text-center denom-input"
-                           data-value="{{ d.value }}"
-                           data-target="sub_{{ d.value }}"
-                           {% if closing.is_closed %}readonly{% endif %}
-                           style="width:90px;margin:auto">
+                      name="qty_{{ d.value }}"
+                      value="{{ d.quantity }}"
+                      min="0"
+                      class="form-control form-control-sm text-center denom-input"
+                      data-value="{{ d.value }}"
+                      data-target="sub_{{ d.value }}"
+                      data-is-bill="{{ d.is_bill|yesno:'true,false' }}"
+                      {% if closing.is_closed %}readonly{% endif %}
+                      style="width:90px;margin:auto">
                   </td>
                   <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|floatformat:"0g" }}</td>
                 </tr>
@@ -139,14 +142,15 @@
                   <td class="ps-3"><span class="badge bg-secondary">{{ d.label }}</span></td>
                   <td class="text-center">
                     <input type="number"
-                           name="qty_{{ d.value }}"
-                           value="{{ d.quantity }}"
-                           min="0"
-                           class="form-control form-control-sm text-center denom-input"
-                           data-value="{{ d.value }}"
-                           data-target="sub_{{ d.value }}"
-                           {% if closing.is_closed %}readonly{% endif %}
-                           style="width:90px;margin:auto">
+                          name="qty_{{ d.value }}"
+                          value="{{ d.quantity }}"
+                          min="0"
+                          class="form-control form-control-sm text-center denom-input"
+                          data-value="{{ d.value }}"
+                          data-target="sub_{{ d.value }}"
+                          data-is-bill="{{ d.is_bill|yesno:'true,false' }}"
+                          {% if closing.is_closed %}readonly{% endif %}
+                          style="width:90px;margin:auto">
                   </td>
                   <td class="text-end pe-3 fw-semibold" id="sub_{{ d.value }}">${{ d.subtotal|floatformat:"0g" }}</td>
                 </tr>
@@ -209,6 +213,27 @@
         </table>
       </div>
     </div>
+
+    <div class="card border mb-3">
+  <div class="card-header bg-white py-2 small fw-semibold text-muted">📝 Notas del cierre</div>
+  <div class="card-body p-3">
+    {% if not closing.is_closed %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="_action" value="save_notes">
+      <input type="hidden" name="_date" value="{{ closing.date|date:'Y-m-d' }}">
+      {{ edit_form.notes }}
+      <button type="submit" class="btn btn-sm btn-outline-secondary mt-2">
+        Guardar notas
+      </button>
+    </form>
+    {% elif closing.notes %}
+    <p class="mb-0 small text-muted" style="white-space:pre-wrap">{{ closing.notes }}</p>
+    {% else %}
+    <p class="mb-0 small text-muted fst-italic">Sin notas.</p>
+    {% endif %}
+  </div>
+</div>
 
     {% if not closing.is_closed %}
     <form method="post">
@@ -285,8 +310,8 @@ document.addEventListener("DOMContentLoaded", function () {
       const sub = qty * val;
       const target = document.getElementById(inp.dataset.target);
       if (target) target.textContent = fmt(sub);
-      if (val >= 1000) totalBills += sub;
-      else             totalCoins += sub;
+      if (inp.dataset.isBill === "true") totalBills += sub;
+else                                totalCoins += sub;
     });
 
     const totalCash = totalBills + totalCoins;

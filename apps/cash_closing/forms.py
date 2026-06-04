@@ -7,6 +7,7 @@ from .models import (
     CashClosing,
     CashDenomination,
     Shift,
+    Supplier,
 )
 
 
@@ -40,40 +41,32 @@ class IncomeForm(forms.ModelForm):
             self.add_error("shift", "El turno es obligatorio.")
         return cleaned_data
 
+from .models import (
+    Income, Expense, PaymentMethod, BankAccount,
+    CashClosing, CashDenomination, Shift, Supplier,  # ← agrega Supplier
+)
 
 class ExpenseForm(forms.ModelForm):
     class Meta:
         model = Expense
         fields = [
-            "business",
-            "date",
-            "expense_type",
-            "supplier",
-            "invoice_number",
-            "employee_name",
-            "amount",
-            "payment_method",
-            "bank",
-            "description",
+            "business", "date", "expense_type",
+            "supplier", "invoice_number", "employee_name",
+            "amount", "payment_method", "bank", "description",
         ]
         widgets = {
             "date": forms.DateInput(attrs={"type": "date"}),
-            "description": forms.TextInput(),  # input de línea, no textarea
+            "description": forms.TextInput(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field in self.fields.values():
-            field.widget.attrs["class"] = "form-control"
-        # Ninguno es required a nivel form; el modelo clean() valida por tipo
-        for name in (
-            "bank",
-            "supplier",
-            "invoice_number",
-            "employee_name",
-            "description",
-        ):
+            field.widget.attrs.setdefault("class", "form-control")
+        for name in ("bank", "supplier", "invoice_number", "employee_name", "description"):
             self.fields[name].required = False
+        self.fields["supplier"].queryset = Supplier.objects.all()  # ← agrega esto
+        self.fields["supplier"].empty_label = "— Selecciona —"     # ← y esto
 
     def clean(self):
         cleaned_data = super().clean()

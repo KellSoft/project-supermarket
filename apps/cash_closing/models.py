@@ -37,25 +37,31 @@ class Shift(models.Model):
 # BankAccount — cuentas bancarias reales del negocio
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 class BankAccount(models.Model):
     name = models.CharField(max_length=100, verbose_name="Nombre del banco")
     slug = models.SlugField(
-        max_length=50, unique=True,
-        help_text="Identificador único, ej: bancolombia, agrario, bogota"
+        max_length=50,
+        unique=True,
+        help_text="Identificador único, ej: bancolombia, agrario, bogota",
     )
     initial_balance = models.DecimalField(
-        max_digits=14, decimal_places=2, default=Decimal("0"),
-        verbose_name="Saldo inicial"
+        max_digits=14,
+        decimal_places=2,
+        default=Decimal("0"),
+        verbose_name="Saldo inicial",
     )
     current_balance = models.DecimalField(
-        max_digits=14, decimal_places=2, default=Decimal("0"),
-        verbose_name="Saldo actual"
+        max_digits=14,
+        decimal_places=2,
+        default=Decimal("0"),
+        verbose_name="Saldo actual",
     )
     is_active = models.BooleanField(default=True, verbose_name="Activo")
     receives_transfers = models.BooleanField(
         default=False,
         verbose_name="Recibe transferencias de ingresos",
-        help_text="Solo esta cuenta aumenta cuando hay ingresos por consignación"
+        help_text="Solo esta cuenta aumenta cuando hay ingresos por consignación",
     )
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -66,12 +72,12 @@ class BankAccount(models.Model):
 
     def recalculate(self):
         """Recalcula current_balance desde cero: inicial + ingresos consignación - egresos consignación."""
-        ingresos = self.incomes.filter(
-            payment_method=PaymentMethod.DEPOSIT
-        ).aggregate(t=Sum("amount"))["t"] or Decimal("0")
-        egresos = self.expenses.filter(
-            payment_method=PaymentMethod.DEPOSIT
-        ).aggregate(t=Sum("amount"))["t"] or Decimal("0")
+        ingresos = self.incomes.filter(payment_method=PaymentMethod.DEPOSIT).aggregate(
+            t=Sum("amount")
+        )["t"] or Decimal("0")
+        egresos = self.expenses.filter(payment_method=PaymentMethod.DEPOSIT).aggregate(
+            t=Sum("amount")
+        )["t"] or Decimal("0")
         self.current_balance = self.initial_balance + ingresos - egresos
         self.save(update_fields=["current_balance"])
 
@@ -82,6 +88,7 @@ class BankAccount(models.Model):
 # ──────────────────────────────────────────────────────────────────────────────
 # Income
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 class Income(models.Model):
     business = models.ForeignKey(
@@ -99,7 +106,8 @@ class Income(models.Model):
     bank = models.ForeignKey(
         BankAccount,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         related_name="incomes",
         verbose_name="Banco",
     )
@@ -135,9 +143,21 @@ class Income(models.Model):
     def __str__(self):
         return f"{self.date} | {self.business} | {self.get_payment_method_display()} | ${self.amount:,.0f}"
 
+
 # ──────────────────────────────────────────────────────────────────────────────
 # Expense
 # ──────────────────────────────────────────────────────────────────────────────
+class Supplier(models.Model):
+    name = models.CharField(max_length=200, verbose_name="Proveedor", unique=True)
+
+    class Meta:
+        verbose_name = "Proveedor"
+        verbose_name_plural = "Proveedores"
+        ordering = ["name"]
+
+    def __str__(self):
+        return self.name
+
 
 class Expense(models.Model):
     business = models.ForeignKey(
@@ -151,8 +171,13 @@ class Expense(models.Model):
         choices=PaymentMethod.choices,
         verbose_name="Método de pago",
     )
-    supplier = models.CharField(
-        max_length=200, verbose_name="Proveedor", null=True, blank=True
+    supplier = models.ForeignKey(
+        Supplier,
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True,
+        related_name="expenses",
+        verbose_name="Proveedor",
     )
     invoice_number = models.CharField(
         max_length=100, verbose_name="N° Factura", null=True, blank=True
@@ -166,7 +191,8 @@ class Expense(models.Model):
     bank = models.ForeignKey(
         BankAccount,
         on_delete=models.SET_NULL,
-        null=True, blank=True,
+        null=True,
+        blank=True,
         related_name="expenses",
         verbose_name="Banco",
     )
@@ -197,8 +223,6 @@ class Expense(models.Model):
     def clean(self):
         if self.employee_name:
             self.employee_name = self.employee_name.strip()
-        if self.supplier:
-            self.supplier = self.supplier.strip()
         if self.invoice_number:
             self.invoice_number = self.invoice_number.strip()
         if self.description:
@@ -239,14 +263,19 @@ class Expense(models.Model):
 # CashClosing
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 class CashClosing(TimeStampedModel):
     date = models.DateField(unique=True, verbose_name="Fecha")
     opening_balance = models.DecimalField(
-        max_digits=12, decimal_places=2, default=Decimal("0"),
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0"),
         verbose_name="Saldo inicial",
     )
     physical_cash = models.DecimalField(
-        max_digits=12, decimal_places=2, default=Decimal("0"),
+        max_digits=12,
+        decimal_places=2,
+        default=Decimal("0"),
         verbose_name="Efectivo contado",
     )
     is_closed = models.BooleanField(default=False, verbose_name="Cerrado")
@@ -260,6 +289,7 @@ class CashClosing(TimeStampedModel):
     @classmethod
     def get_or_create_for_today(cls):
         from django.utils.timezone import localdate
+
         today = localdate()
         closing, created = cls.objects.get_or_create(date=today)
         if created:
@@ -324,26 +354,29 @@ class CashClosing(TimeStampedModel):
 # CashDenomination
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 class CashDenomination(models.Model):
     DENOMINATIONS = [
         (100000, "$100.000"),
-        (50000,  "$50.000"),
-        (20000,  "$20.000"),
-        (10000,  "$10.000"),
-        (5000,   "$5.000"),
-        (2000,   "$2.000"),
-        (1000,   "$1.000"),
-        (500,    "$500"),
-        (200,    "$200"),
-        (100,    "$100"),
-        (50,     "$50"),
+        (50000, "$50.000"),
+        (20000, "$20.000"),
+        (10000, "$10.000"),
+        (5000, "$5.000"),
+        (2000, "$2.000"),
+        (1000, "$1.000"),
+        (500, "$500"),
+        (200, "$200"),
+        (100, "$100"),
+        (50, "$50"),
     ]
 
     BILLS = {100000, 50000, 20000, 10000, 5000, 2000, 1000}
     COINS = {500, 200, 100, 50}
 
     closing = models.ForeignKey(
-        CashClosing, on_delete=models.CASCADE, related_name="denominations",
+        CashClosing,
+        on_delete=models.CASCADE,
+        related_name="denominations",
     )
     value = models.IntegerField(choices=DENOMINATIONS, verbose_name="Denominación")
     quantity = models.PositiveIntegerField(default=0, verbose_name="Cantidad")
