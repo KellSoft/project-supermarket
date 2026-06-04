@@ -19,25 +19,23 @@
 </div>
 {% endfor %}
 
-<div class="d-flex align-items-center justify-content-between mb-3">
+{# ── Header ── #}
+<div class="d-flex align-items-start align-items-md-center justify-content-between mb-3 flex-wrap gap-2">
   <div>
     <h5 class="mb-0 fw-semibold">Flujo de caja</h5>
     <small class="text-muted">Ingresos y egresos — {{ selected_date }}</small>
   </div>
-  <form method="get" id="filterForm" class="d-flex align-items-center gap-2">
-    <div x-data="{ open: false,bizPk: '{{ selected_business }}',bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}'}" style="width:160px; position:relative;">
+  <form method="get" id="filterForm" class="d-flex align-items-center gap-2 flex-wrap">
+    <div x-data="{ open: false, bizPk: '{{ selected_business }}', bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}' }"
+         style="width:160px; position:relative;">
       <input type="hidden" name="business" :value="bizPk">
-      <button type="button"
-              class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+      <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
               @click="open = !open" @click.outside="open = false">
-        <span x-show="bizPk" class="badge rounded-pill"
-              :class="'business-badge-' + bizName.toLowerCase()"
-              x-text="bizName"
-              style="font-size:0.8rem; padding:6px 12px;"></span>
+        <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()"
+              x-text="bizName" style="font-size:0.8rem; padding:6px 12px;"></span>
         <span x-show="!bizPk" class="text-muted small">Todos los negocios</span>
       </button>
-      <div x-show="open" x-cloak
-           class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+      <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
            style="z-index:999; top:calc(100% + 4px); min-width:160px;">
         <div class="px-3 py-1 text-muted small" style="cursor:pointer"
              @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
@@ -54,36 +52,38 @@
         {% endfor %}
       </div>
     </div>
-    <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" style="width:150px" onchange="this.form.submit()">
+    <input type="date" name="date" value="{{ selected_date }}"
+           class="form-control form-control-sm" style="width:150px" onchange="this.form.submit()">
   </form>
 </div>
 
+{# ── Tarjetas resumen ── #}
 <div class="row g-2 mb-4">
-  <div class="col">
+  <div class="col-6 col-md">
     <div class="p-3 rounded-3 border-start border-success border-3 bg-light">
       <div class="text-muted small">Ingresos efectivo</div>
       <div class="fs-5 fw-semibold text-success">${{ total_income_cash|floatformat:"0g" }}</div>
     </div>
   </div>
-  <div class="col">
+  <div class="col-6 col-md">
     <div class="p-3 rounded-3 border-start border-primary border-3 bg-light">
       <div class="text-muted small">Ingresos consignación</div>
       <div class="fs-5 fw-semibold text-primary">${{ total_income_deposit|floatformat:"0g" }}</div>
     </div>
   </div>
-  <div class="col">
+  <div class="col-6 col-md">
     <div class="p-3 rounded-3 border-start border-danger border-3 bg-light">
       <div class="text-muted small">Egresos efectivo</div>
       <div class="fs-5 fw-semibold text-danger">${{ total_expense_cash|floatformat:"0g" }}</div>
     </div>
   </div>
-  <div class="col">
+  <div class="col-6 col-md">
     <div class="p-3 rounded-3 border-start border-warning border-3 bg-light">
       <div class="text-muted small">Egresos consignación</div>
       <div class="fs-5 fw-semibold text-warning">${{ total_expense_deposit|floatformat:"0g" }}</div>
     </div>
   </div>
-  <div class="col">
+  <div class="col-12 col-md">
     <div class="p-3 rounded-3 border border-2 bg-white">
       <div class="text-muted small">Balance neto</div>
       <div class="fs-5 fw-semibold {% if net_balance >= 0 %}text-success{% else %}text-danger{% endif %}">
@@ -93,6 +93,7 @@
   </div>
 </div>
 
+{# ── Tabs ── #}
 <ul class="nav nav-tabs mb-3" id="cashTabs">
   <li class="nav-item">
     <button class="nav-link {% if active_tab != 'expense' %}active{% endif %} fw-semibold text-success"
@@ -127,44 +128,51 @@
 
         <div class="row g-2 align-items-end">
 
-          <div class="col-md-2" x-data="{ open: false, bizPk: '', bizName: '' }">
+          <div class="col-12 col-sm-6 col-md-auto"
+               x-data="{ open: false, bizPk: '', bizName: '' }"
+               style="min-width:130px">
             <label class="form-label small text-muted mb-1">Negocio</label>
             <input type="hidden" name="business" :value="bizPk" required>
             <div class="position-relative">
-              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-1"
                       @click="open = !open" @click.outside="open = false">
-                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName" style="font-size:0.8rem; padding: 6px 12px;"></span>
-                <span x-show="!bizPk" class="text-muted small">— Selecciona —</span>
+                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()"
+                      x-text="bizName" style="font-size:0.7rem; padding:3px 7px;"></span>
+                <span x-show="!bizPk" class="text-muted small">— Negocio —</span>
               </button>
-              <div x-show="open" x-cloak class="position-absolute w-100 bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px)">
+              <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+                   style="z-index:999; top:calc(100% + 4px); min-width:140px;">
                 {% for b in businesses %}
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                      @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
-                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}" style="font-size:0.8rem; padding: 6px 12px;">{{ b.name }}</span>
+                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
+                        style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
                 </div>
                 {% endfor %}
               </div>
             </div>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-6 col-sm-4 col-md-auto" style="min-width:130px">
             <label class="form-label small text-muted mb-1">Fecha</label>
-            <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" required>
+            <input type="date" name="date" value="{{ selected_date }}"
+                   class="form-control form-control-sm" required>
           </div>
-          <div class="col-md-2">
-            <label class="form-label small text-muted mb-1">Método de pago</label>
+
+          <div class="col-12 col-sm-6 col-md-auto" style="min-width:175px">
+            <label class="form-label small text-muted mb-1">Método</label>
             <div class="btn-group w-100" role="group">
               <button type="button" class="btn btn-sm"
                       :class="method === 'cash' ? 'btn-success' : 'btn-outline-success'"
                       @click="method = 'cash'">Efectivo</button>
               <button type="button" class="btn btn-sm"
                       :class="method === 'deposit' ? 'btn-primary' : 'btn-outline-primary'"
-                      @click="method = 'deposit'">Consignación</button>
+                      @click="method = 'deposit'">Consig.</button>
             </div>
           </div>
 
-          <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
+          <div class="col-6 col-sm-4 col-md-auto" x-show="method === 'deposit'" x-cloak style="min-width:130px">
             <label class="form-label small text-muted mb-1">Banco</label>
             <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
               <option value="">— Banco —</option>
@@ -174,8 +182,7 @@
             </select>
           </div>
 
-          <!-- CAMBIO 1: select turno dinámico -->
-          <div class="col-md-2">
+          <div class="col-6 col-sm-4 col-md-auto" style="min-width:110px">
             <label class="form-label small text-muted mb-1">Turno</label>
             <select name="shift" class="form-select form-select-sm" required>
               <option value="">— Turno —</option>
@@ -185,20 +192,20 @@
             </select>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-12 col-sm-6 col-md">
             <label class="form-label small text-muted mb-1">Persona</label>
             <input type="text" name="person_name" class="form-control form-control-sm"
-                   placeholder="Nombre (opcional)">
+                   placeholder="Opcional">
           </div>
 
-          <div :class="method === 'deposit' ? 'col-md-1' : 'col-md-2'">
+          <div class="col-6 col-sm-4 col-md-auto" style="min-width:95px">
             <label class="form-label small text-muted mb-1">Valor ($)</label>
             <input type="text" inputmode="numeric" name="amount" id="incomeAmount"
                    class="form-control form-control-sm" placeholder="0" required>
           </div>
 
-          <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+          <div class="col-6 col-sm-auto">
+            <button type="submit" class="btn btn-success btn-sm w-100 px-3">Guardar</button>
           </div>
 
         </div>
@@ -206,6 +213,7 @@
     </div>
   </div>
 
+  {# Filtros ingresos #}
   <div x-data="{
     fBusiness: '',
     fMethod: '',
@@ -223,10 +231,12 @@
         <div class="position-relative">
           <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
                   @click="open = !open" @click.outside="open = false">
-            <span x-show="fBusiness" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName"></span>
+            <span x-show="fBusiness" class="badge rounded-pill"
+                  :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName"></span>
             <span x-show="!fBusiness" class="text-muted small">Todos los negocios</span>
           </button>
-          <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px); min-width:160px">
+          <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+               style="z-index:999; top:calc(100% + 4px); min-width:160px">
             <div class="px-3 py-1 text-muted small" style="cursor:pointer"
                  @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                  @click="fBusiness=''; bizName=''; open=false">Todos los negocios</div>
@@ -245,7 +255,6 @@
         <option value="cash">Efectivo</option>
         <option value="deposit">Consignación</option>
       </select>
-      <!-- CAMBIO 2: filtro de turno dinámico -->
       <select class="form-select form-select-sm" style="width:120px" x-model="fShift">
         <option value="">Todos los turnos</option>
         {% for shift in shifts %}
@@ -269,18 +278,17 @@
             <tr>
               <th class="ps-3">Negocio</th>
               <th>Método</th>
-              <th>Banco</th>
-              <th>Fecha</th>
+              <th class="d-none d-md-table-cell">Banco</th>
+              <th class="d-none d-sm-table-cell">Fecha</th>
               <th>Turno</th>
-              <th>Persona</th>
+              <th class="d-none d-lg-table-cell">Persona</th>
               <th class="text-end">Valor</th>
-              <th class="text-end text-muted">Hora</th>
+              <th class="text-end text-muted d-none d-sm-table-cell">Hora</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
             {% for income in incomes %}
-            <!-- CAMBIO 3: data-shift y badge usan shift.pk / shift.name -->
             <tr x-show="visible($el)"
                 data-business="{{ income.business.pk }}"
                 data-method="{{ income.payment_method }}"
@@ -295,23 +303,31 @@
                   <span class="badge text-bg-primary">Consignación</span>
                 {% endif %}
               </td>
-              <td class="text-muted small">{{ income.bank.name|default:"—" }}</td>
-              <td class="text-muted small">{{ income.date }}</td>
+              <td class="text-muted small d-none d-md-table-cell">{{ income.bank.name|default:"—" }}</td>
+              <td class="text-muted small d-none d-sm-table-cell">{{ income.date }}</td>
               <td><span class="badge text-bg-secondary">{{ income.shift.name }}</span></td>
-              <td class="text-muted small">{{ income.person_name|default:"—" }}</td>
+              <td class="text-muted small d-none d-lg-table-cell">{{ income.person_name|default:"—" }}</td>
               <td class="text-end fw-semibold text-success">${{ income.amount|floatformat:"0g" }}</td>
-              <td class="text-end text-muted small">{{ income.created_at|time:"H:i" }}</td>
-              <td class="text-end pe-3 d-flex gap-2 justify-content-end align-items-center">
-                <button type="button"
-                        class="btn btn-link btn-sm text-primary p-0"
-                        onclick="openIncomeEdit({{ income.pk }}, '{{ income.business.pk }}', '{{ income.date }}', '{{ income.payment_method }}', '{{ income.bank.pk|default:'' }}', {{ income.shift.pk }}, '{{ income.person_name|default:'' }}', {{ income.amount }})">
-                  Editar
-                </button>
-                <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
-                      class="delete-form" data-kind="income" style="display:inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
-                </form>
+              <td class="text-end text-muted small d-none d-sm-table-cell">{{ income.created_at|time:"H:i" }}</td>
+              <td class="text-end pe-3">
+                <div class="d-flex gap-2 justify-content-end align-items-center">
+                  <button type="button" class="btn btn-link btn-sm text-primary p-0"
+                          onclick="openIncomeEdit(
+                            {{ income.pk }},
+                            '{{ income.business.pk }}',
+                            '{{ income.date|date:"Y-m-d" }}',
+                            '{{ income.payment_method }}',
+                            '{{ income.bank.pk|default:'' }}',
+                            {{ income.shift.pk }},
+                            '{{ income.person_name|default:'' }}',
+                            {{ income.amount }}
+                          )">Editar</button>
+                  <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
+                        class="delete-form" data-kind="income" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
+                  </form>
+                </div>
               </td>
             </tr>
             {% empty %}
@@ -335,6 +351,7 @@
   </div>
 
 </div>
+
 {# ══════════════ TAB EGRESOS ══════════════ #}
 <div class="tab-pane fade {% if active_tab == 'expense' %}show active{% endif %}" id="tab-expense">
 
@@ -352,61 +369,69 @@
 
         <div class="row g-2 align-items-end">
 
-          <div class="col-md-2">
-            <label class="form-label small text-muted mb-1">Tipo de egreso</label>
-            <select name="expense_type" class="form-select form-select-sm"
-                    x-model="expType" required>
+          <div class="col-12 col-sm-6 col-md-auto" style="min-width:155px">
+            <label class="form-label small text-muted mb-1">Tipo</label>
+            <select name="expense_type" class="form-select form-select-sm" x-model="expType" required>
               {% for val, label in expense_type_choices %}
               <option value="{{ val }}">{{ label }}</option>
               {% endfor %}
             </select>
           </div>
 
-          <div class="col-md-2" x-data="{ open: false, bizPk: '', bizName: '' }">
+          <div class="col-12 col-sm-6 col-md-auto"
+               x-data="{ open: false, bizPk: '', bizName: '' }"
+               style="min-width:130px">
             <label class="form-label small text-muted mb-1">Negocio</label>
             <input type="hidden" name="business" :value="bizPk" required>
             <div class="position-relative">
-              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-1"
                       @click="open = !open" @click.outside="open = false">
-                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName" style="font-size:0.8rem; padding: 6px 12px;"></span>
-                <span x-show="!bizPk" class="text-muted small">— Selecciona —</span>
+                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()"
+                      x-text="bizName" style="font-size:0.7rem; padding:3px 7px;"></span>
+                <span x-show="!bizPk" class="text-muted small">— Negocio —</span>
               </button>
-              <div x-show="open" x-cloak class="position-absolute w-100 bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px)">
+              <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+                   style="z-index:999; top:calc(100% + 4px); min-width:140px;">
                 {% for b in businesses %}
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
                      @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
-                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}" style="font-size:0.8rem; padding: 6px 12px;">{{ b.name }}</span>
+                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
+                        style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
                 </div>
                 {% endfor %}
               </div>
             </div>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-6 col-sm-4 col-md-auto" style="min-width:130px">
             <label class="form-label small text-muted mb-1">Fecha</label>
             <input type="date" name="date" value="{{ selected_date }}"
                    class="form-control form-control-sm" required>
           </div>
-          <div class="col-md-2" x-show="expType === 'purchase'" x-cloak>
+
+          <div class="col-12 col-sm-6 col-md-auto" x-show="expType === 'purchase'" x-cloak style="min-width:140px">
             <label class="form-label small text-muted mb-1">Proveedor <span class="text-danger">*</span></label>
-            <input type="text" name="supplier" class="form-control form-control-sm"
-                   placeholder="Nombre proveedor" :required="expType === 'purchase'">
+            <select name="supplier" class="form-select form-select-sm" :required="expType === 'purchase'">
+              <option value="">— Selecciona —</option>
+              {% for s in suppliers %}
+              <option value="{{ s.pk }}">{{ s.name }}</option>
+              {% endfor %}
+            </select>
           </div>
 
-          <div class="col-md-1" x-show="expType === 'purchase'" x-cloak>
+          <div class="col-6 col-sm-4 col-md-auto" x-show="expType === 'purchase'" x-cloak style="min-width:100px">
             <label class="form-label small text-muted mb-1">N° Factura</label>
-            <input type="text" name="invoice_number"
-                   class="form-control form-control-sm" placeholder="0000">
+            <input type="text" name="invoice_number" class="form-control form-control-sm" placeholder="0000">
           </div>
 
-          <div class="col-md-2" x-show="expType === 'staff_payment'" x-cloak>
-            <label class="form-label small text-muted mb-1">Persona pagada <span class="text-danger">*</span></label>
+          <div class="col-12 col-sm-6 col-md-auto" x-show="expType === 'staff_payment'" x-cloak style="min-width:150px">
+            <label class="form-label small text-muted mb-1">Persona <span class="text-danger">*</span></label>
             <input type="text" name="employee_name" class="form-control form-control-sm"
-                   placeholder="Nombre completo" :required="expType === 'staff_payment'">
+                   placeholder="Nombre" :required="expType === 'staff_payment'">
           </div>
 
-          <div class="col-md-2">
+          <div class="col-12 col-sm-6 col-md-auto" style="min-width:175px">
             <label class="form-label small text-muted mb-1">Método</label>
             <div class="btn-group w-100" role="group">
               <button type="button" class="btn btn-sm"
@@ -414,11 +439,11 @@
                       @click="method = 'cash'">Efectivo</button>
               <button type="button" class="btn btn-sm"
                       :class="method === 'deposit' ? 'btn-warning' : 'btn-outline-warning'"
-                      @click="method = 'deposit'">Consignación</button>
+                      @click="method = 'deposit'">Consig.</button>
             </div>
           </div>
 
-          <div class="col-md-2" x-show="method === 'deposit'" x-cloak>
+          <div class="col-6 col-sm-4 col-md-auto" x-show="method === 'deposit'" x-cloak style="min-width:130px">
             <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
             <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
               <option value="">— Banco —</option>
@@ -428,20 +453,20 @@
             </select>
           </div>
 
-          <div class="col-md-1">
+          <div class="col-6 col-sm-4 col-md-auto" style="min-width:95px">
             <label class="form-label small text-muted mb-1">Monto ($)</label>
             <input type="text" inputmode="numeric" name="amount" id="expenseAmount"
                    class="form-control form-control-sm" placeholder="0" required>
           </div>
 
-          <div class="col-md-3">
+          <div class="col-12 col-sm-6 col-md">
             <label class="form-label small text-muted mb-1">Descripción</label>
             <input type="text" name="description" class="form-control form-control-sm"
                    placeholder="Observaciones...">
           </div>
 
-          <div class="col-md-1 d-grid">
-            <button type="submit" class="btn btn-danger btn-sm">Guardar</button>
+          <div class="col-6 col-sm-auto">
+            <button type="submit" class="btn btn-danger btn-sm w-100 px-3">Guardar</button>
           </div>
 
         </div>
@@ -449,6 +474,7 @@
     </div>
   </div>
 
+  {# Filtros egresos #}
   <div x-data="{
     filterBiz: '',
     filterMethod: '',
@@ -496,13 +522,13 @@
             <tr>
               <th class="ps-3">Negocio</th>
               <th>Tipo</th>
-              <th>Proveedor / Persona</th>
-              <th>Descripción</th>
+              <th class="d-none d-md-table-cell">Proveedor / Persona</th>
+              <th class="d-none d-lg-table-cell">Descripción</th>
               <th>Método</th>
-              <th>Banco</th>
-              <th>Fecha</th>
+              <th class="d-none d-md-table-cell">Banco</th>
+              <th class="d-none d-sm-table-cell">Fecha</th>
               <th class="text-end">Monto</th>
-              <th class="text-end text-muted">Hora</th>
+              <th class="text-end text-muted d-none d-sm-table-cell">Hora</th>
               <th></th>
             </tr>
           </thead>
@@ -526,9 +552,9 @@
                   <span class="badge text-bg-secondary">Otros</span>
                 {% endif %}
               </td>
-              <td class="small">
+              <td class="small d-none d-md-table-cell">
                 {% if expense.expense_type == 'purchase' %}
-                  <span class="fw-semibold">{{ expense.supplier }}</span>
+                  <span class="fw-semibold">{{ expense.supplier.name }}</span>
                   {% if expense.invoice_number %}
                     <span class="text-muted ms-1">· Fact. {{ expense.invoice_number }}</span>
                   {% endif %}
@@ -538,7 +564,7 @@
                   <span class="text-muted">—</span>
                 {% endif %}
               </td>
-              <td class="small text-muted">{{ expense.description|default:"—" }}</td>
+              <td class="small text-muted d-none d-lg-table-cell">{{ expense.description|default:"—" }}</td>
               <td>
                 {% if expense.payment_method == 'cash' %}
                   <span class="badge text-bg-danger">Efectivo</span>
@@ -546,24 +572,34 @@
                   <span class="badge text-bg-warning text-dark">Consignación</span>
                 {% endif %}
               </td>
-              <td class="text-muted small">
-                {{ expense.bank.name|default:"—" }}
-              </td>
-              <td class="text-muted small">{{ expense.date }}</td>
+              <td class="text-muted small d-none d-md-table-cell">{{ expense.bank.name|default:"—" }}</td>
+              <td class="text-muted small d-none d-sm-table-cell">{{ expense.date }}</td>
               <td class="text-end fw-semibold text-danger">${{ expense.amount|floatformat:"0g" }}</td>
-              <td class="text-end text-muted small">{{ expense.created_at|time:"H:i" }}</td>
-              <td class="text-end pe-3 d-flex gap-2 justify-content-end align-items-center">
-                <button type="button"
-                        class="btn btn-link btn-sm text-primary p-0"
-                        onclick="openExpenseEdit({{ expense.pk }}, '{{ expense.business.pk }}', '{{ expense.date }}', '{{ expense.expense_type }}', '{{ expense.payment_method }}', '{{ expense.bank.pk|default:'' }}', '{{ expense.supplier|default:'' }}', '{{ expense.invoice_number|default:'' }}', '{{ expense.employee_name|default:'' }}', {{ expense.amount }}, '{{ expense.description|default:'' }}')">
-                  Editar
-                </button>
-                <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
-                      class="delete-form" data-kind="expense" style="display:inline">
-                  {% csrf_token %}
-                  <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
-                </form>
+              <td class="text-end text-muted small d-none d-sm-table-cell">{{ expense.created_at|time:"H:i" }}</td>
+              <td class="text-end pe-3">
+                <div class="d-flex gap-2 justify-content-end align-items-center">
+                  <button type="button" class="btn btn-link btn-sm text-primary p-0"
+                          onclick="openExpenseEdit(
+                            {{ expense.pk }},
+                            '{{ expense.business.pk }}',
+                            '{{ expense.date|date:"Y-m-d" }}',
+                            '{{ expense.expense_type }}',
+                            '{{ expense.payment_method }}',
+                            '{{ expense.bank.pk|default:'' }}',
+                            '{{ expense.supplier.pk|default:'' }}',
+                            '{{ expense.invoice_number|default:'' }}',
+                            '{{ expense.employee_name|default:'' }}',
+                            {{ expense.amount }},
+                            '{{ expense.description|default:'' }}'
+                          )">Editar</button>
+                  <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
+                        class="delete-form" data-kind="expense" style="display:inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-link btn-sm text-danger p-0">Eliminar</button>
+                  </form>
+                </div>
               </td>
+            </tr>
             {% empty %}
             <tr>
               <td colspan="10" class="text-center text-muted py-4 small">Sin egresos para esta fecha.</td>
@@ -587,6 +623,9 @@
 </div>
 </div>
 
+{# ══════════════ MODALES ══════════════ #}
+
+{# Modal confirmar eliminación #}
 <div class="modal fade" id="confirmModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-sm">
     <div class="modal-content border-0 shadow">
@@ -595,16 +634,15 @@
         <p class="fw-semibold mb-1" id="confirmTitle">¿Eliminar registro?</p>
         <p class="text-muted small mb-4" id="confirmText">Esta acción no se puede deshacer.</p>
         <div class="d-flex gap-2 justify-content-center">
-          <button type="button" class="btn btn-sm btn-light px-4"
-                  data-bs-dismiss="modal">Cancelar</button>
-          <button type="button" class="btn btn-sm btn-danger px-4"
-                  id="confirmBtn">Eliminar</button>
+          <button type="button" class="btn btn-sm btn-light px-4" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-sm btn-danger px-4" id="confirmBtn">Eliminar</button>
         </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Modal editar ingreso -->
+
+{# Modal editar ingreso #}
 <div class="modal fade" id="editIncomeModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow">
@@ -616,8 +654,7 @@
         {% csrf_token %}
         <div class="modal-body">
           <div class="row g-3 align-items-end">
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Negocio</label>
               <select name="business" id="ei_business" class="form-select form-select-sm" required>
                 {% for b in businesses %}
@@ -625,13 +662,11 @@
                 {% endfor %}
               </select>
             </div>
-
-            <div class="col-md-2">
+            <div class="col-6 col-sm-4 col-md-2">
               <label class="form-label small text-muted mb-1">Fecha</label>
               <input type="date" name="date" id="ei_date" class="form-control form-control-sm" required>
             </div>
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Método de pago</label>
               <div class="btn-group w-100" role="group">
                 <button type="button" class="btn btn-sm"
@@ -643,8 +678,7 @@
               </div>
               <input type="hidden" name="payment_method" :value="method">
             </div>
-
-            <div class="col-md-3" x-show="method === 'deposit'" x-cloak>
+            <div class="col-12 col-sm-6 col-md-3" x-show="method === 'deposit'" x-cloak>
               <label class="form-label small text-muted mb-1">Banco</label>
               <select name="bank" id="ei_bank" class="form-select form-select-sm">
                 <option value="">— Banco —</option>
@@ -653,9 +687,7 @@
                 {% endfor %}
               </select>
             </div>
-
-            <!-- CAMBIO 4: select turno dinámico en modal editar -->
-            <div class="col-md-2">
+            <div class="col-6 col-sm-4 col-md-2">
               <label class="form-label small text-muted mb-1">Turno</label>
               <select name="shift" id="ei_shift" class="form-select form-select-sm" required>
                 <option value="">— Turno —</option>
@@ -664,18 +696,15 @@
                 {% endfor %}
               </select>
             </div>
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Persona</label>
               <input type="text" name="person_name" id="ei_person" class="form-control form-control-sm">
             </div>
-
-            <div class="col-md-3">
+            <div class="col-6 col-sm-4 col-md-3">
               <label class="form-label small text-muted mb-1">Valor ($)</label>
               <input type="text" inputmode="numeric" name="amount" id="ei_amount"
                      class="form-control form-control-sm" required>
             </div>
-
           </div>
         </div>
         <div class="modal-footer border-0">
@@ -686,7 +715,8 @@
     </div>
   </div>
 </div>
-<!-- Modal editar egreso -->
+
+{# Modal editar egreso #}
 <div class="modal fade" id="editExpenseModal" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content border-0 shadow">
@@ -698,8 +728,7 @@
         {% csrf_token %}
         <div class="modal-body">
           <div class="row g-3 align-items-end">
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Tipo de egreso</label>
               <select name="expense_type" id="ee_type" class="form-select form-select-sm"
                       x-model="expType" required>
@@ -708,8 +737,7 @@
                 {% endfor %}
               </select>
             </div>
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Negocio</label>
               <select name="business" id="ee_business" class="form-select form-select-sm" required>
                 {% for b in businesses %}
@@ -717,28 +745,28 @@
                 {% endfor %}
               </select>
             </div>
-
-            <div class="col-md-2">
+            <div class="col-6 col-sm-4 col-md-2">
               <label class="form-label small text-muted mb-1">Fecha</label>
               <input type="date" name="date" id="ee_date" class="form-control form-control-sm" required>
             </div>
-
-            <div class="col-md-3" x-show="expType === 'purchase'" x-cloak>
+            <div class="col-12 col-sm-6 col-md-3" x-show="expType === 'purchase'" x-cloak>
               <label class="form-label small text-muted mb-1">Proveedor</label>
-              <input type="text" name="supplier" id="ee_supplier" class="form-control form-control-sm">
+              <select name="supplier" id="ee_supplier" class="form-select form-select-sm">
+                <option value="">— Selecciona —</option>
+                {% for s in suppliers %}
+                <option value="{{ s.pk }}">{{ s.name }}</option>
+                {% endfor %}
+              </select>
             </div>
-
-            <div class="col-md-2" x-show="expType === 'purchase'" x-cloak>
+            <div class="col-6 col-sm-4 col-md-2" x-show="expType === 'purchase'" x-cloak>
               <label class="form-label small text-muted mb-1">N° Factura</label>
               <input type="text" name="invoice_number" id="ee_invoice" class="form-control form-control-sm">
             </div>
-
-            <div class="col-md-3" x-show="expType === 'staff_payment'" x-cloak>
+            <div class="col-12 col-sm-6 col-md-3" x-show="expType === 'staff_payment'" x-cloak>
               <label class="form-label small text-muted mb-1">Persona pagada</label>
               <input type="text" name="employee_name" id="ee_employee" class="form-control form-control-sm">
             </div>
-
-            <div class="col-md-3">
+            <div class="col-12 col-sm-6 col-md-3">
               <label class="form-label small text-muted mb-1">Método</label>
               <div class="btn-group w-100" role="group">
                 <button type="button" class="btn btn-sm"
@@ -750,8 +778,7 @@
               </div>
               <input type="hidden" name="payment_method" :value="method">
             </div>
-
-            <div class="col-md-3" x-show="method === 'deposit'" x-cloak>
+            <div class="col-12 col-sm-6 col-md-3" x-show="method === 'deposit'" x-cloak>
               <label class="form-label small text-muted mb-1">Banco</label>
               <select name="bank" id="ee_bank" class="form-select form-select-sm">
                 <option value="">— Banco —</option>
@@ -760,18 +787,15 @@
                 {% endfor %}
               </select>
             </div>
-
-            <div class="col-md-2">
+            <div class="col-6 col-sm-4 col-md-2">
               <label class="form-label small text-muted mb-1">Monto ($)</label>
               <input type="text" inputmode="numeric" name="amount" id="ee_amount"
                      class="form-control form-control-sm" required>
             </div>
-
-            <div class="col-md-4">
+            <div class="col-12 col-sm-6 col-md-4">
               <label class="form-label small text-muted mb-1">Descripción</label>
               <input type="text" name="description" id="ee_description" class="form-control form-control-sm">
             </div>
-
           </div>
         </div>
         <div class="modal-footer border-0">
@@ -786,19 +810,21 @@
 <style>
 [x-cloak] { display: none !important; }
 .business-badge-maná,
-.business-badge-mana  { background: #1d6fa5; color: #fff; }
+.business-badge-mana      { background: #1d6fa5; color: #fff; }
 .business-badge-mercatodo { background: #dc2626; color: #fff; }
 .business-badge-primavera { background: #16a34a; color: #fff; }
 .business-badge-panadería,
 .business-badge-panaderia { background: #ca8a04; color: #fff; }
-.business-badge-otros { background: #7c3aed; color: #fff; }
+.business-badge-otros     { background: #7c3aed; color: #fff; }
 </style>
-<span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit' pk=0 %}"  hidden></span>
+
+<span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit'  pk=0 %}" hidden></span>
 <span id="expense-edit-url" data-url="{% url 'cash_closing:expense-edit' pk=0 %}" hidden></span>
+
 <script>
 function liveFormat(input) {
   const start = input.selectionStart;
-  const prev = input.value.length;
+  const prev  = input.value.length;
   const digits = input.value.replace(/\D/g, "");
   if (!digits) { input.value = ""; return; }
   input.value = parseInt(digits).toLocaleString("de-DE", { maximumFractionDigits: 0 });
@@ -819,10 +845,10 @@ document.addEventListener("DOMContentLoaded", function() {
   bindAmount("incomeAmount");
   bindAmount("expenseAmount");
 
-  // ── Modal confirmar eliminación ──
-  const modal      = new bootstrap.Modal(document.getElementById("confirmModal"));
-  const confirmBtn = document.getElementById("confirmBtn");
-  let pendingForm  = null;
+  // ── Confirmar eliminación ──
+  const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
+  const confirmBtn   = document.getElementById("confirmBtn");
+  let pendingForm    = null;
 
   document.querySelectorAll(".delete-form").forEach(form => {
     form.addEventListener("submit", function(e) {
@@ -831,32 +857,30 @@ document.addEventListener("DOMContentLoaded", function() {
       document.getElementById("confirmIcon").textContent  = isIncome ? "💰" : "💸";
       document.getElementById("confirmTitle").textContent = isIncome ? "¿Eliminar ingreso?" : "¿Eliminar egreso?";
       pendingForm = form;
-      modal.show();
+      confirmModal.show();
     });
   });
 
   confirmBtn.addEventListener("click", function() {
     if (pendingForm) {
-      modal.hide();
+      confirmModal.hide();
       pendingForm.submit();
       pendingForm = null;
     }
   });
 
-  // ── Formateo en vivo para modales de edición ──
+  // ── Formateo en modales ──
   ["ei_amount", "ee_amount"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
     el.addEventListener("input", function() { liveFormat(this); });
   });
 
-  // Limpiar monto antes de enviar modal ingreso
   document.getElementById("editIncomeForm").addEventListener("submit", function() {
     const a = document.getElementById("ei_amount");
     a.value = a.value.replace(/\./g, "") || "0";
   });
 
-  // Limpiar monto antes de enviar modal egreso
   document.getElementById("editExpenseForm").addEventListener("submit", function() {
     const a = document.getElementById("ee_amount");
     a.value = a.value.replace(/\./g, "") || "0";
@@ -865,22 +889,16 @@ document.addEventListener("DOMContentLoaded", function() {
   // ── Abrir modal editar ingreso ──
   window.openIncomeEdit = function(pk, business, date, method, bank, shift, person, amount) {
     const form = document.getElementById("editIncomeForm");
-    const urlTemplate = document.getElementById("income-edit-url").dataset.url;
-    form.action = urlTemplate.replace("/0/", `/${pk}/`);
+    form.action = document.getElementById("income-edit-url").dataset.url.replace("/0/", `/${pk}/`);
 
     document.getElementById("ei_business").value = business;
     document.getElementById("ei_date").value     = date;
     document.getElementById("ei_shift").value    = shift;
     document.getElementById("ei_person").value   = person;
+    document.getElementById("ei_amount").value   = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
 
-    const amtInput = document.getElementById("ei_amount");
-    amtInput.value = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
-
-    // Sincronizar método de pago con Alpine
     const alpineData = Alpine.$data(form);
-    if (alpineData) {
-      alpineData.method = method;
-    }
+    if (alpineData) alpineData.method = method;
 
     setTimeout(() => {
       document.getElementById("ei_bank").value = bank;
@@ -892,20 +910,15 @@ document.addEventListener("DOMContentLoaded", function() {
   // ── Abrir modal editar egreso ──
   window.openExpenseEdit = function(pk, business, date, expType, method, bank, supplier, invoice, employee, amount, description) {
     const form = document.getElementById("editExpenseForm");
-    const urlTemplate = document.getElementById("expense-edit-url").dataset.url;
-    form.action = urlTemplate.replace("/0/", `/${pk}/`);
+    form.action = document.getElementById("expense-edit-url").dataset.url.replace("/0/", `/${pk}/`);
 
     document.getElementById("ee_business").value    = business;
     document.getElementById("ee_date").value        = date;
-    document.getElementById("ee_supplier").value    = supplier;
     document.getElementById("ee_invoice").value     = invoice;
     document.getElementById("ee_employee").value    = employee;
     document.getElementById("ee_description").value = description;
+    document.getElementById("ee_amount").value      = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
 
-    const amtInput = document.getElementById("ee_amount");
-    amtInput.value = parseInt(amount).toLocaleString("de-DE", { maximumFractionDigits: 0 });
-
-    // Sincronizar tipo y método con Alpine, luego banco
     const alpineData = Alpine.$data(form);
     if (alpineData) {
       alpineData.expType = expType;
@@ -913,9 +926,8 @@ document.addEventListener("DOMContentLoaded", function() {
     }
 
     setTimeout(() => {
-      document.getElementById("ee_bank").value = bank;
-      // Disparar change para que Alpine reactive x-model si no usó $data
-      document.getElementById("ee_type").dispatchEvent(new Event("change"));
+      document.getElementById("ee_bank").value     = bank;
+      document.getElementById("ee_supplier").value = supplier;
     }, 50);
 
     new bootstrap.Modal(document.getElementById("editExpenseModal")).show();

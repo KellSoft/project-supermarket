@@ -8,7 +8,16 @@ from django.contrib import messages
 from django.utils.timezone import localdate
 from django.db.models import Sum
 from apps.businesses.models import Business
-from .models import CashClosing, CashDenomination, Income, Expense, BankAccount, ExpenseType, Shift
+from .models import (
+    CashClosing,
+    CashDenomination,
+    Income,
+    Expense,
+    BankAccount,
+    ExpenseType,
+    Shift,
+    Supplier,
+)
 from .forms import ExpenseForm, IncomeForm, OpeningBalanceForm, CashClosingEditForm
 from datetime import date as date_type
 
@@ -150,6 +159,7 @@ class CashFlowView(View):
                 "incomes": income_qs,
                 "expenses": expense_qs,
                 "businesses": Business.objects.all(),
+                "suppliers": Supplier.objects.all(),
                 "selected_date": date,
                 "selected_business": biz,
                 "bank_accounts": BankAccount.objects.filter(is_active=True),
@@ -242,6 +252,11 @@ def _closing_context(closing):
         "difference": closing.difference,
     }
 
+def _redirect_to_closing(date):
+    url = reverse("cash_closing:cash-closing")
+    if date != localdate():
+        url += f"?date={date.isoformat()}"
+    return redirect(url)
 
 class CashClosingView(View):
     template_name = "cash_closing/cash_closing.html"
@@ -253,12 +268,14 @@ class CashClosingView(View):
                 target_date = date_type.fromisoformat(date_str)
             except ValueError:
                 return None, None, "Fecha inválida."
-            if target_date == localdate():
-                closing, _ = CashClosing.get_or_create_for_today()
+
+            if target_date > localdate():
                 return None, None, "No puedes consultar fechas futuras."
+
             if target_date == localdate():
                 closing, _ = CashClosing.get_or_create_for_today()
                 return closing, True, None
+
             try:
                 closing = CashClosing.objects.get(date=target_date)
                 return closing, False, None
@@ -273,14 +290,13 @@ class CashClosingView(View):
             return closing, True, None
 
     def get(self, request):
-        date_str = request.GET.get("date", "").strip()
         closing, is_today, error = self._get_closing(request)
 
         if error:
             messages.error(request, error)
             closing, _ = CashClosing.get_or_create_for_today()
             is_today = True
-            selected_date = date_str or localdate().isoformat()
+            selected_date = localdate().isoformat()
         else:
             selected_date = closing.date.isoformat()
 
@@ -305,31 +321,31 @@ class CashClosingView(View):
         if action == "set_opening":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
-                return redirect("cash_closing:cash-closing")
+                return _redirect_to_closing(closing.date)
             form = OpeningBalanceForm(request.POST, instance=closing)
             if form.is_valid():
                 form.save()
                 messages.success(request, "Saldo inicial guardado.")
             else:
                 messages.error(request, "Valor inválido para el saldo inicial.")
-            return redirect("cash_closing:cash-closing")
+            return _redirect_to_closing(closing.date)
 
         if action == "edit_closing":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
-                return redirect("cash_closing:cash-closing")
+                return _redirect_to_closing(closing.date)
             form = CashClosingEditForm(request.POST, instance=closing)
             if form.is_valid():
                 form.save()
                 messages.success(request, "Cuadre actualizado.")
             else:
                 messages.error(request, "Error al actualizar el cuadre.")
-            return redirect("cash_closing:cash-closing")
+            return _redirect_to_closing(closing.date)
 
         if action == "save_denominations":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya está cerrado.")
-                return redirect("cash_closing:cash-closing")
+                return _redirect_to_closing(closing.date)
             for value, _ in CashDenomination.DENOMINATIONS:
                 qty = int(request.POST.get(f"qty_{value}", 0) or 0)
                 CashDenomination.objects.update_or_create(
@@ -339,30 +355,37 @@ class CashClosingView(View):
                 )
             closing.recalculate_physical_cash()
             messages.success(request, "Conteo guardado.")
-            return redirect("cash_closing:cash-closing")
+            return _redirect_to_closing(closing.date)
 
         if action == "close_closing":
             if closing.is_closed:
                 messages.error(request, "El cuadre ya estaba cerrado.")
-                return redirect("cash_closing:cash-closing")
+                return _redirect_to_closing(closing.date)
             closing.close()
             messages.success(
                 request,
                 f"Cuadre cerrado. Efectivo final: ${closing.physical_cash:,.0f}",
             )
-            return redirect("cash_closing:cash-closing")
+            return _redirect_to_closing(closing.date)
 
         if action == "reopen_closing":
             if closing.is_closed:
                 closing.is_closed = False
                 closing.save(update_fields=["is_closed"])
-                messages.warning(
-                    request, "Cuadre reabierto. Recuerda volver a cerrarlo."
-                )
-            return redirect("cash_closing:cash-closing")
+                messages.warning(request, "Cuadre reabierto. Recuerda volver a cerrarlo.")
+            return _redirect_to_closing(closing.date)
+
+        if action == "save_notes":
+            if closing.is_closed:
+                messages.error(request, "El cuadre ya está cerrado.")
+                return _redirect_to_closing(closing.date)
+            closing.notes = request.POST.get("notes", "").strip()
+            closing.save(update_fields=["notes"])
+            messages.success(request, "Notas guardadas.")
+            return _redirect_to_closing(closing.date)
 
         messages.error(request, "Acción no reconocida.")
-        return redirect("cash_closing:cash-closing")
+        return _redirect_to_closing(closing.date)
 
 
 class CashClosingHistoryView(View):
@@ -412,7 +435,7 @@ class BankAccountView(View):
                     "day_out": day_out,
                 }
             )
-            
+
         total_in = income_qs.aggregate(t=Sum("amount"))["t"] or 0
         total_out = expense_qs.aggregate(t=Sum("amount"))["t"] or 0
 
