@@ -1,491 +1,491 @@
-{% extends 'base.html' %} {% block content %}
-<div class="container mt-5" style="max-width: 860px">
-  <h2 class="mb-1">📄 Reportes</h2>
-  <p class="text-muted mb-4">
-    Selecciona el reporte que quieres generar y descárgalo en PDF.
-  </p>
+  {% extends 'base.html' %} {% block content %}
+  <div class="container mt-5" style="max-width: 860px">
+    <h2 class="mb-1">📄 Reportes</h2>
+    <p class="text-muted mb-4">
+      Selecciona el reporte que quieres generar y descárgalo en PDF.
+    </p>
 
-  <div class="row g-4">
-    <!-- Tarjeta Reporte Diario -->
-    <div class="col-md-4">
-      <div
-        class="card h-100 shadow-sm border-0"
-        style="border-top: 3px solid #6f42c1 !important"
-      >
-        <div class="card-body d-flex flex-column align-items-start p-4">
-          <div class="fs-2 mb-3">📅</div>
-          <h5 class="fw-semibold mb-1">Resumen del día</h5>
-          <p class="text-muted small mb-4">
-            Ingresos y egresos de una fecha. Por defecto, hoy.
-          </p>
-          <button
-            class="btn btn-sm mt-auto"
-            style="background: #6f42c1; color: #fff"
-            data-bs-toggle="modal"
-            data-bs-target="#modalDiario"
-          >
-            Generar PDF
-          </button>
-        </div>
-      </div>
-    </div>
-
-    {% comment %} {# ── Tarjeta Compras ── #}
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-body d-flex flex-column align-items-start p-4">
-          <div class="fs-2 mb-3">🛒</div>
-          <h5 class="fw-semibold mb-1">Compras</h5>
-          <p class="text-muted small mb-4">
-            Filtra por fecha, proveedor o producto.
-          </p>
-          <button
-            class="btn btn-primary btn-sm mt-auto"
-            data-bs-toggle="modal"
-            data-bs-target="#modalCompras"
-          >
-            Generar PDF
-          </button>
-        </div>
-      </div>
-    </div> {% endcomment %}
-
-    {# ── Tarjeta Ingresos ── #}
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-body d-flex flex-column align-items-start p-4">
-          <div class="fs-2 mb-3">💰</div>
-          <h5 class="fw-semibold mb-1">Ingresos</h5>
-          <p class="text-muted small mb-4">
-            Filtra por negocio y rango de fechas.
-          </p>
-          <button
-            class="btn btn-success btn-sm mt-auto"
-            data-bs-toggle="modal"
-            data-bs-target="#modalIngresos"
-          >
-            Generar PDF
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tarjeta Cuadre de Caja -->
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a7c4a !important">
-        <div class="card-body d-flex flex-column align-items-start p-4">
-          <div class="fs-2 mb-3">🏦</div>
-          <h5 class="fw-semibold mb-1">Cuadre de caja</h5>
-          <p class="text-muted small mb-4">
-            Resumen del conteo de efectivo, diferencia y movimientos del día.
-          </p>
-          <button class="btn btn-sm mt-auto" style="background: #1a7c4a; color: #fff"
-                  data-bs-toggle="modal" data-bs-target="#modalCuadreCaja">
-            Generar PDF
-          </button>
-        </div>
-      </div>
-    </div>
-{# ── Tarjeta Bancos ── #}
-<div class="col-md-4">
-  <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a3a7c !important">
-    <div class="card-body d-flex flex-column align-items-start p-4">
-      <div class="fs-2 mb-3">🏦</div>
-      <h5 class="fw-semibold mb-1">Bancos</h5>
-      <p class="text-muted small mb-4">
-        Ingresos y egresos por consignación, agrupados por banco y período.
-      </p>
-      <button class="btn btn-sm mt-auto" style="background:#1a3a7c; color:#fff"
-              data-bs-toggle="modal" data-bs-target="#modalBancos">
-        Generar PDF
-      </button>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL BANCOS -->
-<div class="modal fade" id="modalBancos" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:bank_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">🏦 Reporte de Bancos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted">Negocio</label>
-            <select name="business" class="form-select">
-              <option value="">Todos los negocios</option>
-              {% for b in businesses %}
-              <option value="{{ b.pk }}">{{ b.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-12">
-            <label class="form-label small text-muted">Banco</label>
-            <select name="bank" class="form-select">
-              <option value="">Todos los bancos</option>
-              {% for bank in bank_accounts %}
-              <option value="{{ bank.pk }}">{{ bank.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-          <div class="col-6">
-            <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control">
-          </div>
-          <div class="col-6">
-            <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control">
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm"
-                  data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-sm" style="background:#1a3a7c; color:#fff">
-            ⬇ Descargar PDF
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-    {# ── Tarjeta Egresos ── #}
-    <div class="col-md-4">
-      <div class="card h-100 shadow-sm border-0">
-        <div class="card-body d-flex flex-column align-items-start p-4">
-          <div class="fs-2 mb-3">💸</div>
-          <h5 class="fw-semibold mb-1">Egresos</h5>
-          <p class="text-muted small mb-4">
-            Filtra por negocio y rango de fechas.
-          </p>
-          <button
-            class="btn btn-danger btn-sm mt-auto"
-            data-bs-toggle="modal"
-            data-bs-target="#modalEgresos"
-          >
-            Generar PDF
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-{% comment %} <!-- MODAL COMPRAS -->
-<div class="modal fade" id="modalCompras" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:purchase_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">🛒 Reporte de Compras</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-          ></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted"
-              >Proveedor
-              <span class="text-muted fw-normal">(opcional)</span></label
+    <div class="row g-4">
+      <!-- Tarjeta Reporte Diario -->
+      <div class="col-md-4">
+        <div
+          class="card h-100 shadow-sm border-0"
+          style="border-top: 3px solid #6f42c1 !important"
+        >
+          <div class="card-body d-flex flex-column align-items-start p-4">
+            <div class="fs-2 mb-3">📅</div>
+            <h5 class="fw-semibold mb-1">Resumen del día</h5>
+            <p class="text-muted small mb-4">
+              Ingresos y egresos de una fecha. Por defecto, hoy.
+            </p>
+            <button
+              class="btn btn-sm mt-auto"
+              style="background: #6f42c1; color: #fff"
+              data-bs-toggle="modal"
+              data-bs-target="#modalDiario"
             >
-            <input
-              type="text"
-              name="supplier"
-              class="form-control"
-              placeholder="Ej: Colombina"
-            />
+              Generar PDF
+            </button>
           </div>
+        </div>
+      </div>
 
-          <div class="col-12">
-            <label class="form-label small text-muted"
-              >Productos
-              <span class="text-muted fw-normal">(opcional)</span></label
+      {% comment %} {# ── Tarjeta Compras ── #}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column align-items-start p-4">
+            <div class="fs-2 mb-3">🛒</div>
+            <h5 class="fw-semibold mb-1">Compras</h5>
+            <p class="text-muted small mb-4">
+              Filtra por fecha, proveedor o producto.
+            </p>
+            <button
+              class="btn btn-primary btn-sm mt-auto"
+              data-bs-toggle="modal"
+              data-bs-target="#modalCompras"
             >
-            <input
-              type="text"
-              name="product"
-              class="form-control"
-              placeholder="Ej: Arroz"
-            />
-          </div>
-
-          <div class="col-6">
-            <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control" />
-          </div>
-
-          <div class="col-6">
-            <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control" />
+              Generar PDF
+            </button>
           </div>
         </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            data-bs-dismiss="modal"
-          >
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-primary btn-sm">
-            ⬇ Descargar PDF
-          </button>
+      </div> {% endcomment %}
+
+      {# ── Tarjeta Ingresos ── #}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column align-items-start p-4">
+            <div class="fs-2 mb-3">💰</div>
+            <h5 class="fw-semibold mb-1">Ingresos</h5>
+            <p class="text-muted small mb-4">
+              Filtra por negocio y rango de fechas.
+            </p>
+            <button
+              class="btn btn-success btn-sm mt-auto"
+              data-bs-toggle="modal"
+              data-bs-target="#modalIngresos"
+            >
+              Generar PDF
+            </button>
+          </div>
         </div>
-      </form>
+      </div>
+
+      <!-- Tarjeta Cuadre de Caja -->
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a7c4a !important">
+          <div class="card-body d-flex flex-column align-items-start p-4">
+            <div class="fs-2 mb-3">🏦</div>
+            <h5 class="fw-semibold mb-1">Cuadre de caja</h5>
+            <p class="text-muted small mb-4">
+              Resumen del conteo de efectivo, diferencia y movimientos del día.
+            </p>
+            <button class="btn btn-sm mt-auto" style="background: #1a7c4a; color: #fff"
+                    data-bs-toggle="modal" data-bs-target="#modalCuadreCaja">
+              Generar PDF
+            </button>
+          </div>
+        </div>
+      </div>
+  {# ── Tarjeta Bancos ── #}
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0" style="border-top: 3px solid #1a3a7c !important">
+      <div class="card-body d-flex flex-column align-items-start p-4">
+        <div class="fs-2 mb-3">🏦</div>
+        <h5 class="fw-semibold mb-1">Bancos</h5>
+        <p class="text-muted small mb-4">
+          Ingresos y egresos por consignación, agrupados por banco y período.
+        </p>
+        <button class="btn btn-sm mt-auto" style="background:#1a3a7c; color:#fff"
+                data-bs-toggle="modal" data-bs-target="#modalBancos">
+          Generar PDF
+        </button>
+      </div>
     </div>
   </div>
-</div> {% endcomment %}
-<!-- MODAL INGRESOS -->
-<div class="modal fade" id="modalIngresos" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:income_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">💰 Reporte de Ingresos</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-          ></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted">Negocio</label>
-            <select name="business" class="form-select">
-              <option value="">Todos los negocios</option>
-              {% for b in businesses %}
-              <option value="{{ b.pk }}">{{ b.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
 
-          <div class="col-6">
-            <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control" />
+  <!-- MODAL BANCOS -->
+  <div class="modal fade" id="modalBancos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:bank_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">🏦 Reporte de Bancos</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
-
-          <div class="col-6">
-            <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control" />
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Método de pago</label>
-            <select name="payment_method" class="form-select">
-              <option value="">Todos los métodos</option>
-              <option value="cash">Efectivo</option>
-              <option value="deposit">Consignación</option>
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Banco</label>
-            <select name="bank" class="form-select">
-              <option value="">Todos los bancos</option>
-              {% for bank in bank_accounts %}
-              <option value="{{ bank.pk }}">{{ bank.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Turno</label>
-            <select name="shift" class="form-select">
-              <option value="">Todos los turnos</option>
-              {% for shift in shifts %}
-              <option value="{{ shift.pk }}">{{ shift.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            data-bs-dismiss="modal"
-          >
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-success btn-sm">
-            ⬇ Descargar PDF
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- MODAL EGRESOS -->
-<div class="modal fade" id="modalEgresos" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:expense_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">💸 Reporte de Egresos</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-          ></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted">Negocio</label>
-            <select name="business" class="form-select">
-              <option value="">Todos los negocios</option>
-              {% for b in businesses %}
-              <option value="{{ b.pk }}">{{ b.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <div class="col-6">
-            <label class="form-label small text-muted">Desde</label>
-            <input type="date" name="start_date" class="form-control" />
-          </div>
-
-          <div class="col-6">
-            <label class="form-label small text-muted">Hasta</label>
-            <input type="date" name="end_date" class="form-control" />
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Proveedor</label>
-            <input
-              type="text"
-              name="supplier"
-              class="form-control"
-              placeholder="Ej: Colombina"
-            />
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Método de pago</label>
-            <select name="payment_method" class="form-select">
-              <option value="">Todos los métodos</option>
-              <option value="cash">Efectivo</option>
-              <option value="deposit">Consignación</option>
-            </select>
-          </div>
-
-          <div class="col-12">
-            <label class="form-label small text-muted">Banco</label>
-            <select name="bank" class="form-select">
-              <option value="">Todos los bancos</option>
-              {% for bank in bank_accounts %}
-              <option value="{{ bank.pk }}">{{ bank.name }}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            data-bs-dismiss="modal"
-          >
-            Cancelar
-          </button>
-          <button type="submit" class="btn btn-danger btn-sm">
-            ⬇ Descargar PDF
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- MODAL DIARIO -->
-<div class="modal fade" id="modalDiario" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:daily_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">📅 Resumen del día</h5>
-          <button
-            type="button"
-            class="btn-close"
-            data-bs-dismiss="modal"
-          ></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted">
-              Fecha <span class="text-muted fw-normal">(por defecto, hoy)</span>
-            </label>
-            <input
-              type="date"
-              name="date"
-              value="{{ selected_date }}"
-              class="form-control"
-            />
-          </div>
-
-          <div class="col-12">
-            <div class="alert alert-light border small text-muted mb-0 py-2">
-              El reporte incluirá todos los
-              <strong>ingresos</strong> y <strong>egresos</strong>
-              registrados en la fecha seleccionada, con un balance del día.
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted">Negocio</label>
+              <select name="business" class="form-select">
+                <option value="">Todos los negocios</option>
+                {% for b in businesses %}
+                <option value="{{ b.pk }}">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="form-label small text-muted">Banco</label>
+              <select name="bank" class="form-select">
+                <option value="">Todos los bancos</option>
+                {% for bank in bank_accounts %}
+                <option value="{{ bank.pk }}">{{ bank.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label small text-muted">Desde</label>
+              <input type="date" name="start_date" class="form-control">
+            </div>
+            <div class="col-6">
+              <label class="form-label small text-muted">Hasta</label>
+              <input type="date" name="end_date" class="form-control">
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-outline-secondary btn-sm"
-            data-bs-dismiss="modal">
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="btn btn-sm"
-            style="background: #6f42c1; color: #fff">
-            ⬇ Descargar PDF
-          </button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-sm" style="background:#1a3a7c; color:#fff">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-<!-- MODAL CUADRE DE CAJA -->
-<div class="modal fade" id="modalCuadreCaja" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <form method="POST" action="{% url 'reports:cash_closing_report' %}">
-        {% csrf_token %}
-        <div class="modal-header">
-          <h5 class="modal-title">🏦 Cuadre de Caja</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body row g-3">
-          <div class="col-12">
-            <label class="form-label small text-muted">Fecha</label>
-            <input type="date" name="date" value="{{ selected_date }}" class="form-control">
+      {# ── Tarjeta Egresos ── #}
+      <div class="col-md-4">
+        <div class="card h-100 shadow-sm border-0">
+          <div class="card-body d-flex flex-column align-items-start p-4">
+            <div class="fs-2 mb-3">💸</div>
+            <h5 class="fw-semibold mb-1">Egresos</h5>
+            <p class="text-muted small mb-4">
+              Filtra por negocio y rango de fechas.
+            </p>
+            <button
+              class="btn btn-danger btn-sm mt-auto"
+              data-bs-toggle="modal"
+              data-bs-target="#modalEgresos"
+            >
+              Generar PDF
+            </button>
           </div>
-          <div class="col-12">
-            <div class="alert alert-light border small text-muted mb-0 py-2">
-              Incluye el <strong>conteo de billetes y monedas</strong>,
-              ingresos y egresos en efectivo, efectivo esperado vs contado
-              y la <strong>diferencia</strong> del día.
+        </div>
+      </div>
+    </div>
+  </div>
+  {% comment %} <!-- MODAL COMPRAS -->
+  <div class="modal fade" id="modalCompras" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:purchase_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">🛒 Reporte de Compras</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted"
+                >Proveedor
+                <span class="text-muted fw-normal">(opcional)</span></label
+              >
+              <input
+                type="text"
+                name="supplier"
+                class="form-control"
+                placeholder="Ej: Colombina"
+              />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted"
+                >Productos
+                <span class="text-muted fw-normal">(opcional)</span></label
+              >
+              <input
+                type="text"
+                name="product"
+                class="form-control"
+                placeholder="Ej: Arroz"
+              />
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Desde</label>
+              <input type="date" name="start_date" class="form-control" />
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Hasta</label>
+              <input type="date" name="end_date" class="form-control" />
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-outline-secondary btn-sm"
-                  data-bs-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-sm" style="background:#1a7c4a; color:#fff">
-            ⬇ Descargar PDF
-          </button>
-        </div>
-      </form>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary btn-sm">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div> {% endcomment %}
+  <!-- MODAL INGRESOS -->
+  <div class="modal fade" id="modalIngresos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:income_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">💰 Reporte de Ingresos</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted">Negocio</label>
+              <select name="business" class="form-select">
+                <option value="">Todos los negocios</option>
+                {% for b in businesses %}
+                <option value="{{ b.pk }}">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Desde</label>
+              <input type="date" name="start_date" class="form-control" />
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Hasta</label>
+              <input type="date" name="end_date" class="form-control" />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Método de pago</label>
+              <select name="payment_method" class="form-select">
+                <option value="">Todos los métodos</option>
+                <option value="cash">Efectivo</option>
+                <option value="deposit">Consignación</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Banco</label>
+              <select name="bank" class="form-select">
+                <option value="">Todos los bancos</option>
+                {% for bank in bank_accounts %}
+                <option value="{{ bank.pk }}">{{ bank.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Turno</label>
+              <select name="shift" class="form-select">
+                <option value="">Todos los turnos</option>
+                {% for shift in shifts %}
+                <option value="{{ shift.pk }}">{{ shift.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-success btn-sm">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
-</div>
-{% endblock %}
+  <!-- MODAL EGRESOS -->
+  <div class="modal fade" id="modalEgresos" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:expense_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">💸 Reporte de Egresos</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted">Negocio</label>
+              <select name="business" class="form-select">
+                <option value="">Todos los negocios</option>
+                {% for b in businesses %}
+                <option value="{{ b.pk }}">{{ b.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Desde</label>
+              <input type="date" name="start_date" class="form-control" />
+            </div>
+
+            <div class="col-6">
+              <label class="form-label small text-muted">Hasta</label>
+              <input type="date" name="end_date" class="form-control" />
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Proveedor</label>
+              <select name="supplier" class="form-select">
+                <option value="">Todos los proveedores</option>
+                {% for s in suppliers %}
+                <option value="{{ s.pk }}">{{ s.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Método de pago</label>
+              <select name="payment_method" class="form-select">
+                <option value="">Todos los métodos</option>
+                <option value="cash">Efectivo</option>
+                <option value="deposit">Consignación</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Banco</label>
+              <select name="bank" class="form-select">
+                <option value="">Todos los bancos</option>
+                {% for bank in bank_accounts %}
+                <option value="{{ bank.pk }}">{{ bank.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal"
+            >
+              Cancelar
+            </button>
+            <button type="submit" class="btn btn-danger btn-sm">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DIARIO -->
+  <div class="modal fade" id="modalDiario" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:daily_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">📅 Resumen del día</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+            ></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted">
+                Fecha <span class="text-muted fw-normal">(por defecto, hoy)</span>
+              </label>
+              <input
+                type="date"
+                name="date"
+                value="{{ selected_date }}"
+                class="form-control"
+              />
+            </div>
+
+            <div class="col-12">
+              <div class="alert alert-light border small text-muted mb-0 py-2">
+                El reporte incluirá todos los
+                <strong>ingresos</strong> y <strong>egresos</strong>
+                registrados en la fecha seleccionada, con un balance del día.
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-bs-dismiss="modal">
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              class="btn btn-sm"
+              style="background: #6f42c1; color: #fff">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- MODAL CUADRE DE CAJA -->
+  <div class="modal fade" id="modalCuadreCaja" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{% url 'reports:cash_closing_report' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title">🏦 Cuadre de Caja</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body row g-3">
+            <div class="col-12">
+              <label class="form-label small text-muted">Fecha</label>
+              <input type="date" name="date" value="{{ selected_date }}" class="form-control">
+            </div>
+            <div class="col-12">
+              <div class="alert alert-light border small text-muted mb-0 py-2">
+                Incluye el <strong>conteo de billetes y monedas</strong>,
+                ingresos y egresos en efectivo, efectivo esperado vs contado
+                y la <strong>diferencia</strong> del día.
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary btn-sm"
+                    data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-sm" style="background:#1a7c4a; color:#fff">
+              ⬇ Descargar PDF
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endblock %}

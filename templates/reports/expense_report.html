@@ -285,13 +285,13 @@
           <td>
             <span class="business-badge">{{ expense.business.name }}</span>
           </td>
-          <td>{{ expense.supplier }}</td>
+          <td>{{ expense.supplier.name|default:"—" }}</td>
           <td>
             <span class="pill">{{ expense.invoice_number|default:"—" }}</span>
           </td>
           <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ expense.get_payment_method_display }}</td>
-          <td class="td-muted">{{ expense.get_bank_display|default:"—" }}</td>
+          <td class="td-muted">{{ expense.bank.name|default:"—" }}</td>
           <td class="td-right">${{ expense.amount|cop }}</td>
         </tr>
         {% endfor %}
