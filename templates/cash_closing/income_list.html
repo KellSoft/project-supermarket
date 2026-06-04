@@ -356,7 +356,7 @@
 
   <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-title">Ingresos <span>efectivo</span></div>
+    <div class="topbar-title">Ingresos</div>
     <form method="get" class="filter-form">
       <label>Negocio</label>
       <select name="business" onchange="this.form.submit()">
@@ -491,8 +491,8 @@
               {{ income.get_payment_method_display }}
             </span>
           </td>
-          <td class="td-muted">{{ income.get_bank_display|default:"—" }}</td>
-          <td class="td-muted">{{ income.get_shift_display }}</td>
+          <td class="td-muted">{{ income.bank.name|default:"—" }}</td>
+          <td class="td-muted">{{ income.shift.name|default:"—" }}</td>
           <td class="td-r td-amount">${{ income.amount|floatformat:"0"|intcomma }}</td>
           <td class="td-r td-muted">{{ income.created_at|time:"H:i" }}</td>
           <td class="td-r">
