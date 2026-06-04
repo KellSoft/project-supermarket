@@ -268,17 +268,20 @@
       <tfoot>
         <tr>
           <td colspan="5" style="color:var(--c-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Total entradas</td>
-          <td class="tfoot-in">
-            +${% with total=0 %}
-              {% for i in incomes %}{% endfor %}
-              {{ incomes|length }}
-            {% endwith %}
-            {# Calculamos en vista, usamos variable del contexto #}
-          </td>
+          <td class="tfoot-in">+${{ total_in|floatformat:"0"|intcomma }}</td>
           <td></td>
         </tr>
       </tfoot>
       {% endif %}
+      {% if expenses %}
+<tfoot>
+  <tr>
+    <td colspan="5" style="color:var(--c-soft); font-size:0.72rem; text-transform:uppercase; letter-spacing:1px;">Total salidas</td>
+    <td class="tfoot-out">-${{ total_out|floatformat:"0"|intcomma }}</td>
+    <td></td>
+  </tr>
+</tfoot>
+{% endif %}
     </table>
   </div>
 

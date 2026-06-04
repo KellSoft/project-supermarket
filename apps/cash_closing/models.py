@@ -8,9 +8,9 @@ from apps.businesses.models import Business
 
 
 class ExpenseType(models.TextChoices):
-    PURCHASE = "purchase", "Compra"
+    PURCHASE = "purchase", "Compra a proveedor"
     GENERAL_EXPENSE = "general_expense", "Gasto externo / retiro efectivo"
-    STAFF_PAYMENT = "staff_payment", "Pago a personal"
+    STAFF_PAYMENT = "staff_payment", "Gastos de nómina"
     OTHER = "other", "Otros"
 
 
@@ -134,7 +134,6 @@ class Income(models.Model):
 
     def __str__(self):
         return f"{self.date} | {self.business} | {self.get_payment_method_display()} | ${self.amount:,.0f}"
-
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Expense
