@@ -242,7 +242,8 @@ def _closing_context(closing):
     """Contexto financiero completo para el template del cuadre."""
     return {
         "closing": closing,
-        "is_first": not CashClosing.has_previous_closing(closing),
+        "is_first": not CashClosing.has_previous_closing(closing)
+        or closing.opening_balance == 0,
         "opening_form": OpeningBalanceForm(instance=closing),
         "edit_form": CashClosingEditForm(instance=closing),
         "denominations": _build_denominations(closing),
@@ -252,11 +253,13 @@ def _closing_context(closing):
         "difference": closing.difference,
     }
 
+
 def _redirect_to_closing(date):
     url = reverse("cash_closing:cash-closing")
     if date != localdate():
         url += f"?date={date.isoformat()}"
     return redirect(url)
+
 
 class CashClosingView(View):
     template_name = "cash_closing/cash_closing.html"
@@ -372,7 +375,9 @@ class CashClosingView(View):
             if closing.is_closed:
                 closing.is_closed = False
                 closing.save(update_fields=["is_closed"])
-                messages.warning(request, "Cuadre reabierto. Recuerda volver a cerrarlo.")
+                messages.warning(
+                    request, "Cuadre reabierto. Recuerda volver a cerrarlo."
+                )
             return _redirect_to_closing(closing.date)
 
         if action == "save_notes":
