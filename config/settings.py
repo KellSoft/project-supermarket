@@ -35,8 +35,17 @@ SECRET_KEY = "django-insecure-pa$enyd$t@^8z#r+hb3bl%d8fr&pf@nlygvmmt5b+obgzie*jd
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = [
+    "project-supermarket-production.up.railway.app",
+    "mana-dagua.up.railway.app",
+    "localhost",
+    "127.0.0.1",
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://mana-dagua.up.railway.app",
+    "https://project-supermarket-production.up.railway.app",
+]
 
 # Application definition
 
@@ -98,13 +107,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 import dj_database_url
 
-DATABASES = {
-    'default': dj_database_url.config(
-        default=f"postgres://{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@{os.getenv('DB_HOST', 'localhost')}:{os.getenv('DB_PORT', '5432')}/{os.getenv('DB_NAME')}",
-        conn_max_age=600
-    )
-}
-
+DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -152,7 +155,3 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "dashboard:index"
-
-CSRF_TRUSTED_ORIGINS = [
-    "https://mana-negocios.up.railway.app",
-]
