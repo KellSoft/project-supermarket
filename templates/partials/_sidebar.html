@@ -115,9 +115,43 @@
     </button>
   </form>
 </div>
-  
-
+<button class="mana-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Ocultar sidebar">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="14" height="14">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+  <span class="toggle-label">Ocultar</span>
+</button>
 </aside>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+  const sidebar = document.querySelector('.mana-sidebar');
+  if (!sidebar) return;
+
+  if (localStorage.getItem('sidebarCollapsed') === 'true') {
+    sidebar.classList.add('collapsed');
+    const label = document.querySelector('.toggle-label');
+    if (label) label.textContent = 'Mostrar';
+  }
+
+  // Quitar la clase del html una vez el sidebar ya tiene su clase correcta
+  requestAnimationFrame(() => {
+    document.documentElement.classList.remove('sidebar-pre-collapsed');
+  });
+});
+
+function toggleSidebar() {
+  const sidebar = document.querySelector('.mana-sidebar');
+  const label = document.querySelector('.toggle-label');
+  sidebar.classList.toggle('collapsed');
+  if (sidebar.classList.contains('collapsed')) {
+    if (label) label.textContent = 'Mostrar';
+    localStorage.setItem('sidebarCollapsed', 'true');
+  } else {
+    if (label) label.textContent = 'Ocultar';
+    localStorage.setItem('sidebarCollapsed', 'false');
+  }
+}
+</script>
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
@@ -231,4 +265,80 @@
   .mana-sidebar::-webkit-scrollbar { width: 3px; }
   .mana-sidebar::-webkit-scrollbar-track { background: transparent; }
   .mana-sidebar::-webkit-scrollbar-thumb { background: rgba(245,240,232,0.08); border-radius: 4px; }
+  .mana-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: calc(100% - 24px);
+  margin: 8px 12px 12px;
+  padding: 8px 12px;
+  background: rgba(245,240,232,0.04);
+  border: 1px solid rgba(245,240,232,0.07);
+  border-radius: 7px;
+  color: rgba(245,240,232,0.3);
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  }
+  .mana-sidebar-toggle:hover {
+    background: rgba(245,240,232,0.08);
+    color: rgba(245,240,232,0.7);
+  }
+  .mana-sidebar-toggle svg {
+    transition: transform 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  /* Estado colapsado */
+  .mana-sidebar.collapsed {
+    width: 52px;
+    overflow: hidden;
+  }
+  .mana-sidebar.collapsed .mana-sidebar-section-label,
+  .mana-sidebar.collapsed .mana-nav-item span,
+  .mana-sidebar.collapsed .toggle-label,
+  .mana-sidebar.collapsed .mana-sidebar-footer-brand,
+  .mana-sidebar.collapsed .mana-nav-item > span {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .mana-sidebar.collapsed .mana-sidebar-toggle svg {
+    transform: rotate(180deg);
+  }
+  .mana-sidebar.collapsed .mana-nav-item {
+    justify-content: center;
+    padding: 9px 0;
+  }
+  .mana-sidebar.collapsed .mana-nav-icon {
+    margin: 0;
+  }
+  .mana-sidebar.collapsed .mana-sidebar-footer {
+    padding: 14px 6px;
+  }
+
+  /* Transición suave */
+  .mana-sidebar {
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .mana-sidebar * {
+    transition: opacity 0.2s ease, width 0.2s ease;
+  }
+  .sidebar-pre-collapsed .mana-sidebar {
+  width: 52px;
+  overflow: hidden;
+  transition: none !important;
+  }
+
+  .sidebar-pre-collapsed .mana-sidebar .mana-sidebar-section-label,
+  .sidebar-pre-collapsed .mana-sidebar .mana-nav-item span,
+  .sidebar-pre-collapsed .mana-sidebar .toggle-label,
+  .sidebar-pre-collapsed .mana-sidebar .mana-sidebar-footer-brand {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
 </style>

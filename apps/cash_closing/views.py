@@ -375,12 +375,6 @@ class CashClosingHistoryView(View):
         return render(request, self.template_name, {"page_obj": page_obj})
 
 
-# ── Agrega este import en views.py ──
-# from .models import BankAccount
-
-# ── Agrega esta vista al final de cash_closing/views.py ──
-
-
 class BankAccountView(View):
     template_name = "cash_closing/bank_accounts.html"
 
@@ -418,6 +412,9 @@ class BankAccountView(View):
                     "day_out": day_out,
                 }
             )
+            
+        total_in = income_qs.aggregate(t=Sum("amount"))["t"] or 0
+        total_out = expense_qs.aggregate(t=Sum("amount"))["t"] or 0
 
         return render(
             request,
@@ -429,6 +426,8 @@ class BankAccountView(View):
                 "businesses": Business.objects.all(),
                 "selected_date": selected_date,
                 "selected_business": selected_biz,
+                "total_in": total_in,
+                "total_out": total_out,
             },
         )
 

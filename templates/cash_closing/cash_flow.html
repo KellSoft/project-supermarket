@@ -25,12 +25,35 @@
     <small class="text-muted">Ingresos y egresos — {{ selected_date }}</small>
   </div>
   <form method="get" id="filterForm" class="d-flex align-items-center gap-2">
-    <select name="business" class="form-select form-select-sm" style="width:160px" onchange="this.form.submit()">
-      <option value="">Todos los negocios</option>
-      {% for b in businesses %}
-      <option value="{{ b.pk }}" {% if selected_business == b.pk|stringformat:"s" %}selected{% endif %}>{{ b.name }}</option>
-      {% endfor %}
-    </select>
+    <div x-data="{ open: false,bizPk: '{{ selected_business }}',bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}'}" style="width:160px; position:relative;">
+      <input type="hidden" name="business" :value="bizPk">
+      <button type="button"
+              class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+              @click="open = !open" @click.outside="open = false">
+        <span x-show="bizPk" class="badge rounded-pill"
+              :class="'business-badge-' + bizName.toLowerCase()"
+              x-text="bizName"
+              style="font-size:0.8rem; padding:6px 12px;"></span>
+        <span x-show="!bizPk" class="text-muted small">Todos los negocios</span>
+      </button>
+      <div x-show="open" x-cloak
+           class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+           style="z-index:999; top:calc(100% + 4px); min-width:160px;">
+        <div class="px-3 py-1 text-muted small" style="cursor:pointer"
+             @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+             @click="bizPk=''; bizName=''; open=false; $nextTick(() => document.getElementById('filterForm').submit())">
+          Todos los negocios
+        </div>
+        {% for b in businesses %}
+        <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
+             @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+             @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false; $nextTick(() => document.getElementById('filterForm').submit())">
+          <span class="badge rounded-pill business-badge-{{ b.name|lower }}"
+                style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
     <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" style="width:150px" onchange="this.form.submit()">
   </form>
 </div>
@@ -104,21 +127,31 @@
 
         <div class="row g-2 align-items-end">
 
-          <div class="col-md-2">
+          <div class="col-md-2" x-data="{ open: false, bizPk: '', bizName: '' }">
             <label class="form-label small text-muted mb-1">Negocio</label>
-            <select name="business" class="form-select form-select-sm" required>
-              <option value="">— Selecciona —</option>
-              {% for b in businesses %}
-              <option value="{{ b.pk }}">{{ b.name }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" name="business" :value="bizPk" required>
+            <div class="position-relative">
+              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+                      @click="open = !open" @click.outside="open = false">
+                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName" style="font-size:0.8rem; padding: 6px 12px;"></span>
+                <span x-show="!bizPk" class="text-muted small">— Selecciona —</span>
+              </button>
+              <div x-show="open" x-cloak class="position-absolute w-100 bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px)">
+                {% for b in businesses %}
+                <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
+                     @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
+                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}" style="font-size:0.8rem; padding: 6px 12px;">{{ b.name }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
 
           <div class="col-md-2">
             <label class="form-label small text-muted mb-1">Fecha</label>
             <input type="date" name="date" value="{{ selected_date }}" class="form-control form-control-sm" required>
           </div>
-
           <div class="col-md-2">
             <label class="form-label small text-muted mb-1">Método de pago</label>
             <div class="btn-group w-100" role="group">
@@ -186,12 +219,27 @@
     <div class="d-flex align-items-center gap-2 flex-wrap px-3 py-2 mb-2 rounded-3"
          style="background:#f0fdf4; border:1px solid #bbf7d0">
       <span class="small fw-semibold text-success">🔍 Filtrar</span>
-      <select class="form-select form-select-sm" style="width:160px" x-model="fBusiness">
-        <option value="">Todos los negocios</option>
-        {% for b in businesses %}
-        <option value="{{ b.pk }}">{{ b.name }}</option>
-        {% endfor %}
-      </select>
+      <div x-data="{ open: false, bizName: '' }" style="width:160px">
+        <div class="position-relative">
+          <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+                  @click="open = !open" @click.outside="open = false">
+            <span x-show="fBusiness" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName"></span>
+            <span x-show="!fBusiness" class="text-muted small">Todos los negocios</span>
+          </button>
+          <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px); min-width:160px">
+            <div class="px-3 py-1 text-muted small" style="cursor:pointer"
+                 @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+                 @click="fBusiness=''; bizName=''; open=false">Todos los negocios</div>
+            {% for b in businesses %}
+            <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
+                 @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+                 @click="fBusiness='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
+              <span class="badge rounded-pill business-badge-{{ b.name|lower }}">{{ b.name }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
       <select class="form-select form-select-sm" style="width:150px" x-model="fMethod">
         <option value="">Todos los métodos</option>
         <option value="cash">Efectivo</option>
@@ -238,7 +286,7 @@
                 data-method="{{ income.payment_method }}"
                 data-shift="{{ income.shift.pk }}">
               <td class="ps-3">
-                <span class="badge rounded-pill text-bg-secondary">{{ income.business.name }}</span>
+                <span class="badge rounded-pill business-badge-{{ income.business.name|lower }}">{{ income.business.name }}</span>
               </td>
               <td>
                 {% if income.payment_method == 'cash' %}
@@ -314,14 +362,25 @@
             </select>
           </div>
 
-          <div class="col-md-2">
+          <div class="col-md-2" x-data="{ open: false, bizPk: '', bizName: '' }">
             <label class="form-label small text-muted mb-1">Negocio</label>
-            <select name="business" class="form-select form-select-sm" required>
-              <option value="">— Selecciona —</option>
-              {% for b in businesses %}
-              <option value="{{ b.pk }}">{{ b.name }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" name="business" :value="bizPk" required>
+            <div class="position-relative">
+              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+                      @click="open = !open" @click.outside="open = false">
+                <span x-show="bizPk" class="badge rounded-pill" :class="'business-badge-' + bizName.toLowerCase()" x-text="bizName" style="font-size:0.8rem; padding: 6px 12px;"></span>
+                <span x-show="!bizPk" class="text-muted small">— Selecciona —</span>
+              </button>
+              <div x-show="open" x-cloak class="position-absolute w-100 bg-white border rounded-2 shadow-sm py-1" style="z-index:999; top:calc(100% + 4px)">
+                {% for b in businesses %}
+                <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
+                     @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
+                  <span class="badge rounded-pill business-badge-{{ b.name|lower }}" style="font-size:0.8rem; padding: 6px 12px;">{{ b.name }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
           </div>
 
           <div class="col-md-2">
@@ -329,7 +388,6 @@
             <input type="date" name="date" value="{{ selected_date }}"
                    class="form-control form-control-sm" required>
           </div>
-
           <div class="col-md-2" x-show="expType === 'purchase'" x-cloak>
             <label class="form-label small text-muted mb-1">Proveedor <span class="text-danger">*</span></label>
             <input type="text" name="supplier" class="form-control form-control-sm"
@@ -455,7 +513,7 @@
                 data-method="{{ expense.payment_method }}"
                 data-exptype="{{ expense.expense_type }}">
               <td class="ps-3">
-                <span class="badge rounded-pill text-bg-secondary">{{ expense.business.name }}</span>
+                <span class="badge rounded-pill business-badge-{{ expense.business.name|lower }}">{{ expense.business.name }}</span>
               </td>
               <td>
                 {% if expense.expense_type == 'purchase' %}
@@ -727,6 +785,13 @@
 
 <style>
 [x-cloak] { display: none !important; }
+.business-badge-maná,
+.business-badge-mana  { background: #1d6fa5; color: #fff; }
+.business-badge-mercatodo { background: #dc2626; color: #fff; }
+.business-badge-primavera { background: #16a34a; color: #fff; }
+.business-badge-panadería,
+.business-badge-panaderia { background: #ca8a04; color: #fff; }
+.business-badge-otros { background: #7c3aed; color: #fff; }
 </style>
 <span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit' pk=0 %}"  hidden></span>
 <span id="expense-edit-url" data-url="{% url 'cash_closing:expense-edit' pk=0 %}" hidden></span>

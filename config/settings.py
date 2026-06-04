@@ -29,9 +29,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-pa$enyd$t@^8z#r+hb3bl%d8fr&pf@nlygvmmt5b+obgzie*jd"
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -107,7 +104,26 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 import dj_database_url
 
-DATABASES = {"default": dj_database_url.config(conn_max_age=600)}
+# Database
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    # Producción (Railway inyecta DATABASE_URL automáticamente)
+    DATABASES = {
+        "default": dj_database_url.config(conn_max_age=600)
+    }
+else:
+    # Local (usa las variables individuales del .env)
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.getenv("DB_NAME"),
+            "USER": os.getenv("DB_USER"),
+            "PASSWORD": os.getenv("DB_PASSWORD"),
+            "HOST": os.getenv("DB_HOST"),
+            "PORT": os.getenv("DB_PORT"),
+        }
+    }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
