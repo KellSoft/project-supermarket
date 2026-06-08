@@ -1,6 +1,7 @@
 import io
 import base64
 import matplotlib
+
 matplotlib.use("Agg")  # sin interfaz gráfica
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
@@ -16,7 +17,15 @@ from collections import defaultdict
 from django.db.models import Sum
 
 from apps.purchases.models import Purchase
-from apps.cash_closing.models import BankAccount, Expense, Income, PaymentMethod, Shift, CashClosing
+from apps.cash_closing.models import (
+    BankAccount,
+    Expense,
+    Income,
+    PaymentMethod,
+    Shift,
+    CashClosing,
+    Supplier,
+)
 from apps.businesses.models import Business
 
 
@@ -25,12 +34,18 @@ class ReportIndexView(View):
         businesses = Business.objects.all()
         bank_accounts = BankAccount.objects.filter(is_active=True)
         shifts = Shift.objects.filter(is_active=True)
-        return render(request, "reports/report_index.html", {
-            "businesses": businesses,
-            "bank_accounts": bank_accounts,
-            "shifts": shifts,
-            "selected_date": str(timezone.localdate()),
-        })
+        suppliers = Supplier.objects.all()
+        return render(
+            request,
+            "reports/report_index.html",
+            {
+                "businesses": businesses,
+                "bank_accounts": bank_accounts,
+                "shifts": shifts,
+                "suppliers": suppliers,
+                "selected_date": str(timezone.localdate()),
+            },
+        )
 
 
 class PurchaseReportView(View):
@@ -167,7 +182,7 @@ class ExpenseReportView(View):
         if start_date and end_date:
             expenses = expenses.filter(date__range=[start_date, end_date])
         if supplier:
-            expenses = expenses.filter(supplier__icontains=supplier)
+            expenses = expenses.filter(supplier_id=supplier)
         if payment_method:
             expenses = expenses.filter(payment_method=payment_method)
         if bank:
@@ -211,7 +226,11 @@ def _build_filter_label(
     if business and business != "Todos los negocios":
         parts.append(f"Negocio: {business}")
     if supplier:
-        parts.append(f"Proveedor: {supplier}")
+        try:
+            supplier_name = Supplier.objects.get(pk=supplier).name
+        except Supplier.DoesNotExist:
+            supplier_name = "—"
+        parts.append(f"Proveedor: {supplier_name}")
     if product:
         parts.append(f"Producto: {product}")
     if start_date and end_date:
@@ -225,8 +244,12 @@ def _get_payment_method_display(value):
 
 
 def _build_income_filter_label(
-    business=None, start_date=None, end_date=None,
-    payment_method=None, bank=None, shift=None,
+    business=None,
+    start_date=None,
+    end_date=None,
+    payment_method=None,
+    bank=None,
+    shift=None,
 ):
     parts = []
     if business and business != "Todos los negocios":
@@ -243,6 +266,7 @@ def _build_income_filter_label(
         parts.append(f"Banco: {bank_name}")
     if shift:
         from apps.cash_closing.models import Shift
+
         try:
             shift_name = Shift.objects.get(pk=shift).name
         except Shift.DoesNotExist:
@@ -252,8 +276,12 @@ def _build_income_filter_label(
 
 
 def _build_expense_filter_label(
-    business=None, start_date=None, end_date=None,
-    supplier=None, payment_method=None, bank=None,
+    business=None,
+    start_date=None,
+    end_date=None,
+    supplier=None,
+    payment_method=None,
+    bank=None,
 ):
     parts = []
     if business and business != "Todos los negocios":
@@ -261,7 +289,11 @@ def _build_expense_filter_label(
     if start_date and end_date:
         parts.append(f"Período: {start_date} → {end_date}")
     if supplier:
-        parts.append(f"Proveedor: {supplier}")
+        try:
+            supplier_name = Supplier.objects.get(pk=supplier).name
+        except Supplier.DoesNotExist:
+            supplier_name = "—"
+        parts.append(f"Proveedor: {supplier_name}")
     if payment_method:
         parts.append(f"Método: {_get_payment_method_display(payment_method)}")
     if bank:
@@ -271,6 +303,7 @@ def _build_expense_filter_label(
             bank_name = bank
         parts.append(f"Banco: {bank_name}")
     return " · ".join(parts) if parts else "Todos los registros"
+
 
 def _generate_daily_charts(
     incomes, expenses, purchases, total_incomes, total_expenses, total_purchases
@@ -712,7 +745,9 @@ def _generate_expense_charts(expenses):
     # ── Gráfica 2: Top proveedores ──
     by_supplier = defaultdict(float)
     for e in expenses:
-        by_supplier[str(e.supplier) if e.supplier else "Sin proveedor"] += float(e.amount)
+        by_supplier[e.supplier.name if e.supplier else "Sin proveedor"] += float(
+            e.amount
+        )
 
     if by_supplier:
         pairs = sorted(by_supplier.items(), key=lambda x: x[1], reverse=True)[:8]
@@ -816,6 +851,7 @@ class DailyReportView(View):
         )
         return response
 
+
 class CashClosingReportView(View):
     def get(self, request):
         businesses = Business.objects.all()
@@ -830,8 +866,12 @@ class CashClosingReportView(View):
         except CashClosing.DoesNotExist:
             closing = None
 
-        incomes = list(Income.objects.filter(date=selected_date).select_related("business"))
-        expenses = list(Expense.objects.filter(date=selected_date).select_related("business"))
+        incomes = list(
+            Income.objects.filter(date=selected_date).select_related("business")
+        )
+        expenses = list(
+            Expense.objects.filter(date=selected_date).select_related("business")
+        )
         denominations = list(closing.denominations.all()) if closing else []
 
         total_income_cash = closing.total_income_cash if closing else 0
@@ -866,14 +906,19 @@ class CashClosingReportView(View):
         )
         return response
 
+
 class BankReportView(View):
     def get(self, request):
         businesses = Business.objects.all()
         bank_accounts = BankAccount.objects.filter(is_active=True)
-        return render(request, "reports/report_index.html", {
-            "businesses": businesses,
-            "bank_accounts": bank_accounts,
-        })
+        return render(
+            request,
+            "reports/report_index.html",
+            {
+                "businesses": businesses,
+                "bank_accounts": bank_accounts,
+            },
+        )
 
     def post(self, request):
         start_date = request.POST.get("start_date")
@@ -915,12 +960,14 @@ class BankReportView(View):
         for bank in banks:
             total_in = sum(i.amount for i in incomes if i.bank_id == bank.pk)
             total_out = sum(e.amount for e in expenses if e.bank_id == bank.pk)
-            bank_summary.append({
-                "bank": bank,
-                "total_in": total_in,
-                "total_out": total_out,
-                "net": total_in - total_out,
-            })
+            bank_summary.append(
+                {
+                    "bank": bank,
+                    "total_in": total_in,
+                    "total_out": total_out,
+                    "net": total_in - total_out,
+                }
+            )
 
         total_in_global = sum(i.amount for i in incomes)
         total_out_global = sum(e.amount for e in expenses)
@@ -960,7 +1007,9 @@ class BankReportView(View):
         return response
 
 
-def _build_bank_filter_label(business=None, start_date=None, end_date=None, bank_id=None, banks=None):
+def _build_bank_filter_label(
+    business=None, start_date=None, end_date=None, bank_id=None, banks=None
+):
     parts = []
     if business and business != "Todos los negocios":
         parts.append(f"Negocio: {business}")
@@ -982,8 +1031,14 @@ def _generate_bank_charts(incomes, expenses, banks):
 
     def fig_to_base64(fig):
         buf = io.BytesIO()
-        fig.savefig(buf, format="png", dpi=150, bbox_inches="tight",
-                    facecolor="white", edgecolor="none")
+        fig.savefig(
+            buf,
+            format="png",
+            dpi=150,
+            bbox_inches="tight",
+            facecolor="white",
+            edgecolor="none",
+        )
         buf.seek(0)
         encoded = base64.b64encode(buf.read()).decode("utf-8")
         plt.close(fig)
@@ -991,24 +1046,42 @@ def _generate_bank_charts(incomes, expenses, banks):
 
     # ── Gráfica 1: Entradas vs Salidas por banco ──
     bank_names = [b.name for b in banks]
-    ins  = [sum(i.amount for i in incomes  if i.bank_id == b.pk) for b in banks]
+    ins = [sum(i.amount for i in incomes if i.bank_id == b.pk) for b in banks]
     outs = [sum(e.amount for e in expenses if e.bank_id == b.pk) for b in banks]
 
     if any(v > 0 for v in ins + outs):
         x = range(len(bank_names))
         fig, ax = plt.subplots(figsize=(8, max(3, len(bank_names) * 1.2)))
         width = 0.35
-        bars_in  = ax.bar([i - width/2 for i in x], ins,  width, label="Entradas", color=C_IN,  edgecolor="white")
-        bars_out = ax.bar([i + width/2 for i in x], outs, width, label="Salidas",  color=C_OUT, edgecolor="white")
+        bars_in = ax.bar(
+            [i - width / 2 for i in x],
+            ins,
+            width,
+            label="Entradas",
+            color=C_IN,
+            edgecolor="white",
+        )
+        bars_out = ax.bar(
+            [i + width / 2 for i in x],
+            outs,
+            width,
+            label="Salidas",
+            color=C_OUT,
+            edgecolor="white",
+        )
         ax.set_xticks(list(x))
         ax.set_xticklabels(bank_names, fontsize=8)
-        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", ".")))
+        ax.yaxis.set_major_formatter(
+            plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", "."))
+        )
         ax.tick_params(axis="y", labelsize=7)
         ax.legend(fontsize=8, frameon=False)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.set_facecolor("#f9fafb")
-        ax.set_title("Entradas vs Salidas por banco", fontsize=9, fontweight="bold", pad=8)
+        ax.set_title(
+            "Entradas vs Salidas por banco", fontsize=9, fontweight="bold", pad=8
+        )
         fig.patch.set_facecolor("white")
         plt.tight_layout()
         charts["por_banco"] = fig_to_base64(fig)
@@ -1017,33 +1090,57 @@ def _generate_bank_charts(incomes, expenses, banks):
 
     # ── Gráfica 2: Evolución diaria (entradas - salidas) ──
     from collections import defaultdict
-    daily_in  = defaultdict(float)
+
+    daily_in = defaultdict(float)
     daily_out = defaultdict(float)
     for i in incomes:
-        daily_in[str(i.date)]  += float(i.amount)
+        daily_in[str(i.date)] += float(i.amount)
     for e in expenses:
         daily_out[str(e.date)] += float(e.amount)
 
     all_dates = sorted(set(daily_in.keys()) | set(daily_out.keys()))
 
     if len(all_dates) > 1:
-        vals_in  = [daily_in[d]  for d in all_dates]
+        vals_in = [daily_in[d] for d in all_dates]
         vals_out = [daily_out[d] for d in all_dates]
         fig, ax = plt.subplots(figsize=(8, 3))
-        ax.plot(all_dates, vals_in,  color=C_IN,  linewidth=1.5, marker="o", markersize=4, label="Entradas")
-        ax.plot(all_dates, vals_out, color=C_OUT, linewidth=1.5, marker="o", markersize=4, label="Salidas")
+        ax.plot(
+            all_dates,
+            vals_in,
+            color=C_IN,
+            linewidth=1.5,
+            marker="o",
+            markersize=4,
+            label="Entradas",
+        )
+        ax.plot(
+            all_dates,
+            vals_out,
+            color=C_OUT,
+            linewidth=1.5,
+            marker="o",
+            markersize=4,
+            label="Salidas",
+        )
         ax.fill_between(all_dates, vals_in, alpha=0.08, color=C_IN)
         ax.fill_between(all_dates, vals_out, alpha=0.08, color=C_OUT)
         step = max(1, len(all_dates) // 8)
         ax.set_xticks(all_dates[::step])
         ax.set_xticklabels(all_dates[::step], rotation=30, fontsize=7)
-        ax.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", ".")))
+        ax.yaxis.set_major_formatter(
+            plt.FuncFormatter(lambda v, _: f"${v:,.0f}".replace(",", "."))
+        )
         ax.tick_params(axis="y", labelsize=7)
         ax.legend(fontsize=8, frameon=False)
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
         ax.set_facecolor("#f9fafb")
-        ax.set_title("Evolución diaria de movimientos bancarios", fontsize=9, fontweight="bold", pad=8)
+        ax.set_title(
+            "Evolución diaria de movimientos bancarios",
+            fontsize=9,
+            fontweight="bold",
+            pad=8,
+        )
         fig.patch.set_facecolor("white")
         plt.tight_layout()
         charts["evolucion"] = fig_to_base64(fig)
