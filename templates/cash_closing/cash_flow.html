@@ -7,7 +7,7 @@
 <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1100">
   <div class="toast align-items-center border-0 show
               {% if msg.tags == 'error' %}text-bg-danger{% else %}text-bg-success{% endif %}"
-       role="alert" x-data x-init="setTimeout(() => $el.classList.remove('show'), 4000)">
+       role="alert" x-data x-init="setTimeout(() => $el.classList.remove('show'), 5000)">
     <div class="d-flex">
       <div class="toast-body fw-semibold">
         {% if msg.tags == 'error' %}⚠️{% else %}✅{% endif %} {{ msg }}
@@ -97,13 +97,15 @@
 <ul class="nav nav-tabs mb-3" id="cashTabs">
   <li class="nav-item">
     <button class="nav-link {% if active_tab != 'expense' %}active{% endif %} fw-semibold text-success"
-            data-bs-toggle="tab" data-bs-target="#tab-income" type="button">
+            data-bs-toggle="tab" data-bs-target="#tab-income" type="button"
+            data-tab="income">
       💰 Ingresos
     </button>
   </li>
   <li class="nav-item">
     <button class="nav-link {% if active_tab == 'expense' %}active{% endif %} fw-semibold text-danger"
-            data-bs-toggle="tab" data-bs-target="#tab-expense" type="button">
+            data-bs-toggle="tab" data-bs-target="#tab-expense" type="button"
+            data-tab="expense">
       💸 Egresos
     </button>
   </li>
@@ -120,7 +122,7 @@
     </div>
     <div class="card-body py-3">
       <form method="post" action="{% url 'cash_closing:cash-flow' %}" id="incomeForm"
-            x-data="{ method: 'cash' }">
+            x-data="incomeFormData()" @submit.prevent="submitIncome($event)">
         {% csrf_token %}
         <input type="hidden" name="_kind" value="income">
         <input type="hidden" name="_business_filter" value="{{ selected_business }}">
@@ -129,23 +131,25 @@
         <div class="row g-2 align-items-end">
 
           <div class="col-12 col-sm-6 col-md-auto"
-               x-data="{ open: false, bizPk: '', bizName: '', getBadgeClass(n){ if(!n)return 'business-badge-otros'; const s=n.toLowerCase(); if(s.includes('maná')||s.includes('mana'))return 'business-badge-mana'; if(s.includes('mercatodo'))return 'business-badge-mercatodo'; if(s.includes('primavera'))return 'business-badge-primavera'; if(s.includes('panadería')||s.includes('panaderia')||s.includes('delipan'))return 'business-badge-panaderia'; return 'business-badge-otros'; } }"
                style="min-width:130px">
-            <label class="form-label small text-muted mb-1">Negocio</label>
-            <input type="hidden" name="business" :value="bizPk" required>
+            <label class="form-label small text-muted mb-1">Negocio <span class="text-danger">*</span></label>
+            <input type="hidden" name="business" :value="bizPk">
             <div class="position-relative">
-              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-1"
+              <button type="button"
+                      class="form-select form-select-sm text-start d-flex align-items-center gap-1"
+                      :class="errors.business ? 'is-invalid border-danger' : ''"
                       @click="open = !open" @click.outside="open = false">
                 <span x-show="bizPk" class="badge rounded-pill" :class="getBadgeClass(bizName)"
                       x-text="bizName" style="font-size:0.7rem; padding:3px 7px;"></span>
                 <span x-show="!bizPk" class="text-muted small">— Negocio —</span>
               </button>
+              <div x-show="errors.business" class="invalid-feedback d-block" x-text="errors.business"></div>
               <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
                    style="z-index:999; top:calc(100% + 4px); min-width:140px;">
                 {% for b in businesses %}
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
-                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
+                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false; errors.business=''">
                   <span class="badge rounded-pill business-badge-{{ b.name|lower|slugify }}"
                         style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
                 </div>
@@ -165,7 +169,7 @@
             <div class="btn-group w-100" role="group">
               <button type="button" class="btn btn-sm"
                       :class="method === 'cash' ? 'btn-success' : 'btn-outline-success'"
-                      @click="method = 'cash'">Efectivo</button>
+                      @click="method = 'cash'; errors.bank = ''">Efectivo</button>
               <button type="button" class="btn btn-sm"
                       :class="method === 'deposit' ? 'btn-primary' : 'btn-outline-primary'"
                       @click="method = 'deposit'">Consig.</button>
@@ -173,23 +177,29 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-auto" x-show="method === 'deposit'" x-cloak style="min-width:130px">
-            <label class="form-label small text-muted mb-1">Banco</label>
-            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+            <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
+            <select name="bank" class="form-select form-select-sm"
+                    :class="errors.bank ? 'is-invalid' : ''"
+                    x-model="bank" @change="errors.bank = ''">
               <option value="">— Banco —</option>
               {% for bank in bank_accounts %}
               <option value="{{ bank.pk }}">{{ bank.name }}</option>
               {% endfor %}
             </select>
+            <div x-show="errors.bank" class="invalid-feedback" x-text="errors.bank"></div>
           </div>
 
           <div class="col-6 col-sm-4 col-md-auto" style="min-width:110px">
-            <label class="form-label small text-muted mb-1">Turno</label>
-            <select name="shift" class="form-select form-select-sm" required>
+            <label class="form-label small text-muted mb-1">Turno <span class="text-danger">*</span></label>
+            <select name="shift" class="form-select form-select-sm"
+                    :class="errors.shift ? 'is-invalid' : ''"
+                    @change="errors.shift = ''">
               <option value="">— Turno —</option>
               {% for shift in shifts %}
               <option value="{{ shift.pk }}">{{ shift.name }}</option>
               {% endfor %}
             </select>
+            <div x-show="errors.shift" class="invalid-feedback" x-text="errors.shift"></div>
           </div>
 
           <div class="col-12 col-sm-6 col-md">
@@ -199,13 +209,21 @@
           </div>
 
           <div class="col-6 col-sm-4 col-md-auto" style="min-width:95px">
-            <label class="form-label small text-muted mb-1">Valor ($)</label>
+            <label class="form-label small text-muted mb-1">Valor ($) <span class="text-danger">*</span></label>
             <input type="text" inputmode="numeric" name="amount" id="incomeAmount"
-                   class="form-control form-control-sm" placeholder="0" required>
+                   class="form-control form-control-sm"
+                   :class="errors.amount ? 'is-invalid' : ''"
+                   placeholder="0"
+                   @input="errors.amount = ''">
+            <div x-show="errors.amount" class="invalid-feedback" x-text="errors.amount"></div>
           </div>
 
           <div class="col-6 col-sm-auto">
-            <button type="submit" class="btn btn-success btn-sm w-100 px-3">Guardar</button>
+            <button type="submit" class="btn btn-success btn-sm w-100 px-3"
+                    :disabled="submitting">
+              <span x-show="!submitting">Guardar</span>
+              <span x-show="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
           </div>
 
         </div>
@@ -227,7 +245,7 @@
     <div class="d-flex align-items-center gap-2 flex-wrap px-3 py-2 mb-2 rounded-3"
          style="background:#f0fdf4; border:1px solid #bbf7d0">
       <span class="small fw-semibold text-success">🔍 Filtrar</span>
-      <div x-data="{ open: false, bizName: '', getBadgeClass(n){ if(!n)return 'business-badge-otros'; const s=n.toLowerCase(); if(s.includes('maná')||s.includes('mana'))return 'business-badge-mana'; if(s.includes('mercatodo'))return 'business-badge-mercatodo'; if(s.includes('primavera'))return 'business-badge-primavera'; if(s.includes('panadería')||s.includes('panaderia')||s.includes('delipan'))return 'business-badge-panaderia'; return 'business-badge-otros'; } }" style="width:160px">
+      <div x-data="{ open: false, bizName: '', getBadgeClass(n){ return getBadgeClassGlobal(n); } }" style="width:160px">
         <div class="position-relative">
           <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
                   @click="open = !open" @click.outside="open = false">
@@ -361,7 +379,7 @@
     </div>
     <div class="card-body py-3">
       <form method="post" action="{% url 'cash_closing:cash-flow' %}" id="expenseForm"
-            x-data="{ method: 'cash', expType: 'general_expense' }">
+            x-data="expenseFormData()" @submit.prevent="submitExpense($event)">
         {% csrf_token %}
         <input type="hidden" name="_kind"            value="expense">
         <input type="hidden" name="_business_filter" value="{{ selected_business }}">
@@ -370,7 +388,7 @@
         <div class="row g-2 align-items-end">
 
           <div class="col-12 col-sm-6 col-md-auto" style="min-width:155px">
-            <label class="form-label small text-muted mb-1">Tipo</label>
+            <label class="form-label small text-muted mb-1">Tipo <span class="text-danger">*</span></label>
             <select name="expense_type" class="form-select form-select-sm" x-model="expType" required>
               {% for val, label in expense_type_choices %}
               <option value="{{ val }}">{{ label }}</option>
@@ -379,23 +397,25 @@
           </div>
 
           <div class="col-12 col-sm-6 col-md-auto"
-               x-data="{ open: false, bizPk: '', bizName: '', getBadgeClass(n){ if(!n)return 'business-badge-otros'; const s=n.toLowerCase(); if(s.includes('maná')||s.includes('mana'))return 'business-badge-mana'; if(s.includes('mercatodo'))return 'business-badge-mercatodo'; if(s.includes('primavera'))return 'business-badge-primavera'; if(s.includes('panadería')||s.includes('panaderia')||s.includes('delipan'))return 'business-badge-panaderia'; return 'business-badge-otros'; } }"
                style="min-width:130px">
-            <label class="form-label small text-muted mb-1">Negocio</label>
-            <input type="hidden" name="business" :value="bizPk" required>
+            <label class="form-label small text-muted mb-1">Negocio <span class="text-danger">*</span></label>
+            <input type="hidden" name="business" :value="bizPk">
             <div class="position-relative">
-              <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-1"
+              <button type="button"
+                      class="form-select form-select-sm text-start d-flex align-items-center gap-1"
+                      :class="errors.business ? 'is-invalid border-danger' : ''"
                       @click="open = !open" @click.outside="open = false">
                 <span x-show="bizPk" class="badge rounded-pill" :class="getBadgeClass(bizName)"
                       x-text="bizName" style="font-size:0.7rem; padding:3px 7px;"></span>
                 <span x-show="!bizPk" class="text-muted small">— Negocio —</span>
               </button>
+              <div x-show="errors.business" class="invalid-feedback d-block" x-text="errors.business"></div>
               <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
                    style="z-index:999; top:calc(100% + 4px); min-width:140px;">
                 {% for b in businesses %}
                 <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
                      @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
-                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false">
+                     @click="bizPk='{{ b.pk }}'; bizName='{{ b.name }}'; open=false; errors.business=''">
                   <span class="badge rounded-pill business-badge-{{ b.name|lower|slugify }}"
                         style="font-size:0.7rem; padding:3px 7px;">{{ b.name }}</span>
                 </div>
@@ -410,25 +430,37 @@
                    class="form-control form-control-sm" required>
           </div>
 
+          {# Proveedor — solo para compras #}
           <div class="col-12 col-sm-6 col-md-auto" x-show="expType === 'purchase'" x-cloak style="min-width:140px">
             <label class="form-label small text-muted mb-1">Proveedor <span class="text-danger">*</span></label>
-            <select name="supplier" class="form-select form-select-sm" :required="expType === 'purchase'">
+            <select name="supplier" class="form-select form-select-sm"
+                    :class="errors.supplier ? 'is-invalid' : ''"
+                    @change="errors.supplier = ''">
               <option value="">— Selecciona —</option>
               {% for s in suppliers %}
               <option value="{{ s.pk }}">{{ s.name }}</option>
               {% endfor %}
             </select>
+            <div x-show="errors.supplier" class="invalid-feedback" x-text="errors.supplier"></div>
           </div>
 
+          {# Factura — solo para compras, opcional #}
           <div class="col-6 col-sm-4 col-md-auto" x-show="expType === 'purchase'" x-cloak style="min-width:100px">
-            <label class="form-label small text-muted mb-1">N° Factura</label>
+            <label class="form-label small text-muted mb-1">
+              N° Factura
+              <span class="text-muted" style="font-weight:400">(opcional)</span>
+            </label>
             <input type="text" name="invoice_number" class="form-control form-control-sm" placeholder="0000">
           </div>
 
+          {# Persona — solo para nómina #}
           <div class="col-12 col-sm-6 col-md-auto" x-show="expType === 'staff_payment'" x-cloak style="min-width:150px">
             <label class="form-label small text-muted mb-1">Persona <span class="text-danger">*</span></label>
             <input type="text" name="employee_name" class="form-control form-control-sm"
-                   placeholder="Nombre" :required="expType === 'staff_payment'">
+                   :class="errors.employee_name ? 'is-invalid' : ''"
+                   placeholder="Nombre"
+                   @input="errors.employee_name = ''">
+            <div x-show="errors.employee_name" class="invalid-feedback" x-text="errors.employee_name"></div>
           </div>
 
           <div class="col-12 col-sm-6 col-md-auto" style="min-width:175px">
@@ -436,7 +468,7 @@
             <div class="btn-group w-100" role="group">
               <button type="button" class="btn btn-sm"
                       :class="method === 'cash' ? 'btn-danger' : 'btn-outline-danger'"
-                      @click="method = 'cash'">Efectivo</button>
+                      @click="method = 'cash'; errors.bank = ''">Efectivo</button>
               <button type="button" class="btn btn-sm"
                       :class="method === 'deposit' ? 'btn-warning' : 'btn-outline-warning'"
                       @click="method = 'deposit'">Consig.</button>
@@ -445,28 +477,39 @@
 
           <div class="col-6 col-sm-4 col-md-auto" x-show="method === 'deposit'" x-cloak style="min-width:130px">
             <label class="form-label small text-muted mb-1">Banco <span class="text-danger">*</span></label>
-            <select name="bank" class="form-select form-select-sm" :required="method === 'deposit'">
+            <select name="bank" class="form-select form-select-sm"
+                    :class="errors.bank ? 'is-invalid' : ''"
+                    x-model="bank" @change="errors.bank = ''">
               <option value="">— Banco —</option>
               {% for bank in bank_accounts %}
               <option value="{{ bank.pk }}">{{ bank.name }}</option>
               {% endfor %}
             </select>
+            <div x-show="errors.bank" class="invalid-feedback" x-text="errors.bank"></div>
           </div>
 
           <div class="col-6 col-sm-4 col-md-auto" style="min-width:95px">
-            <label class="form-label small text-muted mb-1">Monto ($)</label>
+            <label class="form-label small text-muted mb-1">Monto ($) <span class="text-danger">*</span></label>
             <input type="text" inputmode="numeric" name="amount" id="expenseAmount"
-                   class="form-control form-control-sm" placeholder="0" required>
+                   class="form-control form-control-sm"
+                   :class="errors.amount ? 'is-invalid' : ''"
+                   placeholder="0"
+                   @input="errors.amount = ''">
+            <div x-show="errors.amount" class="invalid-feedback" x-text="errors.amount"></div>
           </div>
 
           <div class="col-12 col-sm-6 col-md">
             <label class="form-label small text-muted mb-1">Descripción</label>
             <input type="text" name="description" class="form-control form-control-sm"
-                   placeholder="Observaciones...">
+                   placeholder="Observaciones... (opcional)">
           </div>
 
           <div class="col-6 col-sm-auto">
-            <button type="submit" class="btn btn-danger btn-sm w-100 px-3">Guardar</button>
+            <button type="submit" class="btn btn-danger btn-sm w-100 px-3"
+                    :disabled="submitting">
+              <span x-show="!submitting">Guardar</span>
+              <span x-show="submitting" class="spinner-border spinner-border-sm"></span>
+            </button>
           </div>
 
         </div>
@@ -542,15 +585,14 @@
                 <span class="badge rounded-pill business-badge-{{ expense.business.name|lower|slugify }}">{{ expense.business.name }}</span>
               </td>
               <td>
-                {% if expense.expense_type == 'purchase' %}
-                  <span class="badge text-bg-info">Compra</span>
-                {% elif expense.expense_type == 'staff_payment' %}
-                  <span class="badge" style="background:#6f42c1;color:#fff">Personal</span>
-                {% elif expense.expense_type == 'general_expense' %}
-                  <span class="badge text-bg-warning text-dark">Gasto general</span>
-                {% else %}
-                  <span class="badge text-bg-secondary">Otros</span>
-                {% endif %}
+                <span class="badge
+                  {% if expense.expense_type == 'purchase' %}text-bg-info
+                  {% elif expense.expense_type == 'staff_payment' %}text-bg-purple
+                  {% elif expense.expense_type == 'general_expense' %}text-bg-warning text-dark
+                  {% else %}text-bg-secondary
+                  {% endif %}">
+                  {{ expense.get_expense_type_display }}
+                </span>
               </td>
               <td class="small d-none d-md-table-cell">
                 {% if expense.expense_type == 'purchase' %}
@@ -759,7 +801,7 @@
               </select>
             </div>
             <div class="col-6 col-sm-4 col-md-2" x-show="expType === 'purchase'" x-cloak>
-              <label class="form-label small text-muted mb-1">N° Factura</label>
+              <label class="form-label small text-muted mb-1">N° Factura <span class="text-muted small">(opcional)</span></label>
               <input type="text" name="invoice_number" id="ee_invoice" class="form-control form-control-sm">
             </div>
             <div class="col-12 col-sm-6 col-md-3" x-show="expType === 'staff_payment'" x-cloak>
@@ -824,12 +866,25 @@
 .business-badge-panadería-delipan { background: #FFC000; color: #1a1a1a; }
 .business-badge-otros,
 .business-badge-otros-movimientos { background: #AB47BC; color: #fff; }
+.text-bg-purple { background: #6f42c1 !important; color: #fff !important; }
 </style>
 
 <span id="income-edit-url"  data-url="{% url 'cash_closing:income-edit'  pk=0 %}" hidden></span>
 <span id="expense-edit-url" data-url="{% url 'cash_closing:expense-edit' pk=0 %}" hidden></span>
 
 <script>
+// ── Utilidades globales ──────────────────────────────────────────────────────
+
+function getBadgeClassGlobal(name) {
+  if (!name) return 'business-badge-otros';
+  const n = name.toLowerCase();
+  if (n.includes('maná') || n.includes('mana')) return 'business-badge-mana';
+  if (n.includes('mercatodo'))                   return 'business-badge-mercatodo';
+  if (n.includes('primavera'))                   return 'business-badge-primavera';
+  if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan')) return 'business-badge-panaderia';
+  return 'business-badge-otros';
+}
+
 function liveFormat(input) {
   const start = input.selectionStart;
   const prev  = input.value.length;
@@ -840,18 +895,118 @@ function liveFormat(input) {
   input.setSelectionRange(start + diff, start + diff);
 }
 
-function bindAmount(id) {
-  const input = document.getElementById(id);
-  if (!input) return;
-  input.addEventListener("input", function() { liveFormat(this); });
-  input.closest("form").addEventListener("submit", function() {
-    input.value = input.value.replace(/\./g, "") || "0";
-  });
+function getRawAmount(input) {
+  return parseInt(input.value.replace(/\./g, "")) || 0;
 }
 
+// ── Alpine: formulario de ingreso ────────────────────────────────────────────
+
+function incomeFormData() {
+  return {
+    method: 'cash',
+    bank: '',
+    bizPk: '',
+    bizName: '',
+    open: false,
+    submitting: false,
+    errors: {},
+
+    getBadgeClass(name) { return getBadgeClassGlobal(name); },
+
+    validate() {
+      const errs = {};
+      if (!this.bizPk)   errs.business = 'Selecciona un negocio.';
+
+      const amountInput = document.getElementById('incomeAmount');
+      if (!amountInput || getRawAmount(amountInput) <= 0)
+        errs.amount = 'El valor debe ser mayor a cero.';
+
+      const shift = this.$el.querySelector('[name="shift"]');
+      if (!shift || !shift.value)
+        errs.shift = 'Selecciona un turno.';
+
+      if (this.method === 'deposit' && !this.bank)
+        errs.bank = 'Selecciona un banco para la consignación.';
+
+      this.errors = errs;
+      return Object.keys(errs).length === 0;
+    },
+
+    submitIncome(event) {
+      if (!this.validate()) return;
+      this.submitting = true;
+
+      // Limpiar el monto antes de enviar
+      const amountInput = document.getElementById('incomeAmount');
+      if (amountInput) amountInput.value = getRawAmount(amountInput).toString();
+
+      event.target.submit();
+    }
+  };
+}
+
+// ── Alpine: formulario de egreso ─────────────────────────────────────────────
+
+function expenseFormData() {
+  return {
+    method: 'cash',
+    bank: '',
+    expType: 'general_expense',
+    bizPk: '',
+    bizName: '',
+    open: false,
+    submitting: false,
+    errors: {},
+
+    getBadgeClass(name) { return getBadgeClassGlobal(name); },
+
+    validate() {
+      const errs = {};
+      if (!this.bizPk) errs.business = 'Selecciona un negocio.';
+
+      const amountInput = document.getElementById('expenseAmount');
+      if (!amountInput || getRawAmount(amountInput) <= 0)
+        errs.amount = 'El monto debe ser mayor a cero.';
+
+      if (this.method === 'deposit' && !this.bank)
+        errs.bank = 'Selecciona un banco para la consignación.';
+
+      if (this.expType === 'purchase') {
+        const supplier = this.$el.querySelector('[name="supplier"]');
+        if (!supplier || !supplier.value)
+          errs.supplier = 'El proveedor es obligatorio para compras.';
+      }
+
+      if (this.expType === 'staff_payment') {
+        const employee = this.$el.querySelector('[name="employee_name"]');
+        if (!employee || !employee.value.trim())
+          errs.employee_name = 'Indica la persona a quien se le pagó.';
+      }
+
+      this.errors = errs;
+      return Object.keys(errs).length === 0;
+    },
+
+    submitExpense(event) {
+      if (!this.validate()) return;
+      this.submitting = true;
+
+      const amountInput = document.getElementById('expenseAmount');
+      if (amountInput) amountInput.value = getRawAmount(amountInput).toString();
+
+      event.target.submit();
+    }
+  };
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+
 document.addEventListener("DOMContentLoaded", function() {
-  bindAmount("incomeAmount");
-  bindAmount("expenseAmount");
+  // Formateo en tiempo real
+  const incomeAmt = document.getElementById("incomeAmount");
+  const expenseAmt = document.getElementById("expenseAmount");
+  if (incomeAmt)  incomeAmt.addEventListener("input",  function() { liveFormat(this); });
+  if (expenseAmt) expenseAmt.addEventListener("input", function() { liveFormat(this); });
 
   // ── Confirmar eliminación ──
   const confirmModal = new bootstrap.Modal(document.getElementById("confirmModal"));
@@ -940,23 +1095,26 @@ document.addEventListener("DOMContentLoaded", function() {
 
     new bootstrap.Modal(document.getElementById("editExpenseModal")).show();
   };
+});
 
+// ── Alpine magic helper ───────────────────────────────────────────────────────
+document.addEventListener('alpine:init', () => {
+  Alpine.magic('badgeClass', () => (name) => getBadgeClassGlobal(name));
 });
 </script>
 
 <script>
-// Global getBadgeClass helper for Alpine components that don't inherit the parent x-data
-document.addEventListener('alpine:init', () => {
-  Alpine.magic('badgeClass', () => (name) => {
-    if (!name) return 'business-badge-otros';
-    const n = name.toLowerCase();
-    if (n.includes('maná') || n.includes('mana')) return 'business-badge-mana';
-    if (n.includes('mercatodo'))                  return 'business-badge-mercatodo';
-    if (n.includes('primavera'))                  return 'business-badge-primavera';
-    if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan')) return 'business-badge-panaderia';
-    return 'business-badge-otros';
+(function () {
+  document.querySelectorAll('#cashTabs [data-tab]').forEach(btn => {
+    btn.addEventListener('shown.bs.tab', function () {
+      const tab = this.dataset.tab;
+      const url = new URL(window.location.href);
+      url.searchParams.set('tab', tab);
+      window.history.replaceState(null, '', url.toString());
+
+    });
   });
-});
+})();
 </script>
 
 {% endblock %}

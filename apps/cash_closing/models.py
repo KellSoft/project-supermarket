@@ -34,7 +34,7 @@ class Shift(models.Model):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# BankAccount — cuentas bancarias reales del negocio
+# BankAccount
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -71,7 +71,6 @@ class BankAccount(models.Model):
         verbose_name_plural = "Cuentas bancarias"
 
     def recalculate(self):
-        """Recalcula current_balance desde cero: inicial + ingresos consignación - egresos consignación."""
         ingresos = self.incomes.filter(payment_method=PaymentMethod.DEPOSIT).aggregate(
             t=Sum("amount")
         )["t"] or Decimal("0")
@@ -131,11 +130,11 @@ class Income(models.Model):
         verbose_name_plural = "Ingresos"
 
     def clean(self):
-        if self.payment_method == PaymentMethod.DEPOSIT and not self.bank:
+        if self.payment_method == PaymentMethod.DEPOSIT and not self.bank_id:
             raise ValidationError(
                 {"bank": "El banco es obligatorio para ingresos por consignación."}
             )
-        if self.payment_method == PaymentMethod.CASH and self.bank:
+        if self.payment_method == PaymentMethod.CASH and self.bank_id:
             raise ValidationError(
                 {"bank": "Un ingreso en efectivo no debe tener banco asociado."}
             )
@@ -145,8 +144,10 @@ class Income(models.Model):
 
 
 # ──────────────────────────────────────────────────────────────────────────────
-# Expense
+# Supplier
 # ──────────────────────────────────────────────────────────────────────────────
+
+
 class Supplier(models.Model):
     name = models.CharField(max_length=200, verbose_name="Proveedor", unique=True)
 
@@ -157,6 +158,11 @@ class Supplier(models.Model):
 
     def __str__(self):
         return self.name
+
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Expense
+# ──────────────────────────────────────────────────────────────────────────────
 
 
 class Expense(models.Model):
@@ -222,34 +228,28 @@ class Expense(models.Model):
 
     def clean(self):
         if self.employee_name:
-            self.employee_name = self.employee_name.strip()
+            self.employee_name = self.employee_name.strip() or None
         if self.invoice_number:
-            self.invoice_number = self.invoice_number.strip()
+            self.invoice_number = self.invoice_number.strip() or None
         if self.description:
-            self.description = self.description.strip()
+            self.description = self.description.strip() or None
 
-        if self.payment_method == PaymentMethod.DEPOSIT and not self.bank:
+        if self.payment_method == PaymentMethod.DEPOSIT and not self.bank_id:
             raise ValidationError(
                 {"bank": "El banco es obligatorio para consignaciones."}
             )
-        if self.payment_method == PaymentMethod.CASH and self.bank:
+        if self.payment_method == PaymentMethod.CASH and self.bank_id:
             raise ValidationError(
                 {"bank": "Un movimiento en efectivo no debe tener banco."}
             )
 
         if self.expense_type == ExpenseType.PURCHASE:
-            if not self.supplier:
+            if not self.supplier_id:
                 raise ValidationError({"supplier": "El proveedor es obligatorio."})
-            if not self.invoice_number:
-                raise ValidationError({"invoice_number": "La factura es obligatoria."})
-        else:
-            self.supplier = None
-            self.invoice_number = None
 
-        if self.expense_type == ExpenseType.STAFF_PAYMENT and not self.employee_name:
-            raise ValidationError({"employee_name": "Debe indicar la persona."})
-        if self.expense_type != ExpenseType.STAFF_PAYMENT:
-            self.employee_name = None
+        if self.expense_type == ExpenseType.STAFF_PAYMENT:
+            if not self.employee_name:
+                raise ValidationError({"employee_name": "Debe indicar la persona."})
 
     def __str__(self):
         return (
