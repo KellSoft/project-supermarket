@@ -520,6 +520,8 @@
   {# Filtros egresos #}
   <div x-data="{
     filterBiz: '',
+    filterBizName: '',
+    filterBizOpen: false,
     filterMethod: '',
     filterType: '',
     visibleExpense(row) {
@@ -529,14 +531,36 @@
     }
   }">
     <div class="d-flex align-items-center gap-2 flex-wrap px-3 py-2 mb-2 rounded-3"
-         style="background:#fff7ed; border:1px solid #fed7aa">
+        style="background:#fff7ed; border:1px solid #fed7aa">
       <span class="small fw-semibold text-danger">🔍 Filtrar</span>
-      <select class="form-select form-select-sm" style="width:160px" x-model="filterBiz">
-        <option value="">Todos los negocios</option>
-        {% for b in businesses %}
-        <option value="{{ b.pk }}">{{ b.name }}</option>
-        {% endfor %}
-      </select>
+
+      <div style="width:160px; position:relative;">
+        <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
+                @click="filterBizOpen = !filterBizOpen" @click.outside="filterBizOpen = false">
+          <span x-show="filterBiz" class="badge rounded-pill"
+                :class="getBadgeClassGlobal(filterBizName)"
+                x-text="filterBizName" style="font-size:0.8rem; padding:6px 12px;"></span>
+          <span x-show="!filterBiz" class="text-muted small">Todos los negocios</span>
+        </button>
+        <div x-show="filterBizOpen" x-cloak
+            class="position-absolute bg-white border rounded-2 shadow-sm py-1"
+            style="z-index:999; top:calc(100% + 4px); min-width:160px;">
+          <div class="px-3 py-1 text-muted small" style="cursor:pointer"
+              @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+              @click="filterBiz=''; filterBizName=''; filterBizOpen=false">
+            Todos los negocios
+          </div>
+          {% for b in businesses %}
+          <div class="px-3 py-1 d-flex align-items-center gap-2" style="cursor:pointer"
+              @mouseenter="$el.style.background='#f8f9fa'" @mouseleave="$el.style.background=''"
+              @click="filterBiz='{{ b.pk }}'; filterBizName='{{ b.name }}'; filterBizOpen=false">
+            <span class="badge rounded-pill business-badge-{{ b.name|lower|slugify }}"
+                  style="font-size:0.8rem; padding:6px 12px;">{{ b.name }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
       <select class="form-select form-select-sm" style="width:170px" x-model="filterType">
         <option value="">Todos los tipos</option>
         {% for val, label in expense_type_choices %}
@@ -550,7 +574,7 @@
       </select>
       <button type="button" class="btn btn-sm btn-outline-danger ms-auto"
               x-show="filterBiz || filterMethod || filterType"
-              @click="filterBiz=''; filterMethod=''; filterType=''">
+              @click="filterBiz=''; filterBizName=''; filterMethod=''; filterType=''">
         ✕ Limpiar
       </button>
     </div>
@@ -851,6 +875,10 @@
 
 <style>
 [x-cloak] { display: none !important; }
+[class*="business-badge-"] {
+  background: #6c757d;
+  color: #fff; 
+}
 .business-badge-supermercado { background: #2E75B6; color: #fff; }
 .business-badge-mana,
 .business-badge-maná      { background: #2E75B6; color: #fff; }
@@ -859,11 +887,11 @@
 .business-badge-tienda-primavera { background: #00A94F; color: #fff; }
 .business-badge-supermercado-mana { background: #2E75B6; color: #fff; }
 .business-badge-otros-movimientos { background: #AB47BC; color: #fff; }
-.business-badge-panaderia-delipan { background: #FFC000; color: #1a1a1a; }
+.business-badge-panaderia-delipan { background: #FFC000; color: #fff; }
 .business-badge-panaderia,
 .business-badge-panadería,
 .business-badge-panaderia-delipan,
-.business-badge-panadería-delipan { background: #FFC000; color: #1a1a1a; }
+.business-badge-panadería-delipan { background: #FFC000; color: #fff; }
 .business-badge-otros,
 .business-badge-otros-movimientos { background: #AB47BC; color: #fff; }
 .text-bg-purple { background: #6f42c1 !important; color: #fff !important; }

@@ -14,19 +14,13 @@
         --rule: #e0e0e0;
         --white: #ffffff;
         --row-alt: #fafafa;
-
-        /* secciones */
         --c-income: #1a7c4a;
         --c-expense: #1a3a7c;
         --c-purchase: #c8421a;
         --c-balance: #6f42c1;
       }
 
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
 
       body {
         font-family: "DM Sans", Arial, sans-serif;
@@ -36,310 +30,69 @@
         padding: 36px 44px 44px;
       }
 
-      /* ── MASTHEAD ── */
-      .masthead {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-      }
+      .masthead { display: flex; justify-content: space-between; align-items: flex-start; }
+      .masthead-left .label { font-size: 7pt; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--c-balance); margin-bottom: 4px; }
+      .masthead-left h1 { font-family: "DM Serif Display", Georgia, serif; font-size: 26pt; font-weight: 400; line-height: 1.1; letter-spacing: -0.5px; }
+      .masthead-right { text-align: right; padding-top: 6px; }
+      .masthead-right .company { font-size: 11pt; font-weight: 600; margin-bottom: 2px; }
+      .masthead-right .date-block { font-size: 8pt; color: var(--ink-soft); line-height: 1.8; }
 
-      .masthead-left .label {
-        font-size: 7pt;
-        font-weight: 600;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        color: var(--c-balance);
-        margin-bottom: 4px;
-      }
+      .divider { display: flex; align-items: center; margin: 14px 0 20px; }
+      .divider-thick { height: 3px; width: 48px; }
+      .divider-thin { flex: 1; height: 1px; background: var(--rule); }
 
-      .masthead-left h1 {
-        font-family: "DM Serif Display", Georgia, serif;
-        font-size: 26pt;
-        font-weight: 400;
-        line-height: 1.1;
-        letter-spacing: -0.5px;
-      }
+      .summary-grid { display: flex; gap: 10px; margin-bottom: 28px; }
+      .summary-card { flex: 1; border-radius: 5px; padding: 12px 14px; border: 1px solid var(--rule); }
+      .summary-card .s-label { font-size: 7pt; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 5px; }
+      .summary-card .s-amount { font-family: "DM Serif Display", Georgia, serif; font-size: 14pt; font-variant-numeric: tabular-nums; line-height: 1; }
 
-      .masthead-right {
-        text-align: right;
-        padding-top: 6px;
-      }
+      .card-income  { border-left: 4px solid var(--c-income);  background: #edf7f2; }
+      .card-income  .s-label, .card-income  .s-amount { color: var(--c-income);  }
+      .card-expense { border-left: 4px solid var(--c-expense); background: #eef1fb; }
+      .card-expense .s-label, .card-expense .s-amount { color: var(--c-expense); }
+      .card-purchase{ border-left: 4px solid var(--c-purchase);background: #fdf1ee; }
+      .card-purchase.s-label, .card-purchase .s-amount { color: var(--c-purchase);}
+      .card-balance { border-left: 4px solid var(--c-balance); background: #f3f0fb; }
+      .card-balance .s-label, .card-balance .s-amount { color: var(--c-balance); }
+      .card-balance-neg { border-left: 4px solid #b91c1c; background: #fff1f1; }
+      .card-balance-neg .s-label, .card-balance-neg .s-amount { color: #b91c1c; }
 
-      .masthead-right .company {
-        font-size: 11pt;
-        font-weight: 600;
-        margin-bottom: 2px;
-      }
+      .section-header { display: flex; align-items: center; gap: 10px; margin: 22px 0 10px; }
+      .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+      .section-title { font-size: 8pt; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; }
+      .section-rule { flex: 1; height: 1px; background: var(--rule); }
 
-      .masthead-right .date-block {
-        font-size: 8pt;
-        color: var(--ink-soft);
-        line-height: 1.8;
-      }
+      table { width: 100%; border-collapse: collapse; }
+      thead tr { border-bottom: 1.5px solid var(--ink); }
+      thead th { padding: 7px 9px; text-align: left; font-size: 6.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); }
+      thead th.th-right { text-align: right; }
+      tbody tr { border-bottom: 1px solid var(--rule); }
+      tbody tr:nth-child(even) { background: var(--row-alt); }
+      tbody td { padding: 8px 6px; font-size: 7.5pt; vertical-align: middle; }
 
-      /* ── DIVIDER ── */
-      .divider {
-        display: flex;
-        align-items: center;
-        margin: 14px 0 20px;
-      }
+      .td-num   { font-size: 7.5pt; color: var(--ink-faint); width: 24px; }
+      .td-right { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+      .td-muted { color: var(--ink-soft); font-size: 8pt; }
 
-      .divider-thick {
-        height: 3px;
-        width: 48px;
-      }
+      .pill { display: inline-block; background: #f0f0f0; border-radius: 3px; padding: 1px 6px; font-size: 7.5pt; color: var(--ink-soft); }
+      .badge-business { display: inline-block; border-radius: 3px; padding: 1px 7px; font-size: 7.5pt; font-weight: 500; }
 
-      .divider-thin {
-        flex: 1;
-        height: 1px;
-        background: var(--rule);
-      }
+      tfoot tr { border-top: 1.5px solid var(--ink); }
+      tfoot td { padding: 8px 6px; font-size: 7.5pt; }
+      .tfoot-label  { text-align: right; font-size: 6.5pt; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--ink-soft); }
+      .tfoot-amount { text-align: right; font-family: "DM Serif Display", Georgia, serif; font-size: 12pt; font-variant-numeric: tabular-nums; }
 
-      /* ── BALANCE CARDS ── */
-      .summary-grid {
-        display: flex;
-        gap: 10px;
-        margin-bottom: 28px;
-      }
+      .empty-row td { text-align: center; color: var(--ink-faint); font-style: italic; padding: 18px !important; font-size: 8.5pt; }
 
-      .summary-card {
-        flex: 1;
-        border-radius: 5px;
-        padding: 12px 14px;
-        border: 1px solid var(--rule);
-      }
-
-      .summary-card .s-label {
-        font-size: 7pt;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-      }
-
-      .summary-card .s-amount {
-        font-family: "DM Serif Display", Georgia, serif;
-        font-size: 14pt;
-        font-variant-numeric: tabular-nums;
-        line-height: 1;
-      }
-
-      .card-income {
-        border-left: 4px solid var(--c-income);
-        background: #edf7f2;
-      }
-      .card-income .s-label {
-        color: var(--c-income);
-      }
-      .card-income .s-amount {
-        color: var(--c-income);
-      }
-
-      .card-expense {
-        border-left: 4px solid var(--c-expense);
-        background: #eef1fb;
-      }
-      .card-expense .s-label {
-        color: var(--c-expense);
-      }
-      .card-expense .s-amount {
-        color: var(--c-expense);
-      }
-
-      .card-purchase {
-        border-left: 4px solid var(--c-purchase);
-        background: #fdf1ee;
-      }
-      .card-purchase .s-label {
-        color: var(--c-purchase);
-      }
-      .card-purchase .s-amount {
-        color: var(--c-purchase);
-      }
-
-      .card-balance {
-        border-left: 4px solid var(--c-balance);
-        background: #f3f0fb;
-      }
-      .card-balance .s-label {
-        color: var(--c-balance);
-      }
-      .card-balance .s-amount {
-        color: var(--c-balance);
-      }
-
-      .card-balance-neg {
-        border-left: 4px solid #b91c1c;
-        background: #fff1f1;
-      }
-      .card-balance-neg .s-label {
-        color: #b91c1c;
-      }
-      .card-balance-neg .s-amount {
-        color: #b91c1c;
-      }
-
-      /* ── SECTION HEADER ── */
-      .section-header {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin: 22px 0 10px;
-      }
-
-      .section-dot {
-        width: 10px;
-        height: 10px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-
-      .section-title {
-        font-size: 8pt;
-        font-weight: 600;
-        letter-spacing: 1.5px;
-        text-transform: uppercase;
-      }
-
-      .section-rule {
-        flex: 1;
-        height: 1px;
-        background: var(--rule);
-      }
-
-      /* ── TABLES ── */
-      table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-
-      thead tr {
-        border-bottom: 1.5px solid var(--ink);
-      }
-
-      thead th {
-        padding: 7px 9px;
-        text-align: left;
-        font-size: 6.5pt;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--ink-soft);
-      }
-
-      thead th.th-right {
-        text-align: right;
-      }
-
-      tbody tr {
-        border-bottom: 1px solid var(--rule);
-      }
-      tbody tr:nth-child(even) {
-        background: var(--row-alt);
-      }
-
-      tbody td {
-        padding: 8px 6px;
-        font-size: 7.5pt;
-        vertical-align: middle;
-      }
-
-      .td-num {
-        font-size: 7.5pt;
-        color: var(--ink-faint);
-        width: 24px;
-      }
-      .td-right {
-        text-align: right;
-        font-weight: 600;
-        font-variant-numeric: tabular-nums;
-      }
-      .td-muted {
-        color: var(--ink-soft);
-        font-size: 8pt;
-      }
-
-      .pill {
-        display: inline-block;
-        background: #f0f0f0;
-        border-radius: 3px;
-        padding: 1px 6px;
-        font-size: 7.5pt;
-        color: var(--ink-soft);
-      }
-
-      .badge-business {
-        display: inline-block;
-        border-radius: 3px;
-        padding: 1px 7px;
-        font-size: 7.5pt;
-        font-weight: 500;
-      }
-
-      .badge-income {
-        background: #edf7f2;
-        color: var(--c-income);
-        border: 1px solid #b8deca;
-      }
-      .badge-expense {
-        background: #eef1fb;
-        color: var(--c-expense);
-        border: 1px solid #c0caf0;
-      }
-
-      tfoot tr {
-        border-top: 1.5px solid var(--ink);
-      }
-      tfoot td {
-        padding: 8px 6px;
-        font-size: 7.5pt;
-      }
-
-      .tfoot-label {
-        text-align: right;
-        font-size: 6.5pt;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        color: var(--ink-soft);
-      }
-
-      .tfoot-amount {
-        text-align: right;
-        font-family: "DM Serif Display", Georgia, serif;
-        font-size: 12pt;
-        font-variant-numeric: tabular-nums;
-      }
-
-      /* ── EMPTY ── */
-      .empty-row td {
-        text-align: center;
-        color: var(--ink-faint);
-        font-style: italic;
-        padding: 18px !important;
-        font-size: 8.5pt;
-      }
-
-      /* ── FOOTER ── */
-      .doc-footer {
-        margin-top: 28px;
-        padding-top: 10px;
-        border-top: 1px solid var(--rule);
-        display: flex;
-        justify-content: space-between;
-        font-size: 7pt;
-        color: var(--ink-faint);
-      }
+      .doc-footer { margin-top: 28px; padding-top: 10px; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; font-size: 7pt; color: var(--ink-faint); }
     </style>
   </head>
   <body>
-    <!-- MASTHEAD -->
+
     <div class="masthead">
       <div class="masthead-left">
         <div class="label">Resumen diario</div>
-        <h1>
-          {{ selected_date|date:"d \d\e F" }}<br />de {{ selected_date|date:"Y"}}
-        </h1>
+        <h1>{{ selected_date|date:"d \d\e F" }}<br />de {{ selected_date|date:"Y" }}</h1>
       </div>
       <div class="masthead-right">
         <div class="company">Maná y Asociados</div>
@@ -355,7 +108,6 @@
       <div class="divider-thin"></div>
     </div>
 
-    <!-- CARDS DE RESUMEN -->
     <div class="summary-grid">
       <div class="summary-card card-income">
         <div class="s-label">Total ingresos</div>
@@ -365,10 +117,6 @@
         <div class="s-label">Total egresos</div>
         <div class="s-amount">${{ total_expenses|cop }}</div>
       </div>
-      {% comment %} <div class="summary-card card-purchase">
-        <div class="s-label">Total compras</div>
-        <div class="s-amount">${{ total_purchases|cop }}</div>
-      </div> {% endcomment %}
       {% if balance >= 0 %}
       <div class="summary-card card-balance">
         <div class="s-label">Balance neto</div>
@@ -382,7 +130,7 @@
       {% endif %}
     </div>
 
-    <!-- SECCIÓN INGRESOS -->
+    <!-- INGRESOS -->
     <div class="section-header">
       <div class="section-dot" style="background: var(--c-income)"></div>
       <div class="section-title" style="color: var(--c-income)">Ingresos</div>
@@ -406,17 +154,16 @@
         <tr>
           <td class="td-num">{{ forloop.counter }}</td>
           <td>
-            <span class="badge-business badge-income"
-              >{{ income.business.name }}</span
-            >
+            <span class="badge-business"
+                  style="background:{{ income.business.name|biz_color }}; color:#fff; border:none;">
+              {{ income.business.name }}
+            </span>
           </td>
           <td class="td-muted">{{ income.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ income.get_payment_method_display }}</td>
           <td class="td-muted">{{ income.bank.name|default:"—" }}</td>
           <td class="td-muted">{{ income.shift.name|default:"—" }}</td>
-          <td class="td-right" style="color: var(--c-income)">
-            ${{ income.amount|cop }}
-          </td>
+          <td class="td-right" style="color: var(--c-income)">${{ income.amount|cop }}</td>
         </tr>
         {% empty %}
         <tr class="empty-row">
@@ -429,20 +176,16 @@
         <tr>
           <td colspan="5"></td>
           <td class="tfoot-label">Total</td>
-          <td class="tfoot-amount" style="color: var(--c-income)">
-            ${{ total_incomes|cop }}
-          </td>
+          <td class="tfoot-amount" style="color: var(--c-income)">${{ total_incomes|cop }}</td>
         </tr>
       </tfoot>
       {% endif %}
     </table>
 
-    <!-- SECCIÓN EGRESOS -->
+    <!-- EGRESOS -->
     <div class="section-header">
       <div class="section-dot" style="background: var(--c-expense)"></div>
-      <div class="section-title" style="color: var(--c-expense)">
-        Egresos efectivo
-      </div>
+      <div class="section-title" style="color: var(--c-expense)">Egresos efectivo</div>
       <div class="section-rule"></div>
     </div>
 
@@ -464,20 +207,17 @@
         <tr>
           <td class="td-num">{{ forloop.counter }}</td>
           <td>
-            <span class="badge-business badge-expense"
-              >{{ expense.business.name }}</span
-            >
+            <span class="badge-business"
+                  style="background:{{ expense.business.name|biz_color }}; color:#fff; border:none;">
+              {{ expense.business.name }}
+            </span>
           </td>
-          <td>{{ expense.supplier }}</td>
-          <td>
-            <span class="pill">{{ expense.invoice_number|default:"—" }}</span>
-          </td>
+          <td class="td-muted">{{ expense.supplier|default:"—" }}</td>
+          <td><span class="pill">{{ expense.invoice_number|default:"—" }}</span></td>
           <td class="td-muted">{{ expense.date|date:"d/m/Y" }}</td>
           <td class="td-muted">{{ expense.get_payment_method_display }}</td>
           <td class="td-muted">{{ expense.bank.name|default:"—" }}</td>
-          <td class="td-right" style="color: var(--c-expense)">
-            ${{ expense.amount|cop }}
-          </td>
+          <td class="td-right" style="color: var(--c-expense)">${{ expense.amount|cop }}</td>
         </tr>
         {% empty %}
         <tr class="empty-row">
@@ -490,58 +230,7 @@
         <tr>
           <td colspan="6"></td>
           <td class="tfoot-label">Total</td>
-          <td class="tfoot-amount" style="color: var(--c-expense)">
-            ${{ total_expenses|cop }}
-          </td>
-        </tr>
-      </tfoot>
-      {% endif %}
-    </table>
-
-    {% comment %} <!-- SECCIÓN COMPRAS -->
-    <div class="section-header">
-      <div class="section-dot" style="background: var(--c-purchase)"></div>
-      <div class="section-title" style="color: var(--c-purchase)">Compras</div>
-      <div class="section-rule"></div>
-    </div> {% endcomment %}
-
-    <table>
-      <thead>
-        <tr>
-          <th style="width: 24px">#</th>
-          <th>Factura</th>
-          <th>Producto</th>
-          <th>Proveedor</th>
-          <th>Fecha</th>
-          <th class="th-right">Monto</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for purchase in purchases %}
-        <tr>
-          <td class="td-num">{{ forloop.counter }}</td>
-          <td><span class="pill">{{ purchase.invoice_number }}</span></td>
-          <td><strong>{{ purchase.product }}</strong></td>
-          <td class="td-muted">{{ purchase.supplier }}</td>
-          <td class="td-muted">{{ purchase.purchase_date|date:"d/m/Y" }}</td>
-          <td class="td-right" style="color: var(--c-purchase)">
-            ${{ purchase.amount|cop }}
-          </td>
-        </tr>
-        {% empty %}
-        <tr class="empty-row">
-          <td colspan="6">Sin compras registradas para este día.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-      {% if purchases %}
-      <tfoot>
-        <tr>
-          <td colspan="4"></td>
-          <td class="tfoot-label">Total</td>
-          <td class="tfoot-amount" style="color: var(--c-purchase)">
-            ${{ total_purchases|cop }}
-          </td>
+          <td class="tfoot-amount" style="color: var(--c-expense)">${{ total_expenses|cop }}</td>
         </tr>
       </tfoot>
       {% endif %}
@@ -551,49 +240,34 @@
     {% if chart_dona or chart_ingresos_negocio or chart_compras_proveedor %}
     <div class="section-header" style="margin-top: 32px">
       <div class="section-dot" style="background: var(--c-balance)"></div>
-      <div class="section-title" style="color: var(--c-balance)">
-        Análisis visual
-      </div>
+      <div class="section-title" style="color: var(--c-balance)">Análisis visual</div>
       <div class="section-rule"></div>
     </div>
 
-    <div
-      style="
-        display: flex;
-        gap: 16px;
-        margin-top: 16px;
-        align-items: flex-start;
-      "
-    >
+    <div style="display: flex; gap: 16px; margin-top: 16px; align-items: flex-start;">
       {% if chart_dona %}
       <div style="flex: 0 0 auto">
-        <img
-          src="data:image/png;base64,{{ chart_dona }}"
-          style="width: 220px; height: auto"
-        />
+        <img src="data:image/png;base64,{{ chart_dona }}" style="width: 220px; height: auto" />
       </div>
-      {% endif %} {% if chart_ingresos_negocio %}
+      {% endif %}
+      {% if chart_ingresos_negocio %}
       <div style="flex: 1">
-        <img
-          src="data:image/png;base64,{{ chart_ingresos_negocio }}"
-          style="width: 100%; height: auto"
-        />
+        <img src="data:image/png;base64,{{ chart_ingresos_negocio }}" style="width: 100%; height: auto" />
       </div>
       {% endif %}
     </div>
 
     {% if chart_compras_proveedor %}
     <div style="margin-top: 16px">
-      <img
-        src="data:image/png;base64,{{ chart_compras_proveedor }}"
-        style="width: 60%; height: auto"
-      />
+      <img src="data:image/png;base64,{{ chart_compras_proveedor }}" style="width: 60%; height: auto" />
     </div>
-    {% endif %} {% endif %}
+    {% endif %}
+    {% endif %}
 
     <div class="doc-footer">
       <span>Documento generado automáticamente · Maná y Asociados</span>
-      <span>{{ incomes|length }} ingreso(s) · {{ expenses|length }} egreso(s) · {{purchases|length }} compra(s)</span>
+      <span>{{ incomes|length }} ingreso(s) · {{ expenses|length }} egreso(s) · {{ purchases|length }} compra(s)</span>
     </div>
+
   </body>
 </html>

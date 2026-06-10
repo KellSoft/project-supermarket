@@ -233,8 +233,7 @@
           <div class="cb-sub">Ingresos vs Egresos acumulados</div>
         </div>
         <div class="cb-legend">
-          <span class="leg-green">Ingresos</span>
-          <span class="leg-red">Egresos</span>
+          <span style="font-size:0.68rem; color:var(--ink-soft)">Color sólido = Ingresos · Atenuado = Egresos</span>
         </div>
       </div>
       <canvas id="chart2" height="180"></canvas>
@@ -279,8 +278,18 @@
   const greenAlpha = 'rgba(45,106,79,0.10)';
   const blue       = '#14213D';
   const blueAlpha  = 'rgba(20,33,61,0.10)';
-  const red        = '#8b2e12';
-  const gold       = '#b8860b';
+
+  function getBizColor(name) {
+    if (!name) return '#6c757d';
+    const n = name.toLowerCase();
+    if (n.includes('mercatodo'))                                                        return '#E53935';
+    if (n.includes('supermercado'))                                                     return '#3949AB';
+    if (n.includes('maná') || n.includes('mana'))                                      return '#3949AB';
+    if (n.includes('primavera'))                                                        return '#00897B';
+    if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan'))   return '#F4511E';
+    if (n.includes('otros'))                                                            return '#8E24AA';
+    return '#6c757d';
+  }
 
   new Chart(document.getElementById('chart1'), {
     type: 'line',
@@ -336,14 +345,14 @@
         {
           label: 'Ingresos',
           data: c2Incomes,
-          backgroundColor: green,
+          backgroundColor: c2Labels.map(name => getBizColor(name)),
           borderRadius: 4,
           barPercentage: 0.6,
         },
         {
           label: 'Egresos',
           data: c2Expenses,
-          backgroundColor: red,
+          backgroundColor: c2Labels.map(name => getBizColor(name) + '66'),
           borderRadius: 4,
           barPercentage: 0.6,
         },
@@ -370,7 +379,7 @@
         {
           label: 'Ingresos del mes',
           data: c7Values,
-          backgroundColor: [green, blue, gold, red, '#7c3aed', '#0891b2'],
+          backgroundColor: c7Labels.map(name => getBizColor(name)),
           borderRadius: 6,
           barPercentage: 0.5,
         },
