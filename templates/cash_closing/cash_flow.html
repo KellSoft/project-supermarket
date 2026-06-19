@@ -26,15 +26,21 @@
     <small class="text-muted">Ingresos y egresos — {{ selected_date }}</small>
   </div>
   <form method="get" id="filterForm" class="d-flex align-items-center gap-2 flex-wrap">
-    <div x-data="{ open: false, bizPk: '{{ selected_business }}', bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}' }"
-         style="width:160px; position:relative;">
-      <input type="hidden" name="business" :value="bizPk">
-      <button type="button" class="form-select form-select-sm text-start d-flex align-items-center gap-2"
-              @click="open = !open" @click.outside="open = false">
-        <span x-show="bizPk" class="badge rounded-pill" :class="getBadgeClass(bizName)"
-              x-text="bizName" style="font-size:0.8rem; padding:6px 12px;"></span>
-        <span x-show="!bizPk" class="text-muted small">Todos los negocios</span>
-      </button>
+    <div x-data="{
+      open: false,
+      bizPk: '{{ selected_business }}',
+      bizName: '{% for b in businesses %}{% if selected_business == b.pk|stringformat:"s" %}{{ b.name }}{% endif %}{% endfor %}',
+      getBadgeClass(n) { return getBadgeClassGlobal(n); }
+    }"
+      style="width:200px; position:relative;">
+    <input type="hidden" name="business" :value="bizPk">
+    <button type="button" class="form-select text-start d-flex align-items-center gap-2"
+            style="min-height:38px; white-space:nowrap; overflow:hidden;"
+            @click="open = !open" @click.outside="open = false">
+      <span x-show="bizPk" class="badge rounded-pill" :class="getBadgeClass(bizName)"
+            x-text="bizName" style="font-size:0.75rem; padding:4px 10px; max-width:160px; overflow:hidden; text-overflow:ellipsis;"></span>
+      <span x-show="!bizPk" class="text-muted small">Todos los negocios</span>
+    </button>
       <div x-show="open" x-cloak class="position-absolute bg-white border rounded-2 shadow-sm py-1"
            style="z-index:999; top:calc(100% + 4px); min-width:160px;">
         <div class="px-3 py-1 text-muted small" style="cursor:pointer"
@@ -906,11 +912,15 @@
 function getBadgeClassGlobal(name) {
   if (!name) return 'business-badge-otros';
   const n = name.toLowerCase();
-  if (n.includes('maná') || n.includes('mana')) return 'business-badge-mana';
-  if (n.includes('mercatodo'))                   return 'business-badge-mercatodo';
-  if (n.includes('primavera'))                   return 'business-badge-primavera';
-  if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan')) return 'business-badge-panaderia';
-  return 'business-badge-otros';
+  if (n.includes('maná') || n.includes('mana') || n.includes('supermercado'))
+    return 'business-badge-supermercado-mana';
+  if (n.includes('mercatodo'))
+    return 'business-badge-mercatodo';
+  if (n.includes('primavera'))
+    return 'business-badge-primavera';
+  if (n.includes('panadería') || n.includes('panaderia') || n.includes('delipan'))
+    return 'business-badge-panaderia-delipan';
+  return 'business-badge-otros-movimientos';
 }
 
 function liveFormat(input) {
