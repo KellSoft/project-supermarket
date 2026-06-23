@@ -19,4 +19,4 @@ COPY . .
 RUN python manage.py collectstatic --noinput
 
 EXPOSE 8000
-CMD gunicorn config.wsgi --bind 0.0.0.0:$PORT --log-file -
+CMD ["gunicorn", "config.wsgi", "--workers", "2", "--bind", "0.0.0.0:8080", "--log-file", "-"]
