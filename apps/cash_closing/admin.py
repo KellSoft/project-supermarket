@@ -11,6 +11,7 @@ class ShiftAdmin(admin.ModelAdmin):
 
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
+    list_select_related = ("business", "bank", "shift")
     list_display = (
         "date",
         "business",
@@ -59,6 +60,7 @@ class IncomeAdmin(admin.ModelAdmin):
 
 @admin.register(Expense)
 class ExpenseAdmin(admin.ModelAdmin):
+    list_select_related = ("business", "bank", "supplier")
     list_display = (
         "date",
         "business",
@@ -69,7 +71,7 @@ class ExpenseAdmin(admin.ModelAdmin):
         "bank",
         "created_at",
     )
-    search_fields = ("business__name", "supplier", "invoice_number")
+    search_fields = ("business__name", "supplier__name", "invoice_number")
     list_filter = ("date", "business", "payment_method", "bank")
     date_hierarchy = "date"
     ordering = ("-date", "-created_at")

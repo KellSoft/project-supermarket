@@ -343,7 +343,7 @@
                             '{{ income.payment_method }}',
                             '{{ income.bank.pk|default:'' }}',
                             {{ income.shift.pk }},
-                            '{{ income.person_name|default:'' }}',
+                            '{{ income.person_name|default:''|escapejs }}',
                             {{ income.amount }}
                           )">Editar</button>
                   <form method="post" action="{% url 'cash_closing:income-delete' income.pk %}"
@@ -659,10 +659,10 @@
                             '{{ expense.payment_method }}',
                             '{{ expense.bank.pk|default:'' }}',
                             '{{ expense.supplier.pk|default:'' }}',
-                            '{{ expense.invoice_number|default:'' }}',
-                            '{{ expense.employee_name|default:'' }}',
+                            '{{ expense.invoice_number|default:''|escapejs }}',
+                            '{{ expense.employee_name|default:''|escapejs }}',
                             {{ expense.amount }},
-                            '{{ expense.description|default:'' }}'
+                            '{{ expense.description|default:''|escapejs }}'
                           )">Editar</button>
                   <form method="post" action="{% url 'cash_closing:expense-delete' expense.pk %}"
                         class="delete-form" data-kind="expense" style="display:inline">

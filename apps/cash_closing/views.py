@@ -51,15 +51,19 @@ def _build_denominations(closing):
 
 
 def _closing_context(closing):
+    total_income_cash = closing.total_income_cash
+    total_expense_cash = closing.total_expense_cash
+    expected_cash = closing.opening_balance + total_income_cash - total_expense_cash
+    
     return {
         "closing": closing,
         "opening_form": OpeningBalanceForm(instance=closing),
         "edit_form": CashClosingEditForm(instance=closing),
         "denominations": _build_denominations(closing),
-        "total_income_cash": closing.total_income_cash,
-        "total_expense_cash": closing.total_expense_cash,
-        "expected_cash": closing.expected_cash,
-        "difference": closing.difference,
+        "total_income_cash": total_income_cash,
+        "total_expense_cash": total_expense_cash,
+        "expected_cash": expected_cash,
+        "difference": closing.physical_cash - expected_cash,
     }
 
 
@@ -388,8 +392,8 @@ class CashFlowView(View):
         date = filters["date"]
         biz = filters["business"]
 
-        income_qs = Income.objects.select_related("business").filter(date=date)
-        expense_qs = Expense.objects.select_related("business").filter(date=date)
+        income_qs = Income.objects.select_related("business", "bank", "shift").filter(date=date)
+        expense_qs = Expense.objects.select_related("business", "bank", "supplier").filter(date=date)
         if biz:
             income_qs = income_qs.filter(business_id=biz)
             expense_qs = expense_qs.filter(business_id=biz)
